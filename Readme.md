@@ -1,7 +1,7 @@
 # Проект «Большое путешествие»
 
 - Студент: [Дмитрий Гилёв](https://up.htmlacademy.ru/ecmascript-individual/2/user/44605).
-- Наставник: `Станислав Михайлов`.
+- Наставник: [Станислав Михайлов](https://htmlacademy.ru/profile/id139638).
 
 ---
 
