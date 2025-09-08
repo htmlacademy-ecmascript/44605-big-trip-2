@@ -5,7 +5,6 @@ const HtmlPlugin = require('html-webpack-plugin');
 module.exports = {
   entry: './src/main.js',
   output: {
-    filename: 'bundle.js',
     filename: 'bundle.[contenthash].js',
     path: path.resolve(__dirname, 'build'),
     clean: true,
@@ -16,7 +15,6 @@ module.exports = {
       template: 'public/index.html',
     }),
     new CopyPlugin({
-      patterns: [{ from: 'public' }],
       patterns: [
         {
           from: 'public',
@@ -35,10 +33,10 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env']
+            presets: ['@babel/preset-env'],
           },
         },
       },
-    ]
-  }
+    ],
+  },
 };
