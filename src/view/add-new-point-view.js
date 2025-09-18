@@ -163,7 +163,7 @@ function createNewPointTemplate() {
               </form>`;
 }
 
-export default class NewPoint {
+export default class NewTripPoint {
   getTemplate() {
     return createNewPointTemplate();
   }

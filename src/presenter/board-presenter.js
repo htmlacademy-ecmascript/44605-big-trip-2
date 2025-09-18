@@ -1,28 +1,33 @@
 import TripSort from '../view/sort-view';
-import EventList from '../view/event-list-view';
-import EventPoint from '../view/point-view';
-import EventPointEdit from '../view/edit-point-view';
-import NewPoint from '../view/add-new-point-view';
+import TripPoint from '../view/point-view';
+import TripList from '../view/event-list-view';
+import TripPointEdit from '../view/edit-point-view';
+// import NewTripPoint from '../view/add-new-point-view';
 import { render } from '../render';
 
 export default class BoardPresenter {
   // Сохраняю в переменную создание класса. Переменная имеет методы класса
-  EventListComponent = new EventList();
-  EventPointComponent = new EventPoint();
-  EventEditComponent = new EventPointEdit();
-  EventPointEditComponent = new EventPointEdit();
+  TripListComponent = new TripList();
 
-  constructor({ boardContainer }) {
+  constructor({ boardContainer, pointsModel }) {
     this.boardContainer = boardContainer;
+    this.pointsModel = pointsModel;
   }
 
   init() {
+    this.boardPoints = [...this.pointsModel.getPoints()]; // Копируем моковые данные и помещаем в новый массив boardPoints
+
     render(new TripSort(), this.boardContainer); // Отрисовал сортировку
-    render(new NewPoint(), this.boardContainer);
-    render(this.EventListComponent, this.boardContainer); // Создал <ul>
-    render(this.EventEditComponent, this.EventListComponent.getElement()); // Создал форму редактирования точки маршрута
-    for (let i = 0; i < 3; i++) {
-      render(new EventPoint(), this.EventListComponent.getElement()); // Создал точки маршрута
+    render(this.TripListComponent, this.boardContainer); // Создал <ul>
+    render(
+      new TripPointEdit({ point: this.boardPoints[0] }),
+      this.TripListComponent.getElement()
+    ); // Создал форму редактирования точки маршрута
+    for (let i = 1; i < this.boardPoints.length; i++) {
+      render(
+        new TripPoint({ point: this.boardPoints[i] }),
+        this.TripListComponent.getElement()
+      ); // Создал точки маршрута
     }
   }
 }

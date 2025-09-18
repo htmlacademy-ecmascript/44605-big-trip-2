@@ -1,0 +1,5 @@
+const POINTS_COUNT = 3;
+const DATE_FORMAT = 'D MMM';
+const TIME_FORMAT = 'h:mm A';
+
+export { POINTS_COUNT, DATE_FORMAT, TIME_FORMAT };
