@@ -8,7 +8,7 @@ const RANDOM_NUMBER = {
 const DATE_FORMAT = {
   dayMonth: 'D MMM',
   hoursMinutes: 'HH:mm',
-  fullDate: 'DD/mm/YY HH:mm',
+  fullDate: 'DD/MM/YY HH:mm',
 };
 
 const POINTS_TYPE = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];

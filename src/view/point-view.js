@@ -9,6 +9,7 @@ function createPointTemplate(point, destinations, offers) {
 
   // Находим destination
   const pointDestination = destinations.find((element) => element.id === point.destination);
+  const destinationName = pointDestination ? pointDestination.name : '';
 
   // Находим все предложения для типа точки
   const offersOfTypePoints = offers.find((element) => element.type === point.type);
@@ -28,10 +29,12 @@ function createPointTemplate(point, destinations, offers) {
   // Записыванием в переменную название класса если в point есть пометка isFavorite
   const pointFavoritClassName = isFavorite ? 'event__favorite-btn--active' : '';
 
+  // Формирую кусок разметки
+  // Если есть выбранные предложения для точки, то я рисую их, итерируясь по каждой точки с помощью map
   const offersHtml = selectedOffers.length > 0 ? `
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
-      ${selectedOffers.map(offer => `
+      ${selectedOffers.map((offer) => `
         <li class="event__offer">
           <span class="event__offer-title">${offer.title}</span>
           &plus;&euro;&nbsp;
@@ -47,7 +50,7 @@ function createPointTemplate(point, destinations, offers) {
                 <div class="event__type">
                   <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
                 </div>
-                <h3 class="event__title">${type} ${pointDestination.name}</h3>
+                <h3 class="event__title">${type} ${destinationName}</h3>
                 <div class="event__schedule">
                   <p class="event__time">
                     <time class="event__start-time" datetime="2019-03-18T10:30">${timeStart}</time>

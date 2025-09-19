@@ -19,11 +19,13 @@ export default class TripPresenter {
     const points = this.pointsModel.getPoints();
     const offers = this.pointsModel.getOffers();
 
+    console.log(points);
+
     const tripControlsFiltersContainer = document.querySelector('.trip-controls__filters');
     const tripMainContainer = document.querySelector('.trip-main');
 
-    render(new HeaderTripInfoBlock(), tripMainContainer, RenderPosition.AFTERBEGIN);
-    render(new TripFilter(), tripControlsFiltersContainer);
+    render(new HeaderTripInfoBlock(), tripMainContainer, RenderPosition.AFTERBEGIN); // Отрисовал шапку сайта (маршрут / стоимость)
+    render(new TripFilter(), tripControlsFiltersContainer); // Отрисовал фильтры
     render(new TripSort(), this.tripContainer); // Отрисовал сортировку
     render(this.tripListComponent, this.tripContainer); // Создал <ul>
     render(new TripPointEditView(points[0], destinations, offers), this.tripListComponent.getElement()); // Создал форму редактирования точки маршрута
