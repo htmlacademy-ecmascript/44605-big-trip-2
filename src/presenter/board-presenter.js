@@ -19,8 +19,6 @@ export default class TripPresenter {
     const points = this.pointsModel.getPoints();
     const offers = this.pointsModel.getOffers();
 
-    console.log(points);
-
     const tripControlsFiltersContainer = document.querySelector('.trip-controls__filters');
     const tripMainContainer = document.querySelector('.trip-main');
 
