@@ -1,21 +1,18 @@
 import dayjs from 'dayjs';
-import { DATE_FORMAT, TIME_FORMAT } from './const';
+import dayjsPluginUTC from 'dayjs-plugin-utc';
+import { RANDOM_NUMBER } from './const';
 
 function getRandomArrayElement(items) {
   return items[Math.floor(Math.random() * items.length)];
 }
 
-function getRandomNumber(min, max) {
-  return Math.floor(Math.random() * (max - min)) + min;
+function getRandomNumber() {
+  return Math.floor(Math.random() * (RANDOM_NUMBER.max - RANDOM_NUMBER.min)) + RANDOM_NUMBER.min;
 }
 
-function humanizeDate(date) {
-  return date ? dayjs(date).format(DATE_FORMAT) : '';
+function humanizeDate(date, format) {
+  dayjs.extend(dayjsPluginUTC);
+  return date ? dayjs.utc(date).format(format) : '';
 }
 
-function humanizeTime(date) {
-
-  return date ? dayjs(date).format(TIME_FORMAT) : '';
-}
-
-export { getRandomArrayElement, getRandomNumber, humanizeDate, humanizeTime };
+export { getRandomArrayElement, getRandomNumber, humanizeDate };

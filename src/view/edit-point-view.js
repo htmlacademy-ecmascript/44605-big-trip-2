@@ -1,11 +1,25 @@
+import { DATE_FORMAT } from '../const';
 import { createElement } from '../render';
 import { humanizeDate } from '../utils';
 
-function createEventPointEditTemplate(point) {
+function createEventPointEditTemplate(point, destinations, offers) {
 
-  const { dateFrom, dateTo } = point;
-  const dateStart = humanizeDate(dateFrom);
-  const dateEnd = humanizeDate(dateTo);
+  const { dateFrom, dateTo, basePrice } = point;
+
+  // Находим destination
+  const pointDestination = destinations.find((element) => element.id === point.destination);
+
+  // Находим все предложения для типа точки
+  const offersOfTypePoints = offers.find((element) => element.type === point.type);
+
+  // Получаем массив предложений (offers) или пустой массив, если offersOfTypePoints не определен
+  const availableOffers = offersOfTypePoints ? offersOfTypePoints.offers : [];
+
+  // Получаем выбранные предложения для этой точки с учетом типа offers
+  const selectedOffers = availableOffers.filter((offer) => point.offers ? point.offers.includes(offer.id) : false);
+
+  const dateStart = humanizeDate(dateFrom, DATE_FORMAT.fullDate);
+  const dateEnd = humanizeDate(dateTo, DATE_FORMAT.fullDate);
 
   return `<form class="event event--edit" action="#" method="post">
                 <header class="event__header">
@@ -72,7 +86,7 @@ function createEventPointEditTemplate(point) {
                     <label class="event__label  event__type-output" for="event-destination-1">
                       Flight
                     </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="Chamonix" list="destination-list-1">
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${pointDestination.name}" list="destination-list-1">
                     <datalist id="destination-list-1">
                       <option value="Amsterdam"></option>
                       <option value="Geneva"></option>
@@ -93,7 +107,7 @@ function createEventPointEditTemplate(point) {
                       <span class="visually-hidden">Price</span>
                       &euro;
                     </label>
-                    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="160">
+                    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
                   </div>
 
                   <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -162,13 +176,15 @@ function createEventPointEditTemplate(point) {
               </form>`;
 }
 
-export default class TripPointEdit {
-  constructor({ point }) {
+export default class TripPointEditView {
+  constructor(point, destinations, offers) {
     this.point = point;
+    this.destinations = destinations;
+    this.offers = offers;
   }
 
   getTemplate() {
-    return createEventPointEditTemplate(this.point);
+    return createEventPointEditTemplate(this.point, this.destinations, this.offers);
   }
 
   getElement() {

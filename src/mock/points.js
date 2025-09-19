@@ -1,35 +1,34 @@
 import { getRandomArrayElement } from '../utils';
 
-// Точки маршрута
 const mockPoints = [
   {
     id: '1',
     basePrice: 200,
-    dateFrom: '2019-12-01T22:55:56.845Z',
-    dateTo: '2019-07-11T11:22:13.375Z',
-    destination: 'Chamonix',
+    dateFrom: '2019-12-01T07:30:56.845Z',
+    dateTo: '2019-12-01T12:25:13.375Z',
+    destination: '1',
     isFavorite: true,
-    offers: ['4'],
+    offers: '5',
     type: 'flight',
   },
   {
     id: '2',
     basePrice: 300,
     dateFrom: '2019-03-04T11:55:56.845Z',
-    dateTo: '2019-07-11T11:59:13.375Z',
-    destination: 'Amsterdam',
+    dateTo: '2019-03-04T12:10:13.375Z',
+    destination: '3',
     isFavorite: false,
-    offers: 'Upgrade to a business class',
+    offers: ['3', '1'],
     type: 'taxi',
   },
   {
     id: '3',
     basePrice: 120,
-    dateFrom: '2019-01-10T12:00:10.845Z',
-    dateTo: '2019-07-11T18:15:1.375Z',
-    destination: 'London',
+    dateFrom: '2019-01-10T23:55:10.845Z',
+    dateTo: '2019-01-11T00:15:15.375Z',
+    destination: '2',
     isFavorite: false,
-    offers: ['3'],
+    offers: '',
     type: 'check-in',
   },
 ];
