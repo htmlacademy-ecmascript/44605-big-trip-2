@@ -21,6 +21,6 @@ const getDefaultPoints = () => ({
   isFavorite: false,
   offers: [],
   type: POINTS_TYPE[0],
-})
+});
 
 export { POINTS_COUNT, DATE_FORMAT, RANDOM_NUMBER, getDefaultPoints };

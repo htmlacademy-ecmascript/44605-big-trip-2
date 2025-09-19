@@ -14,7 +14,6 @@ function createEventPointEditTemplate(point, destinations, offers) {
 
   // Получаем массив предложений (offers) или пустой массив, если offersOfTypePoints не определен
   const availableOffers = offersOfTypePoints ? offersOfTypePoints.offers : [];
-  console.log(availableOffers);
 
   // Получаем выбранные предложения для этой точки с учетом типа offers
   // const selectedOffers = availableOffers.filter((offer) => point.offers ? point.offers.includes(offer.id) : false);
