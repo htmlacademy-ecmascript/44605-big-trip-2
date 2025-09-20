@@ -26,6 +26,21 @@ function createPointTemplate(point, destinations, offers) {
   const dateEnd = dayjs(dateTo);
   const durationTime = dateEnd.diff(dateStart, 'm');
 
+  function formatDuration(minutes) {
+    const days = Math.floor(minutes / (24 * 60));
+    const remainingHours = minutes % (24 * 60);
+    const hours = Math.floor(remainingHours / 60);
+    const mins = remainingHours % 60;
+
+    if (days > 0) {
+      return `${days}D ${hours}H ${mins}M`;
+    } else if (hours > 0) {
+      return `${hours}H ${mins}M`;
+    } else {
+      return `${mins}M`;
+    }
+  }
+
   // Записыванием в переменную название класса если в point есть пометка isFavorite
   const pointFavoritClassName = isFavorite ? 'event__favorite-btn--active' : '';
 
@@ -57,7 +72,7 @@ function createPointTemplate(point, destinations, offers) {
                     &mdash;
                     <time class="event__end-time" datetime="2019-03-18T11:00">${timeEnd}</time >
                   </p >
-    <p class="event__duration">${durationTime} M</p>
+    <p class="event__duration">${formatDuration(durationTime)}</p>
                 </div >
                 <p class="event__price">
                   &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
