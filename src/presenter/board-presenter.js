@@ -1,28 +1,34 @@
 import TripSort from '../view/sort-view';
-import EventList from '../view/event-list-view';
-import EventPoint from '../view/point-view';
-import EventPointEdit from '../view/edit-point-view';
-import NewPoint from '../view/add-new-point-view';
-import { render } from '../render';
+import TripFilter from '../view/trip-filter-view';
+import HeaderTripInfoBlock from '../view/header-info-trip';
+import TripPointView from '../view/point-view';
+import TripPointListView from '../view/event-list-view';
+import TripPointEditView from '../view/edit-point-view';
+import { render, RenderPosition } from '../render';
 
-export default class BoardPresenter {
-  // Сохраняю в переменную создание класса. Переменная имеет методы класса
-  EventListComponent = new EventList();
-  EventPointComponent = new EventPoint();
-  EventEditComponent = new EventPointEdit();
-  EventPointEditComponent = new EventPointEdit();
+export default class TripPresenter {
 
-  constructor({ boardContainer }) {
-    this.boardContainer = boardContainer;
+  constructor({ tripContainer, pointsModel }) {
+    this.tripContainer = tripContainer;
+    this.pointsModel = pointsModel;
+    this.tripListComponent = new TripPointListView();
   }
 
   init() {
-    render(new TripSort(), this.boardContainer); // Отрисовал сортировку
-    render(new NewPoint(), this.boardContainer);
-    render(this.EventListComponent, this.boardContainer); // Создал <ul>
-    render(this.EventEditComponent, this.EventListComponent.getElement()); // Создал форму редактирования точки маршрута
-    for (let i = 0; i < 3; i++) {
-      render(new EventPoint(), this.EventListComponent.getElement()); // Создал точки маршрута
+    const destinations = this.pointsModel.getDestinations();
+    const points = this.pointsModel.getPoints();
+    const offers = this.pointsModel.getOffers();
+
+    const tripControlsFiltersContainer = document.querySelector('.trip-controls__filters');
+    const tripMainContainer = document.querySelector('.trip-main');
+
+    render(new HeaderTripInfoBlock(), tripMainContainer, RenderPosition.AFTERBEGIN); // Отрисовал шапку сайта (маршрут / стоимость)
+    render(new TripFilter(), tripControlsFiltersContainer); // Отрисовал фильтры
+    render(new TripSort(), this.tripContainer); // Отрисовал сортировку
+    render(this.tripListComponent, this.tripContainer); // Создал <ul>
+    render(new TripPointEditView(points[0], destinations, offers), this.tripListComponent.getElement()); // Создал форму редактирования точки маршрута
+    for (let i = 1; i < points.length; i++) {
+      render(new TripPointView(points[i], destinations, offers), this.tripListComponent.getElement()); // Создал точки маршрута
     }
   }
 }

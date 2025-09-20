@@ -6,7 +6,7 @@ function createEventListTemplate() {
   `;
 }
 
-export default class EventList {
+export default class TripPointListView {
   getTemplate() {
     return createEventListTemplate();
   }
