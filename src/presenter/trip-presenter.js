@@ -29,7 +29,6 @@ export default class TripPresenter {
     render(new TripFilter(), tripControlsFiltersContainer); // Отрисовал фильтры
     render(new TripSort(), this.#tripContainer); // Отрисовал сортировку
     render(this.#tripListComponent, this.#tripContainer); // Создал <ul>
-    // render(new TripPointEditView(points[0], destinations, offers), this.#tripListComponent.element); // Создал форму редактирования точки маршрута
     for (let i = 1; i < points.length; i++) {
       this.#renderPoint(points[i], destinations, offers);
     }
@@ -64,7 +63,7 @@ export default class TripPresenter {
       point, destinations, offers,
       () => {
         replaceFormToCard();
-        document.addEventListener('keydown', eskKeyDownHandler);
+        document.removeEventListener('keydown', eskKeyDownHandler);
       }
 
     );

@@ -13,14 +13,6 @@ const DATE_FORMAT = {
 
 const POINTS_TYPE = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
-const getDefaultPoints = () => ({
-  basePrice: 0,
-  dateFrom: new Date().toUSOString(),
-  dateTo: new Date().toUSOString(),
-  destination: 0,
-  isFavorite: false,
-  offers: [],
-  type: POINTS_TYPE[0],
-});
 
-export { POINTS_COUNT, DATE_FORMAT, RANDOM_NUMBER, getDefaultPoints };
+
+export { POINTS_COUNT, DATE_FORMAT, RANDOM_NUMBER };
