@@ -1,4 +1,4 @@
-const POINTS_COUNT = 3;
+const POINTS_COUNT = 9;
 
 const RANDOM_NUMBER = {
   min: 1,

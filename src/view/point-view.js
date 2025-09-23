@@ -1,9 +1,9 @@
 import { DATE_FORMAT } from '../const.js';
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { humanizeDate } from '../utils.js';
 import dayjs from 'dayjs';
 
-function createPointTemplate(point, destinations, offers) {
+function createPointComponent(point, destinations, offers) {
 
   const { basePrice, type, dateFrom, dateTo, isFavorite } = point;
 
@@ -91,25 +91,28 @@ function createPointTemplate(point, destinations, offers) {
             </li > `;
 }
 
-export default class TripPointView {
-  constructor(point, destinations, offers) {
-    this.point = point;
-    this.destinations = destinations;
-    this.offers = offers;
+export default class TripPointView extends AbstractView {
+  #point;
+  #destinations;
+  #offers;
+  #handleEditClick;
+
+  constructor(point, destinations, offers, onEditClick) {
+    super();
+    this.#point = point;
+    this.#destinations = destinations;
+    this.#offers = offers;
+    this.#handleEditClick = onEditClick;
+
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
   }
 
-  getTemplate() {
-    return createPointTemplate(this.point, this.destinations, this.offers);
+  get template() {
+    return createPointComponent(this.#point, this.#destinations, this.#offers);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
-  }
+  #editClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleEditClick();
+  };
 }
