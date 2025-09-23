@@ -14,5 +14,4 @@ const DATE_FORMAT = {
 const POINTS_TYPE = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
 
-
-export { POINTS_COUNT, DATE_FORMAT, RANDOM_NUMBER };
+export { POINTS_COUNT, DATE_FORMAT, RANDOM_NUMBER, POINTS_TYPE };
