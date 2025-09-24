@@ -5,7 +5,7 @@ function createEmptyPointComponent() {
   return MurkupElement.Everthing;
 }
 
-export default class TripPointView extends AbstractView {
+export default class NoPointView extends AbstractView {
   get template() {
     return createEmptyPointComponent();
   }
