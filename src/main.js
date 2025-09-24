@@ -1,4 +1,4 @@
-import TripPresenter from './presenter/board-presenter';
+import TripPresenter from './presenter/trip-presenter';
 import PointsModel from './model/model';
 
 const tripEventsContainer = document.querySelector('.trip-events'); // Найдем основной контейнер для размещения всех точек маршрута

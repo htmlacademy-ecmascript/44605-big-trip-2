@@ -1,5 +1,5 @@
 import { DATE_FORMAT } from '../const';
-import { createElement } from '../render';
+import AbstractView from '../framework/view/abstract-view';
 import { humanizeDate } from '../utils';
 
 function createEventPointEditTemplate(point, destinations, offers) {
@@ -148,25 +148,28 @@ function createEventPointEditTemplate(point, destinations, offers) {
               </form>`;
 }
 
-export default class TripPointEditView {
-  constructor(point, destinations, offers) {
-    this.point = point;
-    this.destinations = destinations;
-    this.offers = offers;
+export default class TripPointEditView extends AbstractView {
+  #point;
+  #destinations;
+  #offers;
+  #handleFormSubmit;
+
+  constructor(point, destinations, offers, onFormSubmit) {
+    super();
+    this.#point = point;
+    this.#destinations = destinations;
+    this.#offers = offers;
+    this.#handleFormSubmit = onFormSubmit;
+
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#formClickHandler);
   }
 
-  getTemplate() {
-    return createEventPointEditTemplate(this.point, this.destinations, this.offers);
+  get template() {
+    return createEventPointEditTemplate(this.#point, this.#destinations, this.#offers);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
-  }
+  #formClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit();
+  };
 }

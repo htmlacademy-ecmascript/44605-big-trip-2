@@ -1,6 +1,6 @@
-import { createElement } from '../render';
+import AbstractView from '../framework/view/abstract-view';
 
-function createTripSortTemplate() {
+function createTripSortComponent() {
   return `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
             <div class="trip-sort__item  trip-sort__item--day">
               <input id="sort-day" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-day">
@@ -29,19 +29,8 @@ function createTripSortTemplate() {
           </form>`;
 }
 
-export default class TripSort {
-  getTemplate() {
-    return createTripSortTemplate();
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
+export default class TripSort extends AbstractView {
+  get template() {
+    return createTripSortComponent();
   }
 }

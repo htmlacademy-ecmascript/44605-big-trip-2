@@ -1,6 +1,9 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
-function createHeaderInfoBlock() {
+/**
+ * Функция для получения фрагмента разметки (trip-main)
+ */
+function createHeaderInfoComponent() {
   return ` <section class="trip-main__trip-info  trip-info">
             <div class="trip-info__main">
               <h1 class="trip-info__title">Amsterdam &mdash; Chamonix &mdash; Geneva</h1>
@@ -14,19 +17,11 @@ function createHeaderInfoBlock() {
           </section>`;
 }
 
-export default class HeaderTripInfoBlock {
-  getTemplate() {
-    return createHeaderInfoBlock();
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
+/**
+* @returns Фрагмент разметки trip-main
+ */
+export default class HeaderTripInfoBlock extends AbstractView {
+  get template() {
+    return createHeaderInfoComponent();
   }
 }

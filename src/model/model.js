@@ -3,22 +3,29 @@ import { mockDestination } from '../mock/destinations';
 import { mockOffers } from '../mock/offers';
 import { POINTS_COUNT } from '../const';
 
+/**
+ * Класс для генерации точек маршрута
+ */
 export default class PointsModel {
+  #points;
+  #destinations;
+  #offers;
+
   constructor() {
-    this.points = Array.from({ length: POINTS_COUNT }, getRandomPoints);
-    this.destinations = mockDestination;
-    this.offers = mockOffers;
+    this.#points = Array.from({ length: POINTS_COUNT }, getRandomPoints);
+    this.#destinations = mockDestination;
+    this.#offers = mockOffers;
   }
 
-  getPoints() {
-    return this.points;
+  get points() {
+    return this.#points;
   }
 
-  getDestinations() {
-    return this.destinations;
+  get destinations() {
+    return this.#destinations;
   }
 
-  getOffers() {
-    return this.offers;
+  get offers() {
+    return this.#offers;
   }
 }

@@ -1,24 +1,17 @@
-import { createElement } from '../render';
+import AbstractView from '../framework/view/abstract-view';
 
-function createEventListTemplate() {
+function createEventListComponent() {
   return `
   <ul class="trip-events__list"></ul>
   `;
 }
 
-export default class TripPointListView {
-  getTemplate() {
-    return createEventListTemplate();
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
+/**
+ * @description Класс для создания списка точек
+ * @returns Тег списка ul для размещения точек маршрута li
+ */
+export default class TripPointListView extends AbstractView {
+  get template() {
+    return createEventListComponent();
   }
 }
