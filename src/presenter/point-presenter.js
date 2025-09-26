@@ -18,6 +18,10 @@ export default class PointPresenter {
   }
 
   init() {
+    this.#renderPoint();
+  }
+
+  #renderPoint() {
     const replaceCardToForm = () => {
       replace(this.#pointEditComponent, this.#pointComponent);
     };
