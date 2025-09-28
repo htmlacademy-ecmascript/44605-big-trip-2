@@ -90,21 +90,33 @@ function createPointComponent(point, destinations, offers) {
               </div >
             </li > `;
 }
-
+/**
+ * Класс для создания экземляра точки маршрута
+ */
 export default class TripPointView extends AbstractView {
   #point;
   #destinations;
   #offers;
   #handleEditClick;
+  #handleFavoritClick;
 
-  constructor(point, destinations, offers, onEditClick) {
+  /**
+   * @constructor
+   * @param {Object} point - Данные точки маршрута
+   * @param {Array} destinations - Массив направлений
+   * @param {Array} offers - Массив предложений
+   * @param {Function} onEditClick - Функция обработчик клика для открытия формы редактирования
+   */
+  constructor(point, destinations, offers, onEditClick, onFavoritClick) {
     super();
     this.#point = point;
     this.#destinations = destinations;
     this.#offers = offers;
     this.#handleEditClick = onEditClick;
+    this.#handleFavoritClick = onFavoritClick;
 
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
+    this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#favoritClickHandler);
   }
 
   get template() {
@@ -114,5 +126,10 @@ export default class TripPointView extends AbstractView {
   #editClickHandler = (evt) => {
     evt.preventDefault();
     this.#handleEditClick();
+  };
+
+  #favoritClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFavoritClick();
   };
 }
