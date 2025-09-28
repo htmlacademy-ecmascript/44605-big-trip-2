@@ -72,7 +72,6 @@ export default class TripPresenter {
           offers: this.#offers
         });
         pointPresenter.init();
-        pointPresenter.init();
       }
     }
   }
