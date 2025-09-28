@@ -14,16 +14,14 @@ export default class TripPresenter {
   #points;
   #destinations;
   #offers;
-  #pointsModel;
   #tripListComponent;
   #tripMainContainer;
   #tripControlsFiltersContainer;
 
   /**
    * @constructor
-   * @param {Object} params
-   * @param {HTMLElement} params.tripContainer Контейнер для списка точек (область `.trip-events`)
-   * @param {Object} params.pointsModel Модель с данными точек, направлений и офферов
+   * @param {HTMLElement} tripContainer Контейнер для списка точек (область `.trip-events`)
+   * @param {Object} pointsModel Модель с данными точек, направлений и офферов
    */
   constructor(tripContainer, pointsModel) {
     this.#tripContainer = tripContainer;
@@ -62,17 +60,20 @@ export default class TripPresenter {
   }
 
   #renderPoints() {
-    //Если есть точки, добавляем сортировку, ul и отрисовываем список точек
-    render(new TripSort(), this.#tripContainer);
-    render(this.#tripListComponent, this.#tripContainer);
-    for (let i = 0; i < this.#points.length; i++) {
-      const pointPresenter = new PointPresenter({
-        pointListContainer: this.#tripListComponent.element,
-        point: this.#points[i],
-        destinations: this.#destinations,
-        offers: this.#offers
-      });
-      pointPresenter.init();
+    if (this.#points.length > 0) {
+      //Если есть точки, добавляем сортировку, ul и отрисовываем список точек
+      render(new TripSort(), this.#tripContainer);
+      render(this.#tripListComponent, this.#tripContainer);
+      for (let i = 0; i < this.#points.length; i++) {
+        const pointPresenter = new PointPresenter({
+          pointListContainer: this.#tripListComponent.element,
+          point: this.#points[i],
+          destinations: this.#destinations,
+          offers: this.#offers
+        });
+        pointPresenter.init();
+        pointPresenter.init();
+      }
     }
   }
 }
