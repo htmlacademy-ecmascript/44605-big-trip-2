@@ -17,6 +17,7 @@ export default class TripPresenter {
   #tripListComponent;
   #tripMainContainer;
   #tripControlsFiltersContainer;
+  #pointPresenters;
 
   /**
    * @constructor
@@ -31,6 +32,7 @@ export default class TripPresenter {
     this.#tripListComponent = new TripPointListView();
     this.#tripMainContainer = document.querySelector('.trip-main');
     this.#tripControlsFiltersContainer = document.querySelector('.trip-controls__filters');
+    this.#pointPresenters = new Map();
   }
 
   init() {
@@ -60,20 +62,31 @@ export default class TripPresenter {
   }
 
   #renderPoints() {
+
     if (this.#points.length > 0) {
       //Если есть точки, добавляем сортировку, ul и отрисовываем список точек
       render(new TripSort(), this.#tripContainer);
       render(this.#tripListComponent, this.#tripContainer);
       for (let i = 0; i < this.#points.length; i++) {
+
+        const closeAllForms = () => {
+          console.log(this.#pointPresenters);
+          this.#pointPresenters.forEach((presenter) => presenter.closeForm());
+        };
+
         const pointPresenter = new PointPresenter({
           pointListContainer: this.#tripListComponent.element,
           point: this.#points[i],
           destinations: this.#destinations,
-          offers: this.#offers
+          offers: this.#offers,
+          closeForms: closeAllForms,
         });
+        this.#pointPresenters.set(this.#points[i], pointPresenter);
+        // console.log(this.#pointPresenters);
         pointPresenter.init();
       }
+
+
     }
   }
 }
-
