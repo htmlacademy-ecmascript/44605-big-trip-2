@@ -35,6 +35,7 @@
   "dependencies": {
     "dayjs": "1.11.18",
     "dayjs-plugin-utc": "0.1.2",
-    "flatpickr": "4.6.13"
+    "flatpickr": "4.6.13",
+    "nanoid": "5.1.6"
   }
 }

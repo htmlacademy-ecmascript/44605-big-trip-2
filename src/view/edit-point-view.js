@@ -161,15 +161,10 @@ export default class TripPointEditView extends AbstractView {
     this.#offers = offers;
     this.#handleFormSubmit = onFormSubmit;
 
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#formClickHandler);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#handleFormSubmit);
   }
 
   get template() {
     return createEventPointEditTemplate(this.#point, this.#destinations, this.#offers);
   }
-
-  #formClickHandler = (evt) => {
-    evt.preventDefault();
-    this.#handleFormSubmit();
-  };
 }
