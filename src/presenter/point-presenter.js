@@ -41,60 +41,61 @@ export default class PointPresenter {
   }
 
   closeForm() {
-    console.log('CloseForm is run');
+    if (this.#mode !== StatusForm.DEFAULT) {
+      replace(this.#pointComponent, this.#pointEditComponent);
+      this.#mode = StatusForm.DEFAULT;
+    }
   }
 
-  #renderPoint() {
+  #replaceCardToForm = () => {
+    replace(this.#pointEditComponent, this.#pointComponent);
+    document.addEventListener('keydown', this.#escKeyDownHandler);
+    this.#closeAllForms();
+    this.#mode = StatusForm.EDIT;
+  };
 
-    const replaceCardToForm = () => {
-      this.#closeAllForms();
-      this.#mode = StatusForm.EDIT;
-      document.addEventListener('keydown', escKeyDownHandler);
-      replace(this.#pointEditComponent, this.#pointComponent);
+  #replaceFormToCard = () => {
+    replace(this.#pointComponent, this.#pointEditComponent);
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
+    this.#mode = StatusForm.DEFAULT;
+  };
 
-    };
-
-    const replaceFormToCard = () => {
-      this.#mode = StatusForm.DEFAULT;
-      document.removeEventListener('keydown', escKeyDownHandler);
-      replace(this.#pointComponent, this.#pointEditComponent);
-    };
-
-    function escKeyDownHandler(evt) {
-      if (evt.key === 'Escape') {
-        evt.preventDefault();
-        replaceFormToCard();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      }
+  #escKeyDownHandler = (evt) => {
+    if (evt.key === 'Escape') {
+      evt.preventDefault();
+      this.#replaceFormToCard();
+      document.removeEventListener('keydown', this.#escKeyDownHandler);
     }
+  };
 
-    const favoritSwitch = () => {
-      this.#point.isFavorite = !this.#point.isFavorite;
-      // Перерисовываем компонент после изменения isFavorite
-      const newPointComponent = new TripPointView(
-        this.#point,
-        this.#destinations,
-        this.#offers,
-        replaceCardToForm,
-        favoritSwitch,
-      );
-      replace(newPointComponent, this.#pointComponent);
-      this.#pointComponent = newPointComponent;
-    };
+  #favoritSwitch = () => {
+    this.#point.isFavorite = !this.#point.isFavorite;
+    // Перерисовываем компонент после изменения isFavorite
+    const newPointComponent = new TripPointView(
+      this.#point,
+      this.#destinations,
+      this.#offers,
+      this.#replaceCardToForm,
+      this.#favoritSwitch,
+    );
+    replace(newPointComponent, this.#pointComponent);
+    this.#pointComponent = newPointComponent;
+  };
 
+  #renderPoint() {
     this.#pointComponent = new TripPointView(
       this.#point,
       this.#destinations,
       this.#offers,
-      replaceCardToForm,
-      favoritSwitch,
+      this.#replaceCardToForm,
+      this.#favoritSwitch,
     );
 
     this.#pointEditComponent = new TripPointEditView(
       this.#point,
       this.#destinations,
       this.#offers,
-      replaceFormToCard,
+      this.#replaceFormToCard,
     );
 
     render(this.#pointComponent, this.#pointListContainer);
