@@ -44,6 +44,7 @@ export default class PointPresenter {
     if (this.#mode !== StatusForm.DEFAULT) {
       replace(this.#pointComponent, this.#pointEditComponent);
       this.#mode = StatusForm.DEFAULT;
+      document.removeEventListener('keydown', this.#escKeyDownHandler);
     }
   }
 
