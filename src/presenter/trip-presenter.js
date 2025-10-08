@@ -39,7 +39,7 @@ export default class TripPresenter {
     this.#tripListComponent = new TripPointListView();
     this.#tripFilterComponent = new TripFilter();
     this.#pointPresenters = new Map(); // Карта(массив) всех презентеров точек маршрута
-    this.#currentSortType = SortType.DAY; // текушая сортировка, отображаемая на странице
+    this.#currentSortType = SortType.TIME; // текушая сортировка, отображаемая на странице
   }
 
   init() {
@@ -70,15 +70,24 @@ export default class TripPresenter {
 
   #sortPoint = (sortType) => {
     this.#sourcedTripPoints = [...this.#points];
-    // console.log(this.#sourcedTripPoints);
+    console.log('points : ');
+    console.log(this.#points);
     switch (sortType) {
-      case 'day': console.log('day');
+      case 'day':
+        console.log('day');
+        this.#points.sort();
         break;
-      case 'price': console.log('price');
+      case 'price':
+        console.log('price');
+        this.#points.sort();
         break;
-      case 'time': console.log('time');
+      case 'time':
+        console.log('time');
+        this.#points.sort();
         break;
     }
+    console.log('points : ');
+    console.log(this.#points);
   };
 
   #renderHeader() {
