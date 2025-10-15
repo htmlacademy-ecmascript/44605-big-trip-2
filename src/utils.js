@@ -1,13 +1,8 @@
 import dayjs from 'dayjs';
 import dayjsPluginUTC from 'dayjs-plugin-utc';
-import { RANDOM_NUMBER } from './const';
 
 function getRandomArrayElement(items) {
   return items[Math.floor(Math.random() * items.length)];
-}
-
-function getRandomNumber() {
-  return Math.floor(Math.random() * (RANDOM_NUMBER.max - RANDOM_NUMBER.min)) + RANDOM_NUMBER.min;
 }
 
 function humanizeDate(date, format) {
@@ -15,4 +10,20 @@ function humanizeDate(date, format) {
   return date ? dayjs.utc(date).format(format) : '';
 }
 
-export { getRandomArrayElement, getRandomNumber, humanizeDate };
+function sortingByDay(a, b) {
+  const dateA = dayjs(a.dateFrom).valueOf();
+  const dateB = dayjs(b.dateFrom).valueOf();
+  return dateA - dateB;
+}
+
+function sortingByPrice(a, b) {
+  return b.basePrice - a.basePrice;
+}
+
+function sortingByTime(a, b) {
+  const dateA = dayjs(a.dateFrom).valueOf();
+  const dateB = dayjs(b.dateFrom).valueOf();
+  return dateB - dateA;
+}
+
+export { getRandomArrayElement, humanizeDate, sortingByDay, sortingByPrice, sortingByTime };

@@ -1,10 +1,5 @@
 const POINTS_COUNT = 5;
 
-const RANDOM_NUMBER = {
-  min: 1,
-  max: 100
-};
-
 /**
  * @description форматы даты
  */
@@ -19,6 +14,17 @@ const DATE_FORMAT = {
  */
 const POINTS_TYPE = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
+const StatusForm = {
+  EDIT: 'edit',
+  DEFAULT: 'default',
+};
+
+const SortType = {
+  DAY: 'day',
+  TIME: 'time',
+  PRICE: 'price',
+};
+
 /**
  * @description текст для пустой страницы в зависимости от фильтра
  */
@@ -30,4 +36,4 @@ const MurkupElement = {
 };
 
 
-export { POINTS_COUNT, DATE_FORMAT, RANDOM_NUMBER, POINTS_TYPE, MurkupElement };
+export { POINTS_COUNT, DATE_FORMAT, POINTS_TYPE, MurkupElement, StatusForm, SortType };

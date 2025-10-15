@@ -1,11 +1,7 @@
 import TripPointView from '../view/point-view';
 import TripPointEditView from '../view/edit-point-view';
 import { render, replace } from '../framework/render';
-
-const StatusForm = {
-  EDIT: 'edit',
-  DEFAULT: 'default',
-};
+import { StatusForm } from '../const';
 
 /**
  * @class Презентер управления одной точкой маршрута: карточка + форма редактирования.
