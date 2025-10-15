@@ -10,4 +10,18 @@ function humanizeDate(date, format) {
   return date ? dayjs.utc(date).format(format) : '';
 }
 
-export { getRandomArrayElement, humanizeDate };
+function sortingByDay(a, b) {
+  const dateA = dayjs(a.dateFrom).valueOf();
+  const dateB = dayjs(b.dateFrom).valueOf();
+  return dateA - dateB;
+}
+
+function sortingByPrice(a, b) {
+  return a.basePrice - b.basePrice;
+}
+
+function sortingByTime() {
+
+}
+
+export { getRandomArrayElement, humanizeDate, sortingByDay, sortingByPrice, sortingByTime };
