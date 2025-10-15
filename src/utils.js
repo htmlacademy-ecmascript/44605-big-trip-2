@@ -17,11 +17,13 @@ function sortingByDay(a, b) {
 }
 
 function sortingByPrice(a, b) {
-  return a.basePrice - b.basePrice;
+  return b.basePrice - a.basePrice;
 }
 
-function sortingByTime() {
-
+function sortingByTime(a, b) {
+  const dateA = dayjs(a.dateFrom).valueOf();
+  const dateB = dayjs(b.dateFrom).valueOf();
+  return dateB - dateA;
 }
 
 export { getRandomArrayElement, humanizeDate, sortingByDay, sortingByPrice, sortingByTime };

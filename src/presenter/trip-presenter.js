@@ -23,7 +23,6 @@ export default class TripPresenter {
   #tripFilterComponent;
   #pointPresenters;
   #currentSortType;
-  // #sourcedTripPoints = [];
 
   /**
    * @constructor
@@ -66,8 +65,6 @@ export default class TripPresenter {
     this.#sortPoints(this.#currentSortType);
     this.#tripListComponent.element.innerHTML = '';
     this.#renderPoints();
-    // очищаем контейнер с точками,
-    // Вызываем заново вызывать рендер поинт
   };
 
   #sortPoints = (sortType) => {
