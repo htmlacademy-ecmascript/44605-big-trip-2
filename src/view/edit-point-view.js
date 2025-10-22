@@ -1,5 +1,5 @@
+import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import { DATE_FORMAT } from '../const';
-import AbstractView from '../framework/view/abstract-view';
 import { humanizeDate } from '../utils';
 
 function createEventPointEditTemplate(point, destinations, offers) {
@@ -148,7 +148,7 @@ function createEventPointEditTemplate(point, destinations, offers) {
               </form>`;
 }
 
-export default class TripPointEditView extends AbstractView {
+export default class TripPointEditView extends AbstractStatefulView {
   #point;
   #destinations;
   #offers;
@@ -156,15 +156,27 @@ export default class TripPointEditView extends AbstractView {
 
   constructor(point, destinations, offers, onFormSubmit) {
     super();
-    this.#point = point;
+    this._setState(TripPointEditView.parsePointToState(point));
     this.#destinations = destinations;
     this.#offers = offers;
     this.#handleFormSubmit = onFormSubmit;
 
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#handleFormSubmit);
+    this._restoreHandlers();
   }
 
   get template() {
-    return createEventPointEditTemplate(this.#point, this.#destinations, this.#offers);
+    return createEventPointEditTemplate(this._state, this.#destinations, this.#offers);
+  }
+
+  _restoreHandlers() {
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#handleFormSubmit);
+  }
+
+  static parsePointToState(point) {
+    return { ...point };
+  }
+
+  static parseStateToPoint(state) {
+    return { ...state };
   }
 }

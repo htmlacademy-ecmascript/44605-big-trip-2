@@ -25,30 +25,29 @@ export default class PointPresenter {
    * @param {Array} params.offers Массив офферов
    */
   constructor({ pointListContainer, point, destinations, offers, closeForms }) {
-    this.#pointListContainer = pointListContainer;
-    this.#point = point;
-    this.#destinations = destinations;
-    this.#offers = offers;
-    this.#closeAllForms = closeForms;
+    this.#pointListContainer = pointListContainer; // 5.2 Контейнер для отрисовки точек маршрута
+    this.#point = point; // 5.2 Точка маршрута (одна из массива всех точек Points)
+    this.#destinations = destinations; // 5.2 Массив всех направлений
+    this.#offers = offers; // 5.2 Массив всех офферов
+    this.#closeAllForms = closeForms; // 5.2 Функция обработчик клика
   }
 
+  // 5.3
   init() {
     this.#renderPoint();
   }
 
   closeForm() {
     if (this.#mode !== StatusForm.DEFAULT) {
-      replace(this.#pointComponent, this.#pointEditComponent);
-      this.#mode = StatusForm.DEFAULT;
-      document.removeEventListener('keydown', this.#escKeyDownHandler);
+      this.#replaceFormToCard();
     }
   }
 
   #replaceCardToForm = () => {
-    replace(this.#pointEditComponent, this.#pointComponent);
+    replace(this.#pointEditComponent, this.#pointComponent); // Заменаем один компонент на другой(Инициализация ранее п.5.3)
     document.addEventListener('keydown', this.#escKeyDownHandler);
-    this.#closeAllForms();
-    this.#mode = StatusForm.EDIT;
+    this.#closeAllForms(); // Метод проходит по MAP и вызывает метод closeForm() - закрывает если открыта форма редактирвоания
+    this.#mode = StatusForm.EDIT; // После ставим статус - "в редактировании"
   };
 
   #replaceFormToCard = () => {
@@ -80,21 +79,26 @@ export default class PointPresenter {
   };
 
   #renderPoint() {
+    // 5.3.1
     this.#pointComponent = new TripPointView(
       this.#point,
       this.#destinations,
       this.#offers,
-      this.#replaceCardToForm,
-      this.#favoritSwitch,
+      this.#replaceCardToForm, // Функция замены компонента точки на компонент редактирования
+      this.#favoritSwitch, // Функция обработки клика на звезду(избранное)
     );
 
+    // 5.3.2
     this.#pointEditComponent = new TripPointEditView(
       this.#point,
       this.#destinations,
       this.#offers,
-      this.#replaceFormToCard,
+      this.#replaceFormToCard, // Функция замены компонента редактирования точки на компонент точки
     );
 
+    console.log(this.#pointEditComponent);
+
+    // 5.3.3
     render(this.#pointComponent, this.#pointListContainer);
   }
 }

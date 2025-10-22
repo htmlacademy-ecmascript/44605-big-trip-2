@@ -45,7 +45,7 @@ function createPointComponent(point, destinations, offers) {
   const pointFavoritClassName = isFavorite ? 'event__favorite-btn--active' : '';
 
   // Формирую кусок разметки
-  // Если есть выбранные предложения для точки, то я рисую их, итерируясь по каждой точки с помощью map
+  // Если есть выбранные предложения для точки, то я рисую их, итерируясь по каждой точке с помощью map
   const offersHtml = selectedOffers.length > 0 ? `
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
