@@ -96,7 +96,7 @@ export default class PointPresenter {
       this.#replaceFormToCard, // Функция замены компонента редактирования точки на компонент точки
     );
 
-    console.log(this.#pointEditComponent);
+    // console.log(this.#pointEditComponent);
 
     // 5.3.3
     render(this.#pointComponent, this.#pointListContainer);
