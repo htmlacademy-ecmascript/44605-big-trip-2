@@ -1,5 +1,5 @@
+import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import { DATE_FORMAT } from '../const';
-import AbstractView from '../framework/view/abstract-view';
 import { humanizeDate } from '../utils';
 
 function createEventPointEditTemplate(point, destinations, offers) {
@@ -27,7 +27,7 @@ function createEventPointEditTemplate(point, destinations, offers) {
                     <div class="event__available-offers">
                       ${availableOffers.map((offer) => `
                         <div class="event__offer-selector">
-                          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.id}" type="checkbox" name="event-offer-${offer.id}"
+                          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.id}" type="checkbox" name="event-offer-${offer.id}" data-offer-id="${offer.id}"
                           ${selectedOffers.includes(offer.id) ? 'checked' : ''}>
                           <label class="event__offer-label" for="event-offer-${offer.id}">
                             <span class="event__offer-title">${offer.title}</span>
@@ -55,47 +55,47 @@ function createEventPointEditTemplate(point, destinations, offers) {
                         <legend class="visually-hidden">Event type</legend>
 
                         <div class="event__type-item">
-                          <input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi">
+                          <input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi" ${point.type === 'taxi' ? 'checked' : ''}>
                           <label class="event__type-label  event__type-label--taxi" for="event-type-taxi-1">Taxi</label>
                         </div>
 
                         <div class="event__type-item">
-                          <input id="event-type-bus-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus">
+                          <input id="event-type-bus-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus" ${point.type === 'bus' ? 'checked' : ''}>
                           <label class="event__type-label  event__type-label--bus" for="event-type-bus-1">Bus</label>
                         </div>
 
                         <div class="event__type-item">
-                          <input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train">
+                          <input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train" ${point.type === 'train' ? 'checked' : ''}>
                           <label class="event__type-label  event__type-label--train" for="event-type-train-1">Train</label>
                         </div>
 
                         <div class="event__type-item">
-                          <input id="event-type-ship-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship">
+                          <input id="event-type-ship-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship" ${point.type === 'ship' ? 'checked' : ''}>
                           <label class="event__type-label  event__type-label--ship" for="event-type-ship-1">Ship</label>
                         </div>
 
                         <div class="event__type-item">
-                          <input id="event-type-drive-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive">
+                          <input id="event-type-drive-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive" ${point.type === 'drive' ? 'checked' : ''}>
                           <label class="event__type-label  event__type-label--drive" for="event-type-drive-1">Drive</label>
                         </div>
 
                         <div class="event__type-item">
-                          <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" checked>
+                          <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" ${point.type === 'flight' ? 'checked' : ''}>
                           <label class="event__type-label  event__type-label--flight" for="event-type-flight-1">Flight</label>
                         </div>
 
                         <div class="event__type-item">
-                          <input id="event-type-check-in-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in">
+                          <input id="event-type-check-in-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in" ${point.type === 'check-in' ? 'checked' : ''}>
                           <label class="event__type-label  event__type-label--check-in" for="event-type-check-in-1">Check-in</label>
                         </div>
 
                         <div class="event__type-item">
-                          <input id="event-type-sightseeing-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing">
+                          <input id="event-type-sightseeing-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing" ${point.type === 'sightseeing' ? 'checked' : ''}>
                           <label class="event__type-label  event__type-label--sightseeing" for="event-type-sightseeing-1">Sightseeing</label>
                         </div>
 
                         <div class="event__type-item">
-                          <input id="event-type-restaurant-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant">
+                          <input id="event-type-restaurant-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant" ${point.type === 'restaurant' ? 'checked' : ''}>
                           <label class="event__type-label  event__type-label--restaurant" for="event-type-restaurant-1">Restaurant</label>
                         </div>
                       </fieldset>
@@ -108,9 +108,8 @@ function createEventPointEditTemplate(point, destinations, offers) {
                     </label>
                     <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${pointDestination.name}" list="destination-list-1">
                     <datalist id="destination-list-1">
-                      <option value="Amsterdam"></option>
-                      <option value="Geneva"></option>
-                      <option value="Chamonix"></option>
+                    ${destinations.map((destination) => `
+                       <option value='${destination.name}'></option>`)}
                     </datalist>
                   </div>
 
@@ -148,23 +147,74 @@ function createEventPointEditTemplate(point, destinations, offers) {
               </form>`;
 }
 
-export default class TripPointEditView extends AbstractView {
-  #point;
-  #destinations;
-  #offers;
-  #handleFormSubmit;
+export default class TripPointEditView extends AbstractStatefulView {
+  #point = null;
+  #destinations = null;
+  #offers = null;
+  #formArrowHandler = null;
+  #formSaveButtonHandler = null;
 
-  constructor(point, destinations, offers, onFormSubmit) {
+
+  constructor(point, destinations, offers, onFormArrowClick, onFormSaveButtonClick) {
     super();
     this.#point = point;
+    this._setState(TripPointEditView.parsePointToState(this.#point)); // Обновляю состояние _state с помощью спред-оператора разворачиваю объект Point
     this.#destinations = destinations;
     this.#offers = offers;
-    this.#handleFormSubmit = onFormSubmit;
+    this.#formArrowHandler = onFormArrowClick;
+    this.#formSaveButtonHandler = onFormSaveButtonClick;
 
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#handleFormSubmit);
+    this._restoreHandlers();
   }
 
   get template() {
-    return createEventPointEditTemplate(this.#point, this.#destinations, this.#offers);
+    return createEventPointEditTemplate(this._state, this.#destinations, this.#offers);
+  }
+
+  _restoreHandlers() {
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#formArrowHandler); // Обработчик стрелки закрытия формы редактирования
+    this.element.querySelector('.event__type-list').addEventListener('click', this.#handleTypeChange); // Обработчик выбора типа поездки
+
+    this.element.querySelector('.event__save-btn').addEventListener('click', this.#handleSaveButtonSubmit); // Обработчик кнопки сохранения
+    this.element.querySelector('.event__input--destination').addEventListener('input', this.#handleDestinationsChange); // Обработчик пункта назначения
+  }
+
+  reset(point) {
+    this.updateElement(TripPointEditView.parsePointToState(point));
+  }
+
+  #handleDestinationsChange = (evt) => {
+    const destinationInput = this.#destinations.find((element) => element.name === evt.target.value);
+    if (destinationInput) {
+      this.updateElement({ destination: destinationInput.id });
+    }
+    // Иначе можно расширять массив объектов пунктов назначения, добавляяя evt.target.value
+  };
+
+  #handleSaveButtonSubmit = (evt) => {
+    evt.preventDefault();
+    const checkedOffers = document.querySelector('.event__available-offers')?.querySelectorAll('input[type="checkbox"]:checked');
+    if (checkedOffers) {
+      const offerIds = Array.from(checkedOffers).map((checkbox) => checkbox.dataset.offerId);
+      this._setState({ offers: offerIds });
+    }
+    this.#point = TripPointEditView.parseStateToPoint(this._state);
+    this.#formSaveButtonHandler(this.#point);
+  };
+
+
+  #handleTypeChange = (evt) => {
+    if (evt.target.tagName !== 'INPUT') {
+      return;
+    }
+    this.updateElement({ type: evt.target.value });
+  };
+
+  static parsePointToState(point) {
+    return { ...point };
+  }
+
+  static parseStateToPoint(state) {
+    return { ...state };
   }
 }

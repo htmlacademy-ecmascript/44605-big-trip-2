@@ -1,5 +1,5 @@
 import { DATE_FORMAT } from '../const.js';
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { humanizeDate } from '../utils.js';
 import dayjs from 'dayjs';
 
@@ -45,7 +45,7 @@ function createPointComponent(point, destinations, offers) {
   const pointFavoritClassName = isFavorite ? 'event__favorite-btn--active' : '';
 
   // Формирую кусок разметки
-  // Если есть выбранные предложения для точки, то я рисую их, итерируясь по каждой точки с помощью map
+  // Если есть выбранные предложения для точки, то я рисую их, итерируясь по каждой точке с помощью map
   const offersHtml = selectedOffers.length > 0 ? `
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
@@ -93,7 +93,7 @@ function createPointComponent(point, destinations, offers) {
 /**
  * Класс для создания экземляра точки маршрута
  */
-export default class TripPointView extends AbstractView {
+export default class TripPointView extends AbstractStatefulView {
   #point;
   #destinations;
   #offers;
@@ -121,5 +121,9 @@ export default class TripPointView extends AbstractView {
 
   get template() {
     return createPointComponent(this.#point, this.#destinations, this.#offers);
+  }
+
+  _restoreHandlers() {
+
   }
 }
