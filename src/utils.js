@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import dayjsPluginUTC from 'dayjs-plugin-utc';
+// import dayjsPluginUTC from 'dayjs-plugin-utc';
 
 function getRandomArrayElement(items) {
   return items[Math.floor(Math.random() * items.length)];
@@ -12,8 +12,9 @@ function getRandomInteger(min, max) {
 }
 
 function humanizeDate(date, format) {
-  dayjs.extend(dayjsPluginUTC);
-  return date ? dayjs.utc(date).format(format) : '';
+  // dayjs.extend(dayjsPluginUTC);
+  // return date ? dayjs.utc(date).format(format) : '';
+  return date ? dayjs(date).format(format) : '';
 }
 
 function sortingByDay(a, b) {
