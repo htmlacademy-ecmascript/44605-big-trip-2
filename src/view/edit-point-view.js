@@ -27,7 +27,7 @@ function createEventPointEditTemplate(point, destinations, offers) {
                     <div class="event__available-offers">
                       ${availableOffers.map((offer) => `
                         <div class="event__offer-selector">
-                          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.id}" type="checkbox" name="event-offer-${offer.id}"
+                          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.id}" type="checkbox" name="event-offer-${offer.id}" data-offer-id="${offer.id}"
                           ${selectedOffers.includes(offer.id) ? 'checked' : ''}>
                           <label class="event__offer-label" for="event-offer-${offer.id}">
                             <span class="event__offer-title">${offer.title}</span>
@@ -148,17 +148,21 @@ function createEventPointEditTemplate(point, destinations, offers) {
 }
 
 export default class TripPointEditView extends AbstractStatefulView {
+  #point = null;
   #destinations = null;
   #offers = null;
-  #handleFormSubmit = null;
+  #formArrowHandler = null;
+  #formSaveButtonHandler = null;
 
 
-  constructor(point, destinations, offers, onFormSubmit) {
+  constructor(point, destinations, offers, onFormArrowClick, onFormSaveButtonClick) {
     super();
-    this._setState(TripPointEditView.parsePointToState(point)); // Обновляю состояние _state с помощью спред-оператора разворачиваю объект Point
+    this.#point = point;
+    this._setState(TripPointEditView.parsePointToState(this.#point)); // Обновляю состояние _state с помощью спред-оператора разворачиваю объект Point
     this.#destinations = destinations;
     this.#offers = offers;
-    this.#handleFormSubmit = onFormSubmit;
+    this.#formArrowHandler = onFormArrowClick;
+    this.#formSaveButtonHandler = onFormSaveButtonClick;
 
     this._restoreHandlers();
   }
@@ -168,43 +172,42 @@ export default class TripPointEditView extends AbstractStatefulView {
   }
 
   _restoreHandlers() {
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#handleFormSubmit); // Обработчик стрелки закрытия формы редактирования
-    this.element.querySelector('.event__type-list').addEventListener('click', this.#handleToggleSubmit); // Обработчик выбора типа поездки
-    this.element.querySelector('.event__available-offers')?.addEventListener('click', this.#handleMarkedOffers); // Обработчик выбора офферов(нужно сохранять их в State)
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#formArrowHandler); // Обработчик стрелки закрытия формы редактирования
+    this.element.querySelector('.event__type-list').addEventListener('click', this.#handleTypeChange); // Обработчик выбора типа поездки
+
     this.element.querySelector('.event__save-btn').addEventListener('click', this.#handleSaveButtonSubmit); // Обработчик кнопки сохранения
     this.element.querySelector('.event__input--destination').addEventListener('input', this.#handleDestinationsChange); // Обработчик пункта назначения
+  }
+
+  reset(point) {
+    this.updateElement(TripPointEditView.parsePointToState(point));
   }
 
   #handleDestinationsChange = (evt) => {
     const destinationInput = this.#destinations.find((element) => element.name === evt.target.value);
     if (destinationInput) {
-      this.updateElement({ destination: `${destinationInput.id}` });
+      this.updateElement({ destination: destinationInput.id });
     }
-    // console.log(this._state);
+    // Иначе можно расширять массив объектов пунктов назначения, добавляяя evt.target.value
   };
 
   #handleSaveButtonSubmit = (evt) => {
     evt.preventDefault();
-    console.log('Save');
-    this._setState(TripPointEditView.parseStateToPoint(this._state));
-  };
-
-  // Незаконченный метод, нужно описать логику выбора offers и обновления _state
-  #handleMarkedOffers = (evt) => {
-    if (evt.target.tagName !== 'INPUT') {
-      return;
+    const checkedOffers = document.querySelector('.event__available-offers')?.querySelectorAll('input[type="checkbox"]:checked');
+    if (checkedOffers) {
+      const offerIds = Array.from(checkedOffers).map((checkbox) => checkbox.dataset.offerId);
+      this._setState({ offers: offerIds });
     }
-    const labelElement = document.querySelector(`label[for=${evt.target.id}]`);
-    console.log(labelElement);
-
+    this.#point = TripPointEditView.parseStateToPoint(this._state);
+    this.#formSaveButtonHandler(this.#point);
   };
 
-  #handleToggleSubmit = (evt) => {
+
+  #handleTypeChange = (evt) => {
     if (evt.target.tagName !== 'INPUT') {
       return;
     }
     this.updateElement({ type: evt.target.value });
-    // console.log(this._state);
   };
 
   static parsePointToState(point) {

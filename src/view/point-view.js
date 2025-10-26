@@ -1,5 +1,5 @@
 import { DATE_FORMAT } from '../const.js';
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { humanizeDate } from '../utils.js';
 import dayjs from 'dayjs';
 
@@ -93,7 +93,7 @@ function createPointComponent(point, destinations, offers) {
 /**
  * Класс для создания экземляра точки маршрута
  */
-export default class TripPointView extends AbstractView {
+export default class TripPointView extends AbstractStatefulView {
   #point;
   #destinations;
   #offers;
@@ -121,5 +121,9 @@ export default class TripPointView extends AbstractView {
 
   get template() {
     return createPointComponent(this.#point, this.#destinations, this.#offers);
+  }
+
+  _restoreHandlers() {
+
   }
 }

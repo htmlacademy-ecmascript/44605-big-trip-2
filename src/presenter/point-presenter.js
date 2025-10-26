@@ -51,6 +51,7 @@ export default class PointPresenter {
   };
 
   #replaceFormToCard = () => {
+    this.#pointEditComponent.reset(this.#point);
     replace(this.#pointComponent, this.#pointEditComponent);
     document.removeEventListener('keydown', this.#escKeyDownHandler);
     this.#mode = StatusForm.DEFAULT;
@@ -64,9 +65,7 @@ export default class PointPresenter {
     }
   };
 
-  #favoritSwitch = () => {
-    this.#point.isFavorite = !this.#point.isFavorite;
-    // Перерисовываем компонент после изменения isFavorite
+  #replaceComponent = () => {
     const newPointComponent = new TripPointView(
       this.#point,
       this.#destinations,
@@ -76,6 +75,18 @@ export default class PointPresenter {
     );
     replace(newPointComponent, this.#pointComponent);
     this.#pointComponent = newPointComponent;
+  };
+
+  #handleFormSubmit = (updatePoint) => {
+    this.#point = updatePoint;
+    this.#replaceFormToCard();
+    this.#replaceComponent();
+  };
+
+  #favoritSwitch = () => {
+    this.#point.isFavorite = !this.#point.isFavorite;
+    // Перерисовываем компонент после изменения isFavorite
+    this.#replaceComponent();
   };
 
   #renderPoint() {
@@ -94,9 +105,8 @@ export default class PointPresenter {
       this.#destinations,
       this.#offers,
       this.#replaceFormToCard, // Функция замены компонента редактирования точки на компонент точки
+      this.#handleFormSubmit,
     );
-
-    // console.log(this.#pointEditComponent);
 
     // 5.3.3
     render(this.#pointComponent, this.#pointListContainer);
