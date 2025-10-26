@@ -20,10 +20,14 @@ function createPointComponent(point, destinations, offers) {
   // Получаем выбранные предложения для этой точки с учетом типа offers
   const selectedOffers = availableOffers.filter((offer) => point.offers ? point.offers.includes(offer.id) : false);
 
-  const timeStart = humanizeDate(dateFrom, DATE_FORMAT.hoursMinutes);
-  const timeEnd = humanizeDate(dateTo, DATE_FORMAT.hoursMinutes);
+  const timeStart = humanizeDate(dateFrom, DATE_FORMAT.hoursMinutes); // Получаю время начала в формате 11:55
+  const timeEnd = humanizeDate(dateTo, DATE_FORMAT.hoursMinutes); // Получаю время окончания в формате 11:55
+
+  // Преобразую в формат dayjs
   const dateStart = dayjs(dateFrom);
   const dateEnd = dayjs(dateTo);
+
+  // Вычисляю разницу в дате и времени от начала и конца. Результат получаю в минутах
   const durationTime = dateEnd.diff(dateStart, 'm');
 
   function formatDuration(minutes) {

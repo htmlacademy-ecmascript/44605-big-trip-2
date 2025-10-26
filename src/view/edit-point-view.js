@@ -1,6 +1,8 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import { DATE_FORMAT } from '../const';
 import { humanizeDate } from '../utils';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 
 function createEventPointEditTemplate(point, destinations, offers) {
 
@@ -20,7 +22,9 @@ function createEventPointEditTemplate(point, destinations, offers) {
   const selectedOffers = point.offers || [];
 
   const dateStart = humanizeDate(dateFrom, DATE_FORMAT.fullDate);
+  // console.log(dateStart);
   const dateEnd = humanizeDate(dateTo, DATE_FORMAT.fullDate);
+  // console.log(dateStart);
 
   const offersHtml = availableOffers.length > 0 ? `
                    <h3 class="event__section-title  event__section-title--offers">Offers</h3>
@@ -37,9 +41,17 @@ function createEventPointEditTemplate(point, destinations, offers) {
                         </div>`).join('')}
                     </div>` : '';
 
-  const destinationHtml = pointDestination.description ? `
+  const destinationContent = pointDestination.description ? `
                     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
                     <p class="event__destination-description">${pointDestination.description}</p>` : '';
+
+  const destinationPhoto = pointDestination.pictures.length > 0 ? `
+                      <div class="event__photos-container">
+                        <div class="event__photos-tape">
+                          ${pointDestination.pictures.map((pic) => `
+                            <img class="event__photo" src="${pic.src}" alt="${pic.description}">`).join('')}
+                        </div>
+                      </div>` : '';
 
   return `<form class="event event--edit" action="#" method="post">
                 <header class="event__header">
@@ -141,7 +153,10 @@ function createEventPointEditTemplate(point, destinations, offers) {
                   </section>
 
                   <section class="event__section  event__section--destination">
-                    ${destinationHtml}
+                    ${destinationContent}
+                      ${destinationPhoto}
+
+
                   </section>
                 </section>
               </form>`;
@@ -174,14 +189,27 @@ export default class TripPointEditView extends AbstractStatefulView {
   _restoreHandlers() {
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#formArrowHandler); // Обработчик стрелки закрытия формы редактирования
     this.element.querySelector('.event__type-list').addEventListener('click', this.#handleTypeChange); // Обработчик выбора типа поездки
-
     this.element.querySelector('.event__save-btn').addEventListener('click', this.#handleSaveButtonSubmit); // Обработчик кнопки сохранения
     this.element.querySelector('.event__input--destination').addEventListener('input', this.#handleDestinationsChange); // Обработчик пункта назначения
+    this.element.querySelector('.event__field-group--time').addEventListener('click', this.#handleTimeChange);
+    this.element.querySelector('.event__input--price').addEventListener('input', this.#handlePriceChange);
   }
 
   reset(point) {
     this.updateElement(TripPointEditView.parsePointToState(point));
   }
+
+  #handlePriceChange = (evt) => {
+    this._setState({ basePrice: evt.target.value });
+  };
+
+  #handleTimeChange = (evt) => {
+    if (evt.target.tagName !== 'INPUT') {
+      return;
+    }
+    const datepickr = document.querySelector('');
+    console.log('click');
+  };
 
   #handleDestinationsChange = (evt) => {
     const destinationInput = this.#destinations.find((element) => element.name === evt.target.value);

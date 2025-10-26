@@ -5,6 +5,12 @@ function getRandomArrayElement(items) {
   return items[Math.floor(Math.random() * items.length)];
 }
 
+function getRandomInteger(min, max) {
+  min = Math.ceil(min); // Округляем min до ближайшего большего целого
+  max = Math.floor(max); // Округляем max до ближайшего меньшего целого
+  return Math.floor(Math.random() * (max - min + 1) + min); // [min, max]
+}
+
 function humanizeDate(date, format) {
   dayjs.extend(dayjsPluginUTC);
   return date ? dayjs.utc(date).format(format) : '';
@@ -26,4 +32,4 @@ function sortingByTime(a, b) {
   return dateB - dateA;
 }
 
-export { getRandomArrayElement, humanizeDate, sortingByDay, sortingByPrice, sortingByTime };
+export { getRandomArrayElement, getRandomInteger, humanizeDate, sortingByDay, sortingByPrice, sortingByTime };

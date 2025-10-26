@@ -1,3 +1,7 @@
+
+import { getRandomInteger } from '../utils';
+import { MIN_RANDOM_VALUE, MAX_RANDOM_VALUE } from '../const';
+
 const mockDestination = [
   {
     id: '1',
@@ -6,8 +10,8 @@ const mockDestination = [
     name: 'Moscow',
     pictures: [
       {
-        src: 'http://picsum.photos/300/200?r=0.0762563005163317',
-        description: 'Chamonix parliament building',
+        src: `https://loremflickr.com/248/152?random=${getRandomInteger(MIN_RANDOM_VALUE, MAX_RANDOM_VALUE)}`,
+        description: 'Рандомное изображение не загрузилось',
       },
     ],
   },
@@ -18,8 +22,8 @@ const mockDestination = [
     name: 'Novosibirsk',
     pictures: [
       {
-        src: 'http://picsum.photos/300/200?r=0.0762563005163317',
-        description: 'Chamonix parliament building',
+        src: `https://loremflickr.com/248/152?random=${getRandomInteger(MIN_RANDOM_VALUE, MAX_RANDOM_VALUE)}`,
+        description: 'Рандомное изображение не загрузилось',
       },
     ],
   },
@@ -28,12 +32,7 @@ const mockDestination = [
     description:
       'Adler is a resort and the administrative center of the Adler district of Sochi, Krasnodar Territory, Russian Federation.',
     name: 'Adler',
-    pictures: [
-      {
-        src: 'http://picsum.photos/300/200?r=0.0762563005163317',
-        description: 'Chamonix parliament building',
-      },
-    ],
+    pictures: [],
   },
 ];
 
