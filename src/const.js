@@ -1,4 +1,4 @@
-const POINTS_COUNT = 5;
+const POINTS_COUNT = 2;
 
 const MIN_RANDOM_VALUE = 1;
 const MAX_RANDOM_VALUE = 100;

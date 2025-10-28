@@ -197,37 +197,47 @@ export default class TripPointEditView extends AbstractStatefulView {
     this.element.querySelector('.event__type-list').addEventListener('click', this.#handleTypeChange); // Обработчик выбора типа поездки
     this.element.querySelector('.event__save-btn').addEventListener('click', this.#handleSaveButtonSubmit); // Обработчик кнопки сохранения
     this.element.querySelector('.event__input--destination').addEventListener('input', this.#handleDestinationsChange); // Обработчик пункта назначения
-    // this.element.querySelector('.event__field-group--time').addEventListener('click', this.#handleTimeChange);
-    this.element.querySelector('.event__input--price').addEventListener('input', this.#handlePriceChange);
-    this.element.querySelector('.event__input--time').addEventListener('click', this.#handleTimeChange);
+    this.element.querySelector('.event__input--price').addEventListener('input', this.#handlePriceChange); // Обработчик изменения цены
+    this.#setDatePicker();
   }
 
-  #handlePriceChange = (evt) => {
-    this._setState({ basePrice: evt.target.value });
-  };
+  #setDatePicker = () => {
+    const [dateFromElement, dateToElement] = this.element.querySelectorAll('.event__input--time');
 
-  #handleTimeChange = (evt) => {
-
-    if (evt.target.tagName !== 'INPUT') {
-      return;
-    }
-    // console.log(evt.target);
-    const dateFromElement = evt.target;
-
-    const config =
-    {
-      enableTime: true,
+    const commonConfig = {
       dateFormat: 'd/m/y H:i',
+      enableTime: true,
+      locale: { firstDayfWeek: 1 },
       'time_24hr': true,
     };
 
-    this.#datePickerFrom = flatpickr(
-      dateFromElement,
-      {
-        ...config,
-        defaultDate: this._state.dateFrom,
-        maxDate: this._state.dateTo,
-      });
+    this.#datePickerFrom = flatpickr(dateFromElement, {
+      ...commonConfig,
+      defaultDate: this._state.dateFrom,
+      onClose: this.#updateDatePickerFrom,
+      maxDate: this._state.dateTo,
+    });
+
+    this.#datePickerTo = flatpickr(dateToElement, {
+      ...commonConfig,
+      defaultDate: this._state.dateTo,
+      onClose: this.#updateDatePickerTo,
+      minDate: this._state.dateFrom,
+    });
+  };
+
+  #updateDatePickerFrom = (userDate) => {
+    this._setState({ dateFrom: userDate });
+    this.#datePickerTo.set('minDate', this._state.dateFrom);
+  };
+
+  #updateDatePickerTo = (userDate) => {
+    this._setState({ dateTo: userDate });
+    this.#datePickerFrom.set('maxDate', this._state.dateTo);
+  };
+
+  #handlePriceChange = (evt) => {
+    this._setState({ basePrice: evt.target.value });
   };
 
   #handleDestinationsChange = (evt) => {
