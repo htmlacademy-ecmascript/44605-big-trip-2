@@ -190,6 +190,19 @@ export default class TripPointEditView extends AbstractStatefulView {
 
   reset(point) {
     this.updateElement(TripPointEditView.parsePointToState(point));
+
+  }
+
+  removeElement() {
+    super.removeElement();
+    if (this.#datePickerFrom) {
+      this.#datePickerFrom.destroy();
+      this.#datePickerFrom = null;
+    }
+    if (this.#datePickerTo) {
+      this.#datePickerTo.destroy();
+      this.#datePickerTo = null;
+    }
   }
 
   _restoreHandlers() {

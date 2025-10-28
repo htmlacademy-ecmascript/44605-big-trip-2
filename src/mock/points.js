@@ -22,10 +22,10 @@ const mockPoints = [
   },
   {
     basePrice: 120,
-    dateFrom: '2019-01-10T23:55:10.845Z',
-    dateTo: '2019-01-11T00:15:15.375Z',
+    dateFrom: '2025-11-17T07:55:00.845Z',
+    dateTo: '2025-11-17T08:15:00.375Z',
     destination: '2',
-    isFavorite: false,
+    isFavorite: true,
     offers: '',
     type: 'check-in',
   },
