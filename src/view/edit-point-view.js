@@ -239,14 +239,16 @@ export default class TripPointEditView extends AbstractStatefulView {
     });
   };
 
-  #updateDatePickerFrom = (userDate) => {
-    this._setState({ dateFrom: userDate });
-    this.#datePickerTo.set('minDate', this._state.dateFrom);
+  #updateDatePickerFrom = ([userDate]) => {
+    const iso = userDate ? userDate.toISOString() : '';
+    this._setState({ dateFrom: iso });
+    this.#datePickerTo.set('minDate', iso);
   };
 
-  #updateDatePickerTo = (userDate) => {
-    this._setState({ dateTo: userDate });
-    this.#datePickerFrom.set('maxDate', this._state.dateTo);
+  #updateDatePickerTo = ([userDate]) => {
+    const iso = userDate ? userDate.toISOString() : '';
+    this._setState({ dateTo: iso });
+    this.#datePickerFrom.set('maxDate', iso);
   };
 
   #handlePriceChange = (evt) => {
@@ -258,7 +260,6 @@ export default class TripPointEditView extends AbstractStatefulView {
     if (destinationInput) {
       this.updateElement({ destination: destinationInput.id });
     }
-    // Иначе можно расширять массив объектов пунктов назначения, добавляяя evt.target.value
   };
 
   #handleSaveButtonSubmit = (evt) => {
