@@ -1,4 +1,7 @@
-const POINTS_COUNT = 5;
+const POINTS_COUNT = 10;
+
+const MIN_RANDOM_VALUE = 1;
+const MAX_RANDOM_VALUE = 100;
 
 /**
  * @description форматы даты
@@ -36,4 +39,4 @@ const MurkupElement = {
 };
 
 
-export { POINTS_COUNT, DATE_FORMAT, POINTS_TYPE, MurkupElement, StatusForm, SortType };
+export { POINTS_COUNT, MIN_RANDOM_VALUE, MAX_RANDOM_VALUE, DATE_FORMAT, POINTS_TYPE, MurkupElement, StatusForm, SortType };

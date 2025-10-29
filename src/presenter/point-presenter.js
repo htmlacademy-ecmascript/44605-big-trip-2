@@ -71,7 +71,7 @@ export default class PointPresenter {
       this.#destinations,
       this.#offers,
       this.#replaceCardToForm,
-      this.#favoritSwitch,
+      this.#favoriteSwitch,
     );
     replace(newPointComponent, this.#pointComponent);
     this.#pointComponent = newPointComponent;
@@ -83,7 +83,7 @@ export default class PointPresenter {
     this.#replaceComponent();
   };
 
-  #favoritSwitch = () => {
+  #favoriteSwitch = () => {
     this.#point.isFavorite = !this.#point.isFavorite;
     // Перерисовываем компонент после изменения isFavorite
     this.#replaceComponent();
@@ -96,7 +96,7 @@ export default class PointPresenter {
       this.#destinations,
       this.#offers,
       this.#replaceCardToForm, // Функция замены компонента точки на компонент редактирования
-      this.#favoritSwitch, // Функция обработки клика на звезду(избранное)
+      this.#favoriteSwitch, // Функция обработки клика на звезду(избранное)
     );
 
     // 5.3.2
