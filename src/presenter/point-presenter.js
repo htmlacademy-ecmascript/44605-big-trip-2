@@ -37,6 +37,10 @@ export default class PointPresenter {
     this.#renderPoint();
   }
 
+  destroy() {
+    // На будущее. Попробовать избавиться от innerHTML и использовать remove(элемент)
+  }
+
   closeForm() {
     if (this.#mode !== StatusForm.DEFAULT) {
       this.#replaceFormToCard();

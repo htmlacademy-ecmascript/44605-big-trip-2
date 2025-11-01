@@ -30,22 +30,11 @@ function createPointComponent(point, destinations, offers) {
   // Вычисляю разницу в дате и времени от начала и конца. Результат получаю в минутах
   const durationTime = dateEnd.diff(dateStart, 'm');
 
+  // Нужно доработать функцию, учитывать секунды.
   function formatDuration(minutes) {
     const days = Math.floor(minutes / (24 * 60));
     const hours = Math.floor(minutes % (24 * 60) / 60);
     const mins = minutes % 60;
-
-    // Альтернативный вариант, но есть проблема. Когда кол-во часов === 0, значение hours не попадает в массив и => в DOM
-    // const formattedDate = [];
-
-    // if (days > 0) {
-    //   formattedDate.push(`${days.toString().padStart(2, '0')}D`);
-    // } if (hours > 0) {
-    //   formattedDate.push(`${hours.toString().padStart(2, '0')}H`);
-    // }
-    // formattedDate.push(`${mins.toString().padStart(2, '0')}M`);
-
-    // return formattedDate.join(' ');
 
     if (days > 0) {
       return `${days.toString().padStart(2, '0')}D ${hours.toString().padStart(2, '0')}H ${mins.toString().padStart(2, '0')}M`;
