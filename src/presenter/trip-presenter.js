@@ -25,8 +25,8 @@ export default class TripPresenter {
 
   /**
    * @constructor
-   * @param {HTMLElement} tripContainer Контейнер для списка точек (область `.trip-events`)
-   * @param {Object} pointsModel Модель с данными точек, направлений и офферов
+   * @param  tripContainer Контейнер для списка точек (область `.trip-events`)
+   * @param  pointsModel Модель с данными точек, направлений и офферов
    */
   constructor(tripContainer, pointsModel) {
     this.#tripContainer = tripContainer;
@@ -64,6 +64,9 @@ export default class TripPresenter {
     return this.#pointsModel.offers;
   }
 
+  /**
+   * Метод инициализации TripPresenter
+   */
   init() {
     this.#renderHeader();
     this.#renderEmptyPage();
@@ -73,28 +76,51 @@ export default class TripPresenter {
     }
   }
 
-  // Функция, которая должна сработать при изменении данных точки
+  /**
+   * @description Функция-обработчик, будет реагировать на изменение модели
+   */
   #handleModeEvent = (updateType, data) => {
     console.log(updateType, data);
+    // В зависимости от типа изменений решаем, что делать:
+    // - обновить часть списка (например, когда поменялось описание)
+    // - обновить список (например, когда задача ушла в архив)
+    // - обновить всю доску (например, при переключении фильтра)
   };
 
+  #handleViewAction = (actionType, updateType, update) => {
+    console.log(actionType, updateType, update);
+    // Здесь будем вызывать обновление модели.
+    // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
+    // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
+    // update - обновленные данные
+  };
+
+  /**
+   * @description Метод отрисовки шапки сайта
+   */
   #renderHeader() {
     this.#tripMainContainer = document.querySelector('.trip-main');
     render(new HeaderTripInfoBlock(), this.#tripMainContainer, RenderPosition.AFTERBEGIN);
     this.#renderFilterComponent();
   }
 
+  /**
+   * @description Метод отрисовки компонента фильтрафии точек маршрута (Points)
+   */
   #renderFilterComponent() {
     this.#tripFiltersContainer = document.querySelector('.trip-controls__filters');
     this.#tripFilterComponent = new TripFilter();
     render(this.#tripFilterComponent, this.#tripFiltersContainer);
   }
 
+  /**
+   * @description Метод отрисовки пустой страницы, если массив точек маршрута пуст
+   */
   #renderEmptyPage() {
     // Если точек нет — показываем заглушку
     if (this.points.length === 0) {
       render(new NoPointView(), this.#tripContainer); // 2.1
-      // 2.2 В дополнении делаем недоступными для клика все кнопки фильтрации
+      // В дополнении делаем недоступными для клика все кнопки фильтрации
       const filterInputs = document.querySelectorAll('.trip-filters__filter-input');
       filterInputs.forEach((input) => {
         input.disabled = true;
@@ -102,6 +128,10 @@ export default class TripPresenter {
     }
   }
 
+  /**
+   * @description Метод отрисовки компонента сортировки
+   * @param onSortTypeChange - Функция обработчик изменения типа сортировки
+   */
   #renderSortComponent() {
     // Инициализирую компонент сортировки(Передаю в конструктор функцию-обработчик клика)
     this.#tripSortComponent = new TripSort({
@@ -111,16 +141,22 @@ export default class TripPresenter {
     render(this.#tripSortComponent, this.#tripContainer);
   }
 
-  // Функция обработчик клика сортировки
+  /**
+  * @description Функция обработчик клика сортировки
+  * @param sortType - Тип сортировки, выбранный пользователем
+  */
   #handleSortTypeChange = (sortType) => {
     if (this.#currentSortType === sortType) {
       return;
     }
     this.#currentSortType = sortType; // Присваиваю текущей сортировке новое значение из клика
     this.#pointPresenters.forEach((presenter) => presenter.destroy()); // У каждого презентера вызываю метод удаления компонентов
-    this.#renderPoints(); // Рендерим точки после сортировки
+    this.#renderPoints();
   };
 
+  /**
+   * @description Метод отрисовки точек маршрута на страницу
+   */
   #renderPoints() {
     this.#tripListComponent = new TripPointListView();
     render(this.#tripListComponent, this.#tripContainer);
@@ -139,9 +175,10 @@ export default class TripPresenter {
     }
   }
 
-  // Callback функция. Отправляем в презентер; При открытии формы редактирования закрываем все открытые формы редактирования
+  /**
+   *  @description Callback функция. Отправляем в презентер; При открытии формы редактирования закрываем все открытые формы редактирования
+   */
   #closeAllForms = () => {
     this.#pointPresenters.forEach((presenter) => presenter.closeForm());
   };
 }
-

@@ -20,18 +20,30 @@ export default class PointsModel extends Observable {
     this.#offers = mockOffers;
   }
 
+  /**
+   * @description Геттер модели получения массива точек маршрута
+   */
   get points() {
     return this.#points;
   }
 
+  /**
+  * @description Сеттер модели получения массива точек маршрута
+  */
   set points(points) {
     this.#points = [...points];
   }
 
+  /**
+   * @description Геттер модели получения массива пунктов назначения
+   */
   get destinations() {
     return this.#destinations;
   }
 
+  /**
+   * @description Геттер модели получения массива доп.предложений
+   */
   get offers() {
     return this.#offers;
   }
