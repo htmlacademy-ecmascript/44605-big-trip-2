@@ -1,7 +1,8 @@
 import TripPointView from '../view/point-view';
 import TripPointEditView from '../view/edit-point-view';
-import { render, replace } from '../framework/render';
+import { render, replace, remove } from '../framework/render';
 import { StatusForm } from '../const';
+import { UserAction, UpdateType } from '../const';
 
 /**
  * @class Презентер управления одной точкой маршрута: карточка + форма редактирования.
@@ -29,7 +30,7 @@ export default class PointPresenter {
     this.#point = point; // 5.2 Точка маршрута (одна из массива всех точек Points)
     this.#destinations = destinations; // 5.2 Массив всех направлений
     this.#offers = offers; // 5.2 Массив всех офферов
-    this.#closeAllForms = closeForms; // 5.2 Функция обработчик клика
+    this.#closeAllForms = closeForms; // 5.2 Функция обработчик закрывает все открытые формы редактирования при открытии новой формы для редактирования у другой точки
   }
 
   // 5.3
@@ -38,7 +39,8 @@ export default class PointPresenter {
   }
 
   destroy() {
-    // На будущее. Попробовать избавиться от innerHTML и использовать remove(элемент)
+    remove(this.#pointComponent);
+    remove(this.#pointEditComponent);
   }
 
   closeForm() {
@@ -81,6 +83,7 @@ export default class PointPresenter {
     this.#pointComponent = newPointComponent;
   };
 
+  // Функция обновления данных при нажатии SAVE
   #handleFormSubmit = (updatePoint) => {
     this.#point = updatePoint;
     this.#replaceFormToCard();
@@ -89,12 +92,11 @@ export default class PointPresenter {
 
   #favoriteSwitch = () => {
     this.#point.isFavorite = !this.#point.isFavorite;
-    // Перерисовываем компонент после изменения isFavorite
     this.#replaceComponent();
   };
 
   #renderPoint() {
-    // 5.3.1
+
     this.#pointComponent = new TripPointView(
       this.#point,
       this.#destinations,
@@ -103,7 +105,6 @@ export default class PointPresenter {
       this.#favoriteSwitch, // Функция обработки клика на звезду(избранное)
     );
 
-    // 5.3.2
     this.#pointEditComponent = new TripPointEditView(
       this.#point,
       this.#destinations,
@@ -112,7 +113,6 @@ export default class PointPresenter {
       this.#handleFormSubmit,
     );
 
-    // 5.3.3
     render(this.#pointComponent, this.#pointListContainer);
   }
 }
