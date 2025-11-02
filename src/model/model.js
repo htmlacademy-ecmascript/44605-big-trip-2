@@ -1,4 +1,4 @@
-import Observable from '../framework/Observable';
+import Observable from '../framework/observable';
 import { getRandomPoints } from '../mock/points';
 import { mockDestination } from '../mock/destinations';
 import { mockOffers } from '../mock/offers';
@@ -48,7 +48,12 @@ export default class PointsModel extends Observable {
     return this.#offers;
   }
 
-  updatePoint(updateType, update) {
+  /**
+   *
+   * @param {*} updateType - Тип обновления
+   * @param {*} update - Обновленный объект точки маршрута
+   */
+  updatePoints(updateType, update) {
     const index = this.#points.findIndex((point) => point.id === update.id);
 
     if (index === -1) {

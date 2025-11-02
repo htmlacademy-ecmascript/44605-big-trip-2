@@ -1,4 +1,4 @@
-const POINTS_COUNT = 10;
+const POINTS_COUNT = 3;
 const MIN_RANDOM_VALUE = 1;
 const MAX_RANDOM_VALUE = 100;
 
@@ -22,15 +22,15 @@ const SortType = {
 };
 
 const UserAction = {
-  UPDATE_TASK: 'UPDATE_TASK',
-  ADD_TASK: 'ADD_TASK',
-  DELETE_TASK: 'DELETE_TASK',
+  UPDATE_POINT: 'update_point',
+  ADD_POINT: 'add_point',
+  DELETE_POINT: 'delete_point',
 };
 
 const UpdateType = {
-  PATCH: 'PATCH',
-  MINOR: 'MINOR',
-  MAJOR: 'MAJOR',
+  PATCH: 'patch',
+  MINOR: 'minor',
+  MAJOR: 'major',
 };
 
 const MurkupElement = {
