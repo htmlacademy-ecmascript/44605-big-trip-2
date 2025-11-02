@@ -1,19 +1,20 @@
 import TripPointView from '../view/point-view';
 import TripPointEditView from '../view/edit-point-view';
 import { render, replace, remove } from '../framework/render';
-import { StatusForm } from '../const';
+import { StatusForm, UserAction, UpdateType } from '../const';
 
 /**
  * @class Презентер управления одной точкой маршрута: карточка + форма редактирования.
  */
 export default class PointPresenter {
-  #pointListContainer;
-  #point;
-  #destinations;
-  #offers;
+  #pointListContainer = null; // Контейнер для отрисовки точек маршрута
+  #point; // Объект точки маршрута
+  #destinations; // Массив всех направлений
+  #offers; // Массив всех офферов
   #pointComponent;
   #pointEditComponent;
-  #closeAllForms;
+  #handleCloseAllForm;
+  #handleDataUpdate = null;
   #mode = StatusForm.DEFAULT;
 
   /**
@@ -23,13 +24,16 @@ export default class PointPresenter {
    * @param {Object} params.point Данные точки маршрута
    * @param {Array} params.destinations Массив направлений
    * @param {Array} params.offers Массив офферов
+   * @param {function} params.handleEditTypeChange - Функция-обработчик закрытия форм редактирования
+   * @param {function} params.handleDataChange - Функция-обработчик, будет реагировать на действия пользователя
    */
-  constructor({ pointListContainer, point, destinations, offers, closeForms }) {
-    this.#pointListContainer = pointListContainer; // Контейнер для отрисовки точек маршрута
-    this.#point = point; // Точка маршрута (одна из массива всех точек Points)
-    this.#destinations = destinations; // Массив всех направлений
-    this.#offers = offers; // Массив всех офферов
-    this.#closeAllForms = closeForms; // Функция обработчик закрывает все открытые формы редактирования при открытии новой формы для редактирования у другой точки
+  constructor({ pointListContainer, point, destinations, offers, handleEditTypeChange, handleDataChange }) {
+    this.#pointListContainer = pointListContainer;
+    this.#point = point;
+    this.#destinations = destinations;
+    this.#offers = offers;
+    this.#handleCloseAllForm = handleEditTypeChange;
+    this.#handleDataUpdate = handleDataChange;
   }
 
   /**
@@ -40,15 +44,15 @@ export default class PointPresenter {
       this.#point,
       this.#destinations,
       this.#offers,
-      this.#replaceCardToForm, // Функция замены компонента точки на компонент редактирования
-      this.#favoriteSwitch, // Функция обработки клика на звезду(избранное)
+      this.#handleEditArrowClick,
+      this.#handleFavoriteClick,
     );
 
     this.#pointEditComponent = new TripPointEditView(
       this.#point,
       this.#destinations,
       this.#offers,
-      this.#replaceFormToCard, // Функция замены компонента редактирования точки на компонент точки
+      this.#handleCloseEditArrowClick, // Функция замены компонента редактирования точки на компонент точки
       this.#handleFormSubmit,
     );
 
@@ -66,11 +70,34 @@ export default class PointPresenter {
   /**
    * @description Метод закрытия всех открытых форм редактирования
    */
-  closeForm() {
+  resetViewToDefault() {
     if (this.#mode !== StatusForm.DEFAULT) {
       this.#replaceFormToCard();
     }
   }
+
+  #handleEditArrowClick = () => {
+    this.#replaceCardToForm();
+  };
+
+  #handleCloseEditArrowClick = () => {
+    this.#replaceFormToCard();
+  };
+
+  /**
+  * @description Функция обновления данных при нажатии "Избранное"
+  */
+  #handleFavoriteClick = () => {
+    this.#point.isFavorite = !this.#point.isFavorite;
+    this.#handleDataUpdate(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      this.#point
+    );
+
+    // this.#point.isFavorite = !this.#point.isFavorite;
+    // this._replaceComponent();
+  };
 
   /**
    * @description Функция открытия компонента редактирования
@@ -78,7 +105,7 @@ export default class PointPresenter {
   #replaceCardToForm = () => {
     replace(this.#pointEditComponent, this.#pointComponent); // Заменаем один компонент на другой(Инициализация ранее п.5.3)
     document.addEventListener('keydown', this.#escKeyDownHandler);
-    this.#closeAllForms(); // Метод проходит по MAP и вызывает метод closeForm() - закрывает если открыта форма редактирвоания
+    this.#handleCloseAllForm(); // Метод проходит по MAP и вызывает метод closeForm() - закрывает если открыта форма редактирвоания
     this.#mode = StatusForm.EDIT; // После ставим статус - "в редактировании"
   };
 
@@ -106,17 +133,17 @@ export default class PointPresenter {
   /**
    * @description Функция замены элемента
    */
-  #replaceComponent = () => {
+  _replaceComponent(point) {
     const newPointComponent = new TripPointView(
-      this.#point,
+      point,
       this.#destinations,
       this.#offers,
       this.#replaceCardToForm,
-      this.#favoriteSwitch,
+      this.#handleFavoriteClick,
     );
     replace(newPointComponent, this.#pointComponent);
     this.#pointComponent = newPointComponent;
-  };
+  }
 
   /**
    * @description Функция обновления данных при нажатии SAVE
@@ -124,14 +151,6 @@ export default class PointPresenter {
   #handleFormSubmit = (updatePoint) => {
     this.#point = updatePoint;
     this.#replaceFormToCard();
-    this.#replaceComponent();
-  };
-
-  /**
- * @description Функция обновления данных при нажатии "Избранное"
- */
-  #favoriteSwitch = () => {
-    this.#point.isFavorite = !this.#point.isFavorite;
-    this.#replaceComponent();
+    this._replaceComponent(this.#point);
   };
 }
