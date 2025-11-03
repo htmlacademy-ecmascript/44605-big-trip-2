@@ -8,12 +8,12 @@ import { StatusForm, UserAction, UpdateType } from '../const';
  */
 export default class PointPresenter {
   #pointListContainer = null; // Контейнер для отрисовки точек маршрута
-  #point; // Объект точки маршрута
-  #destinations; // Массив всех направлений
-  #offers; // Массив всех офферов
-  #pointComponent;
-  #pointEditComponent;
-  #handleCloseAllForm;
+  #point = null; // Объект точки маршрута
+  #destinations = null; // Массив всех направлений
+  #offers = null; // Массив всех офферов
+  #pointComponent = null;
+  #pointEditComponent = null;
+  #handleCloseAllForm = null;
   #handleDataUpdate = null;
   #mode = StatusForm.DEFAULT;
 
@@ -76,10 +76,12 @@ export default class PointPresenter {
     }
   }
 
+  // Бестолковый метод, проще сразу вызывать replace напрямую
   #handleEditArrowClick = () => {
     this.#replaceCardToForm();
   };
 
+  // Бестолковый метод, проще сразу вызывать replace напрямую
   #handleCloseEditArrowClick = () => {
     this.#replaceFormToCard();
   };
@@ -94,9 +96,6 @@ export default class PointPresenter {
       UpdateType.MINOR,
       this.#point
     );
-
-    // this.#point.isFavorite = !this.#point.isFavorite;
-    // this._replaceComponent();
   };
 
   /**
@@ -105,7 +104,7 @@ export default class PointPresenter {
   #replaceCardToForm = () => {
     replace(this.#pointEditComponent, this.#pointComponent); // Заменаем один компонент на другой(Инициализация ранее п.5.3)
     document.addEventListener('keydown', this.#escKeyDownHandler);
-    this.#handleCloseAllForm(); // Метод проходит по MAP и вызывает метод closeForm() - закрывает если открыта форма редактирвоания
+    this.#handleCloseAllForm(); // Метод проходит по MAP и вызывает метод resetViewToDefault() - закрывает если открыта форма редактирвоания
     this.#mode = StatusForm.EDIT; // После ставим статус - "в редактировании"
   };
 
@@ -151,6 +150,10 @@ export default class PointPresenter {
   #handleFormSubmit = (updatePoint) => {
     this.#point = updatePoint;
     this.#replaceFormToCard();
-    this._replaceComponent(this.#point);
+    this.#handleDataUpdate(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      this.#point
+    );
   };
 }
