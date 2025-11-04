@@ -37,24 +37,25 @@ export default class PointPresenter {
   }
 
   /**
-   * @description Метод инициализации PointPresenter
+   * Метод инициализации PointPresenter
    */
   init() {
-    this.#pointComponent = new TripPointView(
-      this.#point,
-      this.#destinations,
-      this.#offers,
-      this.#handleEditArrowClick,
-      this.#handleFavoriteClick,
-    );
+    this.#pointComponent = new TripPointView({
+      point: this.#point,
+      destinations: this.#destinations,
+      offers: this.#offers,
+      onEditFormButtonClick: this.#handleOpenFormArrow,
+      onFavoritButtonClick: this.#handleFavoriteButton,
+    });
 
-    this.#pointEditComponent = new TripPointEditView(
-      this.#point,
-      this.#destinations,
-      this.#offers,
-      this.#handleCloseEditArrowClick, // Функция замены компонента редактирования точки на компонент точки
-      this.#handleFormSubmit,
-    );
+    this.#pointEditComponent = new TripPointEditView({
+      point: this.#point,
+      destinations: this.#destinations,
+      offers: this.#offers,
+      onCloseEditFormButtonClick: this.#handleCloseFormArrow,
+      onSaveFormButtonClick: this.#handleSaveButton,
+      onDeletePointButtonClick: this.#handleDeleteButton,
+    });
 
     render(this.#pointComponent, this.#pointListContainer);
   }
@@ -77,19 +78,19 @@ export default class PointPresenter {
   }
 
   // Бестолковый метод, проще сразу вызывать replace напрямую
-  #handleEditArrowClick = () => {
+  #handleOpenFormArrow = () => {
     this.#replaceCardToForm();
   };
 
   // Бестолковый метод, проще сразу вызывать replace напрямую
-  #handleCloseEditArrowClick = () => {
+  #handleCloseFormArrow = () => {
     this.#replaceFormToCard();
   };
 
   /**
   * @description Функция обновления данных при нажатии "Избранное"
   */
-  #handleFavoriteClick = () => {
+  #handleFavoriteButton = () => {
     this.#point.isFavorite = !this.#point.isFavorite;
     this.#handleDataUpdate(
       UserAction.UPDATE_POINT,
@@ -133,13 +134,14 @@ export default class PointPresenter {
    * @description Функция замены элемента
    */
   _replaceComponent(point) {
-    const newPointComponent = new TripPointView(
-      point,
-      this.#destinations,
-      this.#offers,
-      this.#replaceCardToForm,
-      this.#handleFavoriteClick,
-    );
+    const newPointComponent = new TripPointView({
+      point: point,
+      destinations: this.#destinations,
+      offers: this.#offers,
+      onEditFormButtonClick: this.#handleOpenFormArrow,
+      onFavoritButtonClick: this.#handleFavoriteButton,
+    });
+
     replace(newPointComponent, this.#pointComponent);
     this.#pointComponent = newPointComponent;
   }
@@ -147,12 +149,20 @@ export default class PointPresenter {
   /**
    * @description Функция обновления данных при нажатии SAVE
    */
-  #handleFormSubmit = (updatePoint) => {
+  #handleSaveButton = (updatePoint) => {
     this.#point = updatePoint;
     this.#replaceFormToCard();
     this.#handleDataUpdate(
       UserAction.UPDATE_POINT,
       UpdateType.MINOR,
+      this.#point
+    );
+  };
+
+  #handleDeleteButton = () => {
+    this.#handleDataUpdate(
+      UserAction.DELETE_POINT,
+      UpdateType.MAJOR,
       this.#point
     );
   };

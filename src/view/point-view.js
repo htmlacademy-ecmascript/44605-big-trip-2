@@ -101,26 +101,27 @@ export default class TripPointView extends AbstractStatefulView {
   #point;
   #destinations;
   #offers;
-  #handleEditClick;
-  #handleFavoriteClick;
+  #handleOpenFormArrow;
+  #handleFavoriteButton;
 
   /**
    * @constructor
-   * @param {Object} point - Данные точки маршрута
-   * @param {Array} destinations - Массив направлений
-   * @param {Array} offers - Массив предложений
-   * @param {Function} onEditClick - Функция обработчик клика для открытия формы редактирования
+   * @param {object} params
+   * @param {Object} params.point - Данные точки маршрута
+   * @param {Array} params.destinations - Массив направлений
+   * @param {Array} params.offers - Массив предложений
+   * @param {Function} params.onEditFormButtonClick - Функция обработчик клика для открытия формы редактирования
+   * @param {Function} params.onFavoriteButtonClick - Функция обработчик клика для кнопки "Избранное"
    */
-  constructor(point, destinations, offers, onEditClick, onFavoriteClick) {
+  constructor({ point, destinations, offers, onEditFormButtonClick, onFavoriteButtonClick }) {
     super();
     this.#point = point;
     this.#destinations = destinations;
     this.#offers = offers;
-    this.#handleEditClick = onEditClick;
-    this.#handleFavoriteClick = onFavoriteClick;
+    this.#handleOpenFormArrow = onEditFormButtonClick;
+    this.#handleFavoriteButton = onFavoriteButtonClick;
 
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#handleEditClick);
-    this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#handleFavoriteClick);
+    this._restoreHandlers();
   }
 
   get template() {
@@ -128,6 +129,7 @@ export default class TripPointView extends AbstractStatefulView {
   }
 
   _restoreHandlers() {
-
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#handleOpenFormArrow);
+    this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#handleFavoriteButton);
   }
 }

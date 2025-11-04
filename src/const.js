@@ -2,6 +2,7 @@ const POINTS_COUNT = 3;
 const MIN_RANDOM_VALUE = 1;
 const MAX_RANDOM_VALUE = 100;
 
+
 const DATE_FORMAT = {
   dayMonth: 'D MMM',
   hoursMinutes: 'HH:mm',
@@ -9,6 +10,14 @@ const DATE_FORMAT = {
 };
 
 const POINTS_TYPE = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
+
+const FilterType = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  PRESENT: 'present',
+  PAST: 'past',
+};
+const DEFAULT_FILTER_TYPE = FilterType.EVERYTHING;
 
 const StatusForm = {
   EDIT: 'edit',
@@ -40,4 +49,4 @@ const MurkupElement = {
   Future: 'There are no future events now',
 };
 
-export { POINTS_COUNT, MIN_RANDOM_VALUE, MAX_RANDOM_VALUE, DATE_FORMAT, POINTS_TYPE, MurkupElement, StatusForm, SortType, UserAction, UpdateType };
+export { POINTS_COUNT, MIN_RANDOM_VALUE, MAX_RANDOM_VALUE, DATE_FORMAT, POINTS_TYPE, FilterType, DEFAULT_FILTER_TYPE, MurkupElement, StatusForm, SortType, UserAction, UpdateType };

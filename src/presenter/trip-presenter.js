@@ -1,12 +1,13 @@
 import TripSort from '../view/sort-view';
 import TripFilter from '../view/trip-filter-view';
-import HeaderTripInfoBlock from '../view/header-info-trip';
+// import HeaderTripInfoBlock from '../view/header-info-trip';
 import TripPointListView from '../view/event-list-view';
 import NoPointView from '../view/no-point-view';
 import PointPresenter from './point-presenter';
-import { render, RenderPosition } from '../framework/render';
+import { render, RenderPosition, remove } from '../framework/render';
 import { SortType, UserAction, UpdateType } from '../const';
 import { sortingByPrice, sortingByDay, sortingByTime } from '../utils';
+import NewPointView from '../view/new-point-view';
 
 /**
  * @class Презентер списка точек маршрута и связанных UI-элементов (хедер, фильтры, сортировка).
@@ -32,7 +33,7 @@ export default class TripPresenter {
     this.#tripContainer = tripContainer;
     this.#pointsModel = pointsModel;
 
-    this.#pointsModel.addObserver(this.#handleModeEvent); // Подписываемся на событие изменения модели
+    this.#pointsModel.addObserver(this.#handleModeChange); // Подписываемся на событие изменения модели
   }
 
   /**
@@ -67,21 +68,16 @@ export default class TripPresenter {
    */
   init() {
     this.#renderHeader();
-    if (this.points.length === 0) {
-      this.#renderEmptyPage();
-    } else {
-      this.#renderSortComponent();
-      this.#tripListComponent = new TripPointListView();
-      render(this.#tripListComponent, this.#tripContainer);
-      this.#renderPoints();
-    }
+    this.#renderSortComponent();
+    this.#renderPoints();
   }
 
   /**
    * @description Метод отрисовки шапки сайта
    */
   #renderHeader() {
-    render(new HeaderTripInfoBlock(), this.#tripMainContainer, RenderPosition.AFTERBEGIN);
+    render(new NewPointView(), this.#tripMainContainer, RenderPosition.BEFOREBEGINBEGIN);
+    // render(new HeaderTripInfoBlock(), this.#tripMainContainer, RenderPosition.AFTERBEGIN); // Блок с общей стоимостью и маршрутом(от/до)
     this.#renderFilterComponent();
   }
 
@@ -97,15 +93,15 @@ export default class TripPresenter {
    * @description Метод отрисовки пустой страницы, если массив точек маршрута пуст
    */
   #renderEmptyPage() {
-    // Если точек нет — показываем заглушку
-    if (this.points.length === 0) {
-      render(new NoPointView(), this.#tripContainer); // 2.1
-      // В дополнении делаем недоступными для клика все кнопки фильтрации
-      const filterInputs = document.querySelectorAll('.trip-filters__filter-input');
-      filterInputs.forEach((input) => {
-        input.disabled = true;
-      });
+    if (this.#tripSortComponent !== null) {
+      remove(this.#tripSortComponent);
     }
+    render(new NoPointView(), this.#tripContainer);
+    // В дополнении делаем недоступными для клика все кнопки фильтрации
+    const filterInputs = document.querySelectorAll('.trip-filters__filter-input');
+    filterInputs.forEach((input) => {
+      input.disabled = true;
+    });
   }
 
   /**
@@ -138,18 +134,27 @@ export default class TripPresenter {
    * @description Метод отрисовки точек маршрута на страницу
    */
   #renderPoints() {
-    for (let i = 0; i < this.points.length; i++) {
-      const pointPresenter = new PointPresenter({
-        pointListContainer: this.#tripListComponent.element,
-        point: this.points[i],
-        destinations: this.destinations,
-        offers: this.offers,
-        handleEditTypeChange: this.#handleCloseAllForm,
-        handleDataChange: this.#handleViewAction,
-      });
+    if (this.points.length !== 0) {
+      if (this.#tripListComponent === null) {
+        this.#tripListComponent = new TripPointListView();
+        render(this.#tripListComponent, this.#tripContainer); render(this.#tripListComponent, this.#tripContainer);
+      }
+      for (let i = 0; i < this.points.length; i++) {
+        const pointPresenter = new PointPresenter({
+          pointListContainer: this.#tripListComponent.element,
+          point: this.points[i],
+          destinations: this.destinations,
+          offers: this.offers,
+          handleEditTypeChange: this.#handleCloseAllForm,
+          handleDataChange: this.#handleViewAction,
+        });
 
-      pointPresenter.init(); // После инициализации вызываем главный метод, который отрисовывает Point
-      this.#pointPresenters.set(this.points[i].id, pointPresenter); // Добавляем презентер в Map
+        pointPresenter.init();
+        this.#pointPresenters.set(this.points[i].id, pointPresenter); // Добавляем презентер в Map
+      }
+
+    } else {
+      this.#renderEmptyPage();
     }
   }
 
@@ -160,20 +165,26 @@ export default class TripPresenter {
     this.#pointPresenters.forEach((presenter) => presenter.resetViewToDefault());
   };
 
+  #clearBoard = () => {
+    this.#pointPresenters.forEach((presenter) => presenter.destroy());
+  };
+
   /**
  * @description Функция-обработчик, будет реагировать на изменение модели
  * @param updateType - Тип обновления
  * @param data - Обновленный объект точки маршрута
  */
-  #handleModeEvent = (updateType, data) => {
+  #handleModeChange = (updateType, data) => {
 
     switch (updateType) {
-      case UpdateType.MAJOR:
+      case UpdateType.MAJOR: // Полностью перерисовываем весь Board
+        this.#clearBoard();
+        this.#renderPoints();
         break;
-      case UpdateType.MINOR:
+      case UpdateType.MINOR: // Перерисовываем компонент
         this.#pointPresenters.get(data.id)._replaceComponent(data);
         break;
-      case UpdateType.PATCH:
+      case UpdateType.PATCH: // Точечно перерисовываем компонент. В каком случае?
         break;
     }
   };
@@ -190,6 +201,7 @@ export default class TripPresenter {
       case UserAction.ADD_POINT:
         break;
       case UserAction.DELETE_POINT:
+        this.#pointsModel.deletePoint(updateType, update);
         break;
       case UserAction.UPDATE_POINT:
         this.#pointsModel.updatePoints(updateType, update);

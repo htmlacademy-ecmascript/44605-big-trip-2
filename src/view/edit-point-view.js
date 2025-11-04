@@ -170,16 +170,18 @@ export default class TripPointEditView extends AbstractStatefulView {
   #formSaveButtonHandler = null;
   #datePickerFrom = null;
   #datePickerTo = null;
+  #deleteButtonHandler = null;
 
 
-  constructor(point, destinations, offers, onFormArrowClick, onFormSaveButtonClick) {
+  constructor({ point, destinations, offers, onCloseEditFormButtonClick, onSaveFormButtonClick, onDeletePointButtonClick }) {
     super();
     this.#point = point;
     this._setState(TripPointEditView.parsePointToState(this.#point)); // Обновляю состояние _state с помощью спред-оператора разворачиваю объект Point
     this.#destinations = destinations;
     this.#offers = offers;
-    this.#formArrowHandler = onFormArrowClick;
-    this.#formSaveButtonHandler = onFormSaveButtonClick;
+    this.#formArrowHandler = onCloseEditFormButtonClick;
+    this.#formSaveButtonHandler = onSaveFormButtonClick;
+    this.#deleteButtonHandler = onDeletePointButtonClick;
 
     this._restoreHandlers();
   }
@@ -208,9 +210,10 @@ export default class TripPointEditView extends AbstractStatefulView {
   _restoreHandlers() {
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#formArrowHandler); // Обработчик стрелки закрытия формы редактирования
     this.element.querySelector('.event__type-list').addEventListener('click', this.#handleTypeChange); // Обработчик выбора типа поездки
-    this.element.querySelector('.event__save-btn').addEventListener('click', this.#handleSaveButtonSubmit); // Обработчик кнопки сохранения
+    this.element.querySelector('.event__save-btn').addEventListener('click', this.#handleSaveButton); // Обработчик кнопки сохранения
     this.element.querySelector('.event__input--destination').addEventListener('input', this.#handleDestinationsChange); // Обработчик пункта назначения
     this.element.querySelector('.event__input--price').addEventListener('input', this.#handlePriceChange); // Обработчик изменения цены
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#handleDeleteButton);
     this.#setDatePicker();
   }
 
@@ -262,7 +265,11 @@ export default class TripPointEditView extends AbstractStatefulView {
     }
   };
 
-  #handleSaveButtonSubmit = (evt) => {
+  #handleDeleteButton = () => {
+    this.#deleteButtonHandler();
+  };
+
+  #handleSaveButton = (evt) => {
     evt.preventDefault();
     const checkedOffers = document.querySelector('.event__available-offers')?.querySelectorAll('input[type="checkbox"]:checked');
     if (checkedOffers) {

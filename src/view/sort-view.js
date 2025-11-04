@@ -37,11 +37,15 @@ export default class TripSort extends AbstractView {
     super();
     this.#onSortType = onSortTypeChange; // Функция сортировки, приходит из TripPresenter
 
-    this.element.addEventListener('click', this.#onButtonSortclick);
+    this._restoreHandlers();
   }
 
   get template() {
     return createTripSortComponent();
+  }
+
+  _restoreHandlers() {
+    this.element.addEventListener('click', this.#onButtonSortclick);
   }
 
   #onButtonSortclick = (evt) => {
