@@ -98,11 +98,11 @@ function createPointComponent(point, destinations, offers) {
  * Класс для создания экземляра точки маршрута
  */
 export default class TripPointView extends AbstractStatefulView {
-  #point;
-  #destinations;
-  #offers;
-  #handleOpenFormArrow;
-  #handleFavoriteButton;
+  #point = null;
+  #destinations = null;
+  #offers = null;
+  #handleOpenFormArrow = null;
+  #handleFavoriteButton = null;
 
   /**
    * @constructor

@@ -1,6 +1,16 @@
 import { nanoid } from 'nanoid';
 import { getRandomArrayElement } from '../utils';
 
+const defaultNewPoint = {
+  basePrice: '',
+  dateFrom: '',
+  dateTo: '',
+  destination: '', // Moscow
+  isFavorite: false,
+  offers: [], // flight: business class
+  type: 'taxi',
+};
+
 const mockPoints = [
   {
     basePrice: 200,
@@ -101,4 +111,4 @@ function getRandomPoints() {
   };
 }
 
-export { getRandomPoints };
+export { getRandomPoints, defaultNewPoint };

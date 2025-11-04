@@ -45,7 +45,7 @@ export default class PointPresenter {
       destinations: this.#destinations,
       offers: this.#offers,
       onEditFormButtonClick: this.#handleOpenFormArrow,
-      onFavoritButtonClick: this.#handleFavoriteButton,
+      onFavoriteButtonClick: this.#handleFavoriteButton,
     });
 
     this.#pointEditComponent = new TripPointEditView({
@@ -139,7 +139,7 @@ export default class PointPresenter {
       destinations: this.#destinations,
       offers: this.#offers,
       onEditFormButtonClick: this.#handleOpenFormArrow,
-      onFavoritButtonClick: this.#handleFavoriteButton,
+      onFavoriteButtonClick: this.#handleFavoriteButton,
     });
 
     replace(newPointComponent, this.#pointComponent);

@@ -10,8 +10,11 @@ function createNewPoint() {
  * @class Класс для создания кнопки "New Event" в шапке сайта
  */
 export default class NewPointView extends AbstractView {
-  constructor() {
+  #handleNewPointButton = null;
+
+  constructor({ onAddButtonClick }) {
     super();
+    this.#handleNewPointButton = onAddButtonClick;
     this._restoreHandlers();
   }
 
@@ -20,10 +23,10 @@ export default class NewPointView extends AbstractView {
   }
 
   _restoreHandlers() {
-    this.element.querySelector('.trip-main__event-add-btn')?.addEventListener('click', this.#handleButtonClick);
+    this.element.addEventListener('click', this.#handleButtonClick);
   }
 
   #handleButtonClick = () => {
-    console.log('Add button click');
+    this.#handleNewPointButton();
   };
 }
