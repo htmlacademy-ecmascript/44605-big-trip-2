@@ -49,7 +49,7 @@ export default class PointsModel extends Observable {
   }
 
   /**
-   *
+   * Метод обновления новой точки маршрута
    * @param {*} updateType - Тип обновления
    * @param {*} update - Обновленный объект точки маршрута
    */
@@ -69,6 +69,11 @@ export default class PointsModel extends Observable {
     this._notify(updateType, update);
   }
 
+  /**
+   * Метод добавления новой точки маршрута
+   * @param {*} updateType - Тип обновления
+   * @param {*} update - Новый объект точки маршрута
+   */
   addPoint(updateType, update) {
     this.#points = [
       update,
@@ -78,6 +83,11 @@ export default class PointsModel extends Observable {
     this._notify(updateType, update);
   }
 
+  /**
+  * Метод удаления новой точки маршрута
+  * @param {*} updateType - Тип обновления
+  * @param {*} update - Новый объект точки маршрута
+  */
   deletePoint(updateType, update) {
     const index = this.#points.findIndex((point) => point.id === update.id);
 

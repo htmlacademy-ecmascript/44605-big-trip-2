@@ -17,7 +17,6 @@ export default class PointPresenter {
   #handleDataUpdate = null;
   #mode = StatusForm.DEFAULT;
 
-
   /**
    * @constructor
    * @param {Object} params
@@ -31,12 +30,10 @@ export default class PointPresenter {
     this.#handleDataUpdate = handleDataChange;
   }
 
-
   /**
    * Метод инициализации PointPresenter
    */
   init(point, destinations, offers) {
-
     this.#point = point;
     this.#destinations = destinations;
     this.#offers = offers;
@@ -76,7 +73,6 @@ export default class PointPresenter {
     remove(prevPointEditComponent);
   }
 
-
   /**
    * Метод удаления компонентов со страницы
    */
@@ -84,7 +80,6 @@ export default class PointPresenter {
     remove(this.#pointComponent);
     remove(this.#pointEditComponent);
   }
-
 
   /**
    *  Метод закрытия всех открытых форм редактирования
@@ -96,7 +91,6 @@ export default class PointPresenter {
     }
   }
 
-
   /**
  *  Функция открытия компонента редактирования
  */
@@ -107,7 +101,6 @@ export default class PointPresenter {
     this.#mode = StatusForm.EDIT; // После ставим статус - "в редактировании"
   }
 
-
   /**
    *  Фнукиця закрытия компонента редактирования
    */
@@ -117,18 +110,15 @@ export default class PointPresenter {
     this.#mode = StatusForm.DEFAULT;
   }
 
-
   // Бестолковый метод, проще сразу вызывать replace напрямую
   #handleOpenFormArrow = () => {
     this.#replaceCardToForm();
   };
 
-
   // Бестолковый метод, проще сразу вызывать replace напрямую
   #handleCloseFormArrow = () => {
     this.#replaceFormToCard();
   };
-
 
   /**
   *  Функция обновления данных при нажатии "Избранное"
@@ -141,7 +131,6 @@ export default class PointPresenter {
     );
   };
 
-
   /**
    * Функция обработчик нажатия кнопки escape для закрытия формы редактирования
    */
@@ -153,7 +142,6 @@ export default class PointPresenter {
       document.removeEventListener('keydown', this.#escKeyDownHandler);
     }
   };
-
 
   /**
    * Функция обновления данных при нажатии SAVE
@@ -169,7 +157,6 @@ export default class PointPresenter {
       updatePoint
     );
   };
-
 
   /**
     *  Функция удаления элемента при нажатии DELETE

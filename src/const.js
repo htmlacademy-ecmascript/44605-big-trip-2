@@ -1,7 +1,24 @@
 const POINTS_COUNT = 3;
 const MIN_RANDOM_VALUE = 1;
 const MAX_RANDOM_VALUE = 100;
-
+const FILTERS = [
+  {
+    name: 'EVERYTHING',
+    count: 0
+  },
+  {
+    name: 'FUTURE',
+    count: 0
+  },
+  {
+    name: 'PRESENT',
+    count: 0
+  },
+  {
+    name: 'PAST',
+    count: 0
+  }
+];
 
 const DATE_FORMAT = {
   dayMonth: 'D MMM',
@@ -9,21 +26,11 @@ const DATE_FORMAT = {
   fullDate: 'DD/MM/YY HH:mm',
 };
 
-const POINTS_TYPE = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
-
-const FilterType = {
-  EVERYTHING: 'everything',
-  FUTURE: 'future',
-  PRESENT: 'present',
-  PAST: 'past',
-};
-const DEFAULT_FILTER_TYPE = FilterType.EVERYTHING;
-
 const StatusForm = {
   EDIT: 'edit',
   DEFAULT: 'default',
-};
 
+};
 const SortType = {
   DAY: 'day',
   TIME: 'time',
@@ -42,6 +49,14 @@ const UpdateType = {
   MAJOR: 'major',
 };
 
+const FilterType = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  PRESENT: 'present',
+  PAST: 'past',
+};
+
+
 const MurkupElement = {
   Everthing: '<p class="trip-events__msg">Click New Event to create your first point</p>',
   Past: 'There are no past events now',
@@ -49,4 +64,4 @@ const MurkupElement = {
   Future: 'There are no future events now',
 };
 
-export { POINTS_COUNT, MIN_RANDOM_VALUE, MAX_RANDOM_VALUE, DATE_FORMAT, POINTS_TYPE, FilterType, DEFAULT_FILTER_TYPE, MurkupElement, StatusForm, SortType, UserAction, UpdateType };
+export { POINTS_COUNT, MIN_RANDOM_VALUE, MAX_RANDOM_VALUE, FILTERS, DATE_FORMAT, FilterType, MurkupElement, StatusForm, SortType, UserAction, UpdateType };

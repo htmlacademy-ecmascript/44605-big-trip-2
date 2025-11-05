@@ -12,9 +12,9 @@ function createNewPoint() {
 export default class NewPointView extends AbstractView {
   #handleNewPointButton = null;
 
-  constructor({ onAddButtonClick }) {
+  constructor({ onNewPointButtonClick }) {
     super();
-    this.#handleNewPointButton = onAddButtonClick;
+    this.#handleNewPointButton = onNewPointButtonClick;
     this._restoreHandlers();
   }
 
