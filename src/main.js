@@ -1,3 +1,4 @@
+import { render } from './framework/render';
 import TripPresenter from './presenter/trip-presenter';
 import PointsModel from './model/points-model';
 import FilterPresenter from './presenter/filter-presenter';
