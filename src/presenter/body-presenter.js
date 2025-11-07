@@ -7,6 +7,7 @@ import { render, remove } from '../framework/render';
 import { SortType, UserAction, UpdateType } from '../const';
 import { sortingByPrice, sortingByDay, sortingByTime } from '../utils';
 import HeaderPresenter from './header-presenter';
+import { FilterType } from '../const';
 
 /**
  * @class Презентер списка точек маршрута и связанных UI-элементов (хедер, фильтры, сортировка).
@@ -18,8 +19,11 @@ export default class BodyPresenter {
   #tripSortComponent = null; // Компонент сортировки(список)
   #tripListComponent = null; // Компонент ul списка для размещения li(точек маршрута)
   #noPointView = null;
+  #newPointPresenter = null;
   #pointPresenters = new Map(); // MAP для хранения созданных презентеров Point
   #currentSortType = SortType.DAY; // Переменная для хранения текущей сортировки( по умолчанию DAY )
+  #currentFilter = FilterType.EVERYTHING;
+  #currentDate = new Date();
 
   /**
    * @constructor
@@ -39,11 +43,14 @@ export default class BodyPresenter {
   get points() {
     switch (this.#currentSortType) {
       case SortType.DAY:
-        return this.#pointsModel.points.sort(sortingByDay);
+        this.#pointsModel.points.sort(sortingByDay);
+        break;
       case SortType.TIME:
-        return this.#pointsModel.points.sort(sortingByTime); // Эта сортировка работает некорректно
+        this.#pointsModel.points.sort(sortingByTime); // Эта сортировка работает некорректно
+        break;
       case SortType.PRICE:
-        return this.#pointsModel.points.sort(sortingByPrice);
+        this.#pointsModel.points.sort(sortingByPrice);
+        break;
     }
     return this.#pointsModel.points;
   }
@@ -77,24 +84,52 @@ export default class BodyPresenter {
   #renderHeader() {
     // Создаю экземляр класса, передаю функции обработки клика
     const headerPresenter = new HeaderPresenter({
-      onFilterClick: () => { }, // console.log('filterClick'),
+      currentFilter: this.#currentFilter,
+      onFilterClick: this.#handleFilterChange,
       onNewPointClick: this.#handleNewPointButton
     });
     headerPresenter.init();
   }
 
   /**
+   * Функция-обработчик кнопки фильтрации
+   */
+  #handleFilterChange = (filterName) => {
+    if (this.#currentFilter === filterName) {
+      // console.log('Фильтры совпадают');
+      return;
+    }
+    this.#currentFilter = filterName;
+    this.#useFilter(this.#currentFilter);
+    // console.log('Фильтр ' + filterName);
+  };
+
+  #useFilter = (filter) => {
+    switch (filter) {
+      case FilterType.EVERYTHING:
+        return this.points;
+      case FilterType.FUTURE:
+        return this.points.filter((point) => point.dateFrom > this.#currentDate);
+      case FilterType.PRESENT:
+        return this.points.filter((point) => point.dateFrom === this.#currentDate);
+      case FilterType.PAST:
+        return this.points.filter((point) => point.dateFrom < this.#currentDate);
+    }
+    this.#handleModeChange(UpdateType.MAJOR);
+  };
+
+  /**
    * Функция-обработчик кнопки добавления новой точки маршрута
    */
   #handleNewPointButton = () => {
-    const newPointPresenter = new NewPointPresenter({
+    this.#newPointPresenter = new NewPointPresenter({
       pointListContainer: this.#tripListComponent.element,
       handleEditTypeChange: this.#handleCloseAllForm,
       handleDataChange: this.#handleViewAction,
     });
 
-    newPointPresenter.init(this.destinations, this.offers);
-    // this.#pointPresenters.set(defaultPoint.id, newPointPresenter); // Добавляем презентер в Map
+    this.#newPointPresenter.init(this.destinations, this.offers);
+    this.#pointPresenters.forEach((presenter) => presenter.resetViewToDefault());
   };
 
   /**
@@ -161,14 +196,16 @@ export default class BodyPresenter {
       return;
     }
     this.#currentSortType = sortType; // Присваиваю текущей сортировке новое значение из клика
-    this.#clearBoard();
-    this.#renderPoints();
+    this.#handleModeChange(UpdateType.MINOR);
   };
 
   /**
    * Функция для закрытия всех открытых форм редактирования - editPointView
    */
   #handleCloseAllForm = () => {
+    if (this.#newPointPresenter) {
+      this.#newPointPresenter.destroy();
+    }
     this.#pointPresenters.forEach((presenter) => presenter.resetViewToDefault());
   };
 

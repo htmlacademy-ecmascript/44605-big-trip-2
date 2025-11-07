@@ -57,17 +57,15 @@ export default class NewPointPresenter {
       render(this.#pointEditComponent, this.#pointListContainer, RenderPosition.AFTERBEGIN);
       document.addEventListener('keydown', this.#escKeyDownHandler);
     }
-
     remove(prevPointEditComponent);
   }
 
   destroy() {
     remove(this.#pointEditComponent);
+    this.#buttonNewPoint.disabled = false;
   }
 
-  // клик по стрелке для закрытия формы редактирования. Совместить с escape. Стрелки не будет
   #handleCloseNewPointForm = () => {
-    this.#buttonNewPoint.disabled = false;
     this.destroy();
   };
 

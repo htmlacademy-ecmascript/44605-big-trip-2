@@ -6,14 +6,16 @@ import { render, remove } from '../framework/render';
 export default class HeaderPresenter extends Observable {
   #tripMainContainer = document.querySelector('.trip-main'); // Контейнер Header для фильтров, карты маршрута, стоимости
   #tripFilterContainer = document.querySelector('.trip-controls__filters'); // Контейнер для списка Filter
+  #currentFilter = null;
   #filterChangeHandler = null; // Функция, приходит из BodyPresnter
   #newPointButtonHandler = null; // Функция, приходит из BodyPresnter
 
   #filterComponent = null;
   #buttonNewPointComponent = null;
 
-  constructor({ onFilterClick, onNewPointClick }) {
+  constructor({ currentFilter, onFilterClick, onNewPointClick }) {
     super();
+    this.#currentFilter = currentFilter;
     this.#filterChangeHandler = onFilterClick;
     this.#newPointButtonHandler = onNewPointClick;
   }
@@ -22,6 +24,7 @@ export default class HeaderPresenter extends Observable {
     // Создаю список фильтров
     this.#filterComponent =
       new TripFilter({
+        currentFilter: this.#currentFilter,
         onFilterClick: this.#filterChangeHandler
       });
     // Создаю кнопку добавления новой точки
@@ -38,7 +41,4 @@ export default class HeaderPresenter extends Observable {
     remove(this.#filterComponent);
     remove(this.#buttonNewPointComponent);
   }
-
-  #handleNewPointButton = () => {
-  };
 }

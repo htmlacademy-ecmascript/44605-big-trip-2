@@ -95,6 +95,7 @@ const mockPoints = [
 ];
 
 const defaultPoint = {
+  flag: 'default',
   basePrice: '',
   dateFrom: '',
   dateTo: '',

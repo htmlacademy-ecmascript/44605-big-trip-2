@@ -7,6 +7,8 @@ import { nanoid } from 'nanoid';
 
 function createEventPointEditTemplate(point, destinations, offers) {
 
+  const flagDefault = point.flag || false;
+
   const { dateFrom, dateTo, basePrice } = point;
 
   // Находим destination
@@ -19,13 +21,10 @@ function createEventPointEditTemplate(point, destinations, offers) {
   const availableOffers = offersOfTypePoints ? offersOfTypePoints.offers : [];
 
   // Получаем выбранные предложения для этой точки с учетом типа offers
-  // const selectedOffers = availableOffers.filter((offer) => point.offers ? point.offers.includes(offer.id) : false);
   const selectedOffers = point.offers || [];
 
   const dateStart = humanizeDate(dateFrom, DATE_FORMAT.fullDate);
-  // console.log(dateStart);
   const dateEnd = humanizeDate(dateTo, DATE_FORMAT.fullDate);
-  // console.log(dateStart);
 
   const offersContent = availableOffers.length > 0 ? `
                    <h3 class="event__section-title  event__section-title--offers">Offers</h3>
@@ -53,6 +52,12 @@ function createEventPointEditTemplate(point, destinations, offers) {
                             <img class="event__photo" src="${pic.src}" alt="${pic.description}">`).join('')}
                         </div>
                       </div>` : '';
+
+  const changeTextNewPointView = flagDefault ? `
+                  <button class="event__reset-btn" type="reset">Cancel</button>
+                  ` : `
+                  <button class="event__reset-btn" type="reset">Delete</button>
+                  <button class="event__rollup-btn" type="button">`;
 
   return `<form class="event event--edit" action="#" method="post">
                 <header class="event__header">
@@ -143,8 +148,7 @@ function createEventPointEditTemplate(point, destinations, offers) {
                   </div>
 
                   <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-                  <button class="event__reset-btn" type="reset">Delete</button>
-                  <button class="event__rollup-btn" type="button">
+                 ${changeTextNewPointView}
                     <span class="visually-hidden">Open event</span>
                   </button>
                 </header>
@@ -193,7 +197,6 @@ export default class TripPointEditView extends AbstractStatefulView {
 
   reset(point) {
     this.updateElement(TripPointEditView.parsePointToState(point));
-
   }
 
   removeElement() {
@@ -209,7 +212,7 @@ export default class TripPointEditView extends AbstractStatefulView {
   }
 
   _restoreHandlers() {
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#formArrowHandler); // Обработчик стрелки закрытия формы редактирования
+    this.element.querySelector('.event__rollup-btn')?.addEventListener('click', this.#formArrowHandler); // Обработчик стрелки закрытия формы редактирования
     this.element.querySelector('.event__type-list').addEventListener('click', this.#handleTypeChange); // Обработчик выбора типа поездки
     this.element.querySelector('.event__save-btn').addEventListener('click', this.#handleSaveButton); // Обработчик кнопки сохранения
     this.element.querySelector('.event__input--destination').addEventListener('input', this.#handleDestinationsChange); // Обработчик пункта назначения
@@ -278,12 +281,14 @@ export default class TripPointEditView extends AbstractStatefulView {
       this._setState({ offers: offerIds });
     }
     this.#point = TripPointEditView.parseStateToPoint(this._state);
+    if (Object.keys(this.#point).includes('flag')) {
+      delete this.#point.flag;
+    }
     this.#formSaveButtonHandler({
       id: nanoid(),
       ...this.#point
     });
   };
-
 
   #handleTypeChange = (evt) => {
     if (evt.target.tagName !== 'INPUT') {

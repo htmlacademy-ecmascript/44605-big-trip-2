@@ -1,24 +1,25 @@
 import AbstractView from '../framework/view/abstract-view.js';
+import { FilterType } from '../const.js';
 
-function createTripFilterComponent() {
+function createTripFilterComponent(filter) {
   return `<form class="trip-filters" action="#" method="get">
                 <div class="trip-filters__filter">
-                  <input id="filter-everything" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="everything" checked>
+                  <input id="filter-everything" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="everything" data-filter-type = "${FilterType.EVERYTHING}" ${filter === FilterType.EVERYTHING ? 'checked' : ''}>
                   <label class="trip-filters__filter-label" for="filter-everything">Everything</label>
                 </div>
 
                 <div class="trip-filters__filter">
-                  <input id="filter-future" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="future">
+                  <input id="filter-future" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="future" data-filter-type = "${FilterType.FUTURE}" ${filter === FilterType.FUTURE ? 'checked' : ''}>
                   <label class="trip-filters__filter-label" for="filter-future">Future</label>
                 </div>
 
                 <div class="trip-filters__filter">
-                  <input id="filter-present" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="present">
+                  <input id="filter-present" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="present" data-filter-type = "${FilterType.PRESENT}" ${filter === FilterType.PRESENT ? 'checked' : ''}>
                   <label class="trip-filters__filter-label" for="filter-present">Present</label>
                 </div>
 
                 <div class="trip-filters__filter">
-                  <input id="filter-past" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="past">
+                  <input id="filter-past" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="past" data-filter-type="${FilterType.PAST}" ${filter === FilterType.PAST ? 'checked' : ''}>
                   <label class="trip-filters__filter-label" for="filter-past">Past</label>
                 </div>
 
@@ -28,16 +29,18 @@ function createTripFilterComponent() {
 
 export default class TripFilter extends AbstractView {
   #filterChangeHandler = null;
+  #currentFilter = null;
 
-  constructor({ onFilterClick }) {
+  constructor({ currentFilter, onFilterClick }) {
     super();
+    this.#currentFilter = currentFilter;
     this.#filterChangeHandler = onFilterClick;
 
     this._restoreHandlers();
   }
 
   get template() {
-    return createTripFilterComponent();
+    return createTripFilterComponent(this.#currentFilter);
   }
 
   _restoreHandlers() {
@@ -48,6 +51,6 @@ export default class TripFilter extends AbstractView {
     if (evt.target.tagName !== 'INPUT') {
       return;
     }
-    this.#filterChangeHandler();
+    this.#filterChangeHandler(evt.target.dataset.filterType);
   };
 }
