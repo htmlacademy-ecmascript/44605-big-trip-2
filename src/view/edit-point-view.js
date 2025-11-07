@@ -3,6 +3,7 @@ import { DATE_FORMAT } from '../const';
 import { humanizeDate } from '../utils';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
+import { nanoid } from 'nanoid';
 
 function createEventPointEditTemplate(point, destinations, offers) {
 
@@ -41,11 +42,11 @@ function createEventPointEditTemplate(point, destinations, offers) {
                         </div>`).join('')}
                     </div>` : '';
 
-  const destinationContent = pointDestination.description ? `
+  const destinationContent = pointDestination?.description ? `
                     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
                     <p class="event__destination-description">${pointDestination.description}</p>` : '';
 
-  const destinationPhoto = pointDestination.pictures.length > 0 ? `
+  const destinationPhoto = pointDestination?.pictures.length > 0 ? `
                       <div class="event__photos-container">
                         <div class="event__photos-tape">
                           ${pointDestination.pictures.map((pic) => `
@@ -118,7 +119,7 @@ function createEventPointEditTemplate(point, destinations, offers) {
                     <label class="event__label  event__type-output" for="event-destination-1">
                       ${point.type}
                     </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${pointDestination.name}" list="destination-list-1">
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${pointDestination ? pointDestination.name : ''}" list="destination-list-1">
                     <datalist id="destination-list-1">
                     ${destinations.map((destination) => `
                        <option value='${destination.name}'></option>`)}
@@ -277,7 +278,10 @@ export default class TripPointEditView extends AbstractStatefulView {
       this._setState({ offers: offerIds });
     }
     this.#point = TripPointEditView.parseStateToPoint(this._state);
-    this.#formSaveButtonHandler(this.#point);
+    this.#formSaveButtonHandler({
+      id: nanoid(),
+      ...this.#point
+    });
   };
 
 

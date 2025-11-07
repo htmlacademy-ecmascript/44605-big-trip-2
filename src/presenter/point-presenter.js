@@ -1,7 +1,8 @@
 import TripPointView from '../view/point-view';
 import TripPointEditView from '../view/edit-point-view';
-import { render, replace, remove } from '../framework/render';
+import { render, replace, remove, RenderPosition } from '../framework/render';
 import { StatusForm, UserAction, UpdateType } from '../const';
+import { defaultPoint } from '../mock/points';
 
 /**
  * @class Презентер управления одной точкой маршрута: карточка + форма редактирования.
@@ -33,7 +34,7 @@ export default class PointPresenter {
   /**
    * Метод инициализации PointPresenter
    */
-  init(point, destinations, offers) {
+  init(destinations, offers, point = defaultPoint) {
     this.#point = point;
     this.#destinations = destinations;
     this.#offers = offers;
@@ -57,6 +58,12 @@ export default class PointPresenter {
       onSaveFormButtonClick: this.#handleSaveButton,
       onDeletePointButtonClick: this.#handleDeleteButton,
     });
+
+    if (this.#point === defaultPoint) {
+
+      render(this.#pointComponent, this.#pointListContainer, RenderPosition.AFTERBEGIN);
+      return;
+    }
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
       render(this.#pointComponent, this.#pointListContainer);
@@ -102,7 +109,7 @@ export default class PointPresenter {
   }
 
   /**
-   *  Фнукиця закрытия компонента редактирования
+   *  Функиця закрытия компонента редактирования
    */
   #replaceFormToCard() {
     replace(this.#pointComponent, this.#pointEditComponent);

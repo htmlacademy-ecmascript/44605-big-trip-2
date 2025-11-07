@@ -1,6 +1,7 @@
 import TripSort from '../view/sort-view';
 import NoPointView from '../view/no-point-view';
 import PointPresenter from './point-presenter';
+import NewPointPresenter from './new-point-presenter';
 import TripPointListView from '../view/event-list-view';
 import { render, remove } from '../framework/render';
 import { SortType, UserAction, UpdateType } from '../const';
@@ -16,6 +17,7 @@ export default class BodyPresenter {
 
   #tripSortComponent = null; // Компонент сортировки(список)
   #tripListComponent = null; // Компонент ul списка для размещения li(точек маршрута)
+  #noPointView = null;
   #pointPresenters = new Map(); // MAP для хранения созданных презентеров Point
   #currentSortType = SortType.DAY; // Переменная для хранения текущей сортировки( по умолчанию DAY )
 
@@ -73,12 +75,27 @@ export default class BodyPresenter {
    * Метод отрисовки "шапки" сайта
    */
   #renderHeader() {
+    // Создаю экземляр класса, передаю функции обработки клика
     const headerPresenter = new HeaderPresenter({
-      onFilterClick: () => console.log('filterClick'),
-      onNewPointClick: () => console.log('newButtonClick')
+      onFilterClick: () => { }, // console.log('filterClick'),
+      onNewPointClick: this.#handleNewPointButton
     });
     headerPresenter.init();
   }
+
+  /**
+   * Функция-обработчик кнопки добавления новой точки маршрута
+   */
+  #handleNewPointButton = () => {
+    const newPointPresenter = new NewPointPresenter({
+      pointListContainer: this.#tripListComponent.element,
+      handleEditTypeChange: this.#handleCloseAllForm,
+      handleDataChange: this.#handleViewAction,
+    });
+
+    newPointPresenter.init(this.destinations, this.offers);
+    // this.#pointPresenters.set(defaultPoint.id, newPointPresenter); // Добавляем презентер в Map
+  };
 
   /**
    *  Метод отрисовки пустой страницы, если массив точек маршрута пуст
@@ -87,13 +104,13 @@ export default class BodyPresenter {
     if (this.#tripSortComponent !== null) {
       remove(this.#tripSortComponent);
     }
-
-    render(new NoPointView(), this.#tripContainer);
+    this.#noPointView = new NoPointView();
+    render(this.#noPointView, this.#tripContainer);
     // В дополнении делаем недоступными для клика все кнопки фильтрации
-    const filterInputs = document.querySelectorAll('.trip-filters__filter-input');
-    filterInputs.forEach((input) => {
-      input.disabled = true;
-    });
+    // const filterInputs = document.querySelectorAll('.trip-filters__filter-input');
+    // filterInputs.forEach((input) => {
+    //   input.disabled = true;
+    // });
   }
 
   /**
@@ -126,7 +143,7 @@ export default class BodyPresenter {
           handleDataChange: this.#handleViewAction,
         });
 
-        pointPresenter.init(this.points[i], this.destinations, this.offers);
+        pointPresenter.init(this.destinations, this.offers, this.points[i]);
         this.#pointPresenters.set(this.points[i].id, pointPresenter); // Добавляем презентер в Map
       }
     } else {
@@ -192,7 +209,7 @@ export default class BodyPresenter {
     switch (updateType) {
 
       case UpdateType.PATCH: // Обновить часть списка(одну точку маршрута)
-        this.#pointPresenters.get(data.id).init(data, this.destinations, this.offers);
+        this.#pointPresenters.get(data.id).init(this.destinations, this.offers, data);
         break;
 
       case UpdateType.MINOR: // Обновить список (например, когда произошло удаление задачи или изменилась дата)

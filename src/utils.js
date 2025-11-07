@@ -28,8 +28,8 @@ function sortingByPrice(a, b) {
 }
 
 function sortingByTime(a, b) {
-  const dateA = dayjs(a.dateFrom).valueOf();
-  const dateB = dayjs(b.dateFrom).valueOf();
+  const dateA = dayjs(a.dateTo).valueOf() - dayjs(a.dateFrom).valueOf();
+  const dateB = dayjs(b.dateTo).valueOf() - dayjs(b.dateFrom).valueOf();
   return dateB - dateA;
 }
 
