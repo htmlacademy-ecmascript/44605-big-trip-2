@@ -1,5 +1,5 @@
-import TripPointView from '../view/point-view';
-import TripPointEditView from '../view/edit-point-view';
+import PointView from '../view/point-view';
+import TripPointEditView from '../view/point-edit-view';
 import { render, replace, remove, RenderPosition } from '../framework/render';
 import { StatusForm, UserAction, UpdateType } from '../const';
 import { defaultPoint } from '../mock/points';
@@ -42,7 +42,7 @@ export default class PointPresenter {
     const prevPointComponent = this.#pointComponent;
     const prevPointEditComponent = this.#pointEditComponent;
 
-    this.#pointComponent = new TripPointView({
+    this.#pointComponent = new PointView({
       point: this.#point,
       destinations: this.#destinations,
       offers: this.#offers,
@@ -60,7 +60,6 @@ export default class PointPresenter {
     });
 
     if (this.#point === defaultPoint) {
-
       render(this.#pointComponent, this.#pointListContainer, RenderPosition.AFTERBEGIN);
       return;
     }

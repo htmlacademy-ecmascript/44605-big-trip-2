@@ -1,4 +1,4 @@
-import TripPointEditView from '../view/edit-point-view';
+import TripPointEditView from '../view/point-edit-view';
 import { render, remove, RenderPosition } from '../framework/render';
 import { StatusForm, UserAction, UpdateType } from '../const';
 import { defaultPoint } from '../mock/points';

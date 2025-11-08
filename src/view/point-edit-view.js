@@ -1,12 +1,13 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
-import { DATE_FORMAT } from '../const';
-import { humanizeDate } from '../utils';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import { nanoid } from 'nanoid';
+import { DATE_FORMAT } from '../const';
+import { humanizeDate } from '../utils';
 
 function createEventPointEditTemplate(point, destinations, offers) {
 
+  // Флаг есть только у объекта точки по умолчанию. Нужен для изменения разметки компонента. В конце будет удален.
   const flagDefault = point.flag || false;
 
   const { dateFrom, dateTo, basePrice } = point;
@@ -167,7 +168,10 @@ function createEventPointEditTemplate(point, destinations, offers) {
               </form>`;
 }
 
-export default class TripPointEditView extends AbstractStatefulView {
+/**
+ * @class Класс для создания компонента формы редактирования точки маршрута
+ */
+export default class PointEditView extends AbstractStatefulView {
   #point = null;
   #destinations = null;
   #offers = null;
@@ -177,11 +181,20 @@ export default class TripPointEditView extends AbstractStatefulView {
   #datePickerTo = null;
   #deleteButtonHandler = null;
 
-
+  /**
+   * @constructor
+   * @param {Object} params
+   * @param {Object} params.point - Данные точки маршрута
+   * @param {Array} params.destinations - Массив направлений
+   * @param {Array} params.offers - Массив предложений
+   * @param {Function} params.onCloseEditFormButtonClick - Функция для автоматичечского закрытия форм редактирования при открытии новой формы редактирования
+   * @param {Function} params.onSaveFormButtonClick - Функция для сохранения данных из формы редактирования
+   * @param {Function} params.onDeletePointButtonClick - Функция для удаления точки маршрута
+   */
   constructor({ point, destinations, offers, onCloseEditFormButtonClick, onSaveFormButtonClick, onDeletePointButtonClick }) {
     super();
     this.#point = point;
-    this._setState(TripPointEditView.parsePointToState(this.#point)); // Обновляю состояние _state с помощью спред-оператора разворачиваю объект Point
+    this._setState(PointEditView.parsePointToState(this.#point)); // Обновляю состояние _state с помощью спред-оператора разворачиваю объект Point
     this.#destinations = destinations;
     this.#offers = offers;
     this.#formArrowHandler = onCloseEditFormButtonClick;
@@ -195,8 +208,12 @@ export default class TripPointEditView extends AbstractStatefulView {
     return createEventPointEditTemplate(this._state, this.#destinations, this.#offers);
   }
 
+  /**
+   * Функция сбрасывает введенные значения до значений точки до редактирования
+   * @param {Object} point - Объект данных точки маршрута
+   */
   reset(point) {
-    this.updateElement(TripPointEditView.parsePointToState(point));
+    this.updateElement(PointEditView.parsePointToState(point));
   }
 
   removeElement() {
@@ -220,6 +237,45 @@ export default class TripPointEditView extends AbstractStatefulView {
     this.element.querySelector('.event__reset-btn').addEventListener('click', this.#handleDeleteButton);
     this.#setDatePicker();
   }
+
+  #handleTypeChange = (evt) => {
+    if (evt.target.tagName !== 'INPUT') {
+      return;
+    }
+    this.updateElement({ type: evt.target.value });
+  };
+
+  #handleSaveButton = (evt) => {
+    evt.preventDefault();
+    const checkedOffers = document.querySelector('.event__available-offers')?.querySelectorAll('input[type="checkbox"]:checked');
+    if (checkedOffers) {
+      const offerIds = Array.from(checkedOffers).map((checkbox) => checkbox.dataset.offerId);
+      this._setState({ offers: offerIds });
+    }
+    this.#point = PointEditView.parseStateToPoint(this._state);
+    if (Object.keys(this.#point).includes('flag')) {
+      delete this.#point.flag;
+    }
+    this.#formSaveButtonHandler({
+      id: nanoid(),
+      ...this.#point
+    });
+  };
+
+  #handleDestinationsChange = (evt) => {
+    const destinationInput = this.#destinations.find((element) => element.name === evt.target.value);
+    if (destinationInput) {
+      this.updateElement({ destination: destinationInput.id });
+    }
+  };
+
+  #handlePriceChange = (evt) => {
+    this._setState({ basePrice: evt.target.value });
+  };
+
+  #handleDeleteButton = () => {
+    this.#deleteButtonHandler();
+  };
 
   #setDatePicker = () => {
     const [dateFromElement, dateToElement] = this.element.querySelectorAll('.event__input--time');
@@ -256,45 +312,6 @@ export default class TripPointEditView extends AbstractStatefulView {
     const iso = userDate ? userDate.toISOString() : '';
     this._setState({ dateTo: iso });
     this.#datePickerFrom.set('maxDate', iso);
-  };
-
-  #handlePriceChange = (evt) => {
-    this._setState({ basePrice: evt.target.value });
-  };
-
-  #handleDestinationsChange = (evt) => {
-    const destinationInput = this.#destinations.find((element) => element.name === evt.target.value);
-    if (destinationInput) {
-      this.updateElement({ destination: destinationInput.id });
-    }
-  };
-
-  #handleDeleteButton = () => {
-    this.#deleteButtonHandler();
-  };
-
-  #handleSaveButton = (evt) => {
-    evt.preventDefault();
-    const checkedOffers = document.querySelector('.event__available-offers')?.querySelectorAll('input[type="checkbox"]:checked');
-    if (checkedOffers) {
-      const offerIds = Array.from(checkedOffers).map((checkbox) => checkbox.dataset.offerId);
-      this._setState({ offers: offerIds });
-    }
-    this.#point = TripPointEditView.parseStateToPoint(this._state);
-    if (Object.keys(this.#point).includes('flag')) {
-      delete this.#point.flag;
-    }
-    this.#formSaveButtonHandler({
-      id: nanoid(),
-      ...this.#point
-    });
-  };
-
-  #handleTypeChange = (evt) => {
-    if (evt.target.tagName !== 'INPUT') {
-      return;
-    }
-    this.updateElement({ type: evt.target.value });
   };
 
   static parsePointToState(point) {

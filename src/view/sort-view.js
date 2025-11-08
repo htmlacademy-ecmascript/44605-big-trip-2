@@ -30,14 +30,23 @@ function createTripSortComponent(currentSortType) {
           </form>`;
 }
 
-export default class TripSort extends AbstractView {
+/**
+ * @class Класс для создания компонента сортировки
+ */
+export default class SortView extends AbstractView {
   #currentSortType = null;
   #onSortType = null;
 
+  /**
+   * @constructor
+   * @param {Object} params
+   * @param {String} params.currentSortType - Выбранный тип сортировки
+   * @param {Function} params.onSortTypeChange - Функция-обработчик, реагирует на изменение типа сортировки (DAY / PRICE / TIME)
+   */
   constructor({ currentSortType, onSortTypeChange }) {
     super();
     this.#currentSortType = currentSortType;
-    this.#onSortType = onSortTypeChange; // Функция сортировки, приходит из TripPresenter
+    this.#onSortType = onSortTypeChange;
 
     this._restoreHandlers();
   }
@@ -50,6 +59,11 @@ export default class TripSort extends AbstractView {
     this.element.addEventListener('click', this.#onButtonSortclick);
   }
 
+  /**
+   * Функиця-обработчик клика на компоненте сортировки
+   * @param {*} evt Событие клика пользователя на странице
+   * @description Передает выбранную сортировку в презентер
+   */
   #onButtonSortclick = (evt) => {
     if (evt.target.tagName !== 'INPUT') {
       return;

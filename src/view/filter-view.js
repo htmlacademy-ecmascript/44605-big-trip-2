@@ -27,15 +27,14 @@ function createTripFilterComponent(filter) {
               </form>`;
 }
 
-export default class TripFilter extends AbstractView {
-  #filterChangeHandler = null;
+export default class Filter extends AbstractView {
   #currentFilter = null;
+  #filterChangeHandler = null;
 
   constructor({ currentFilter, onFilterClick }) {
     super();
     this.#currentFilter = currentFilter;
     this.#filterChangeHandler = onFilterClick;
-
     this._restoreHandlers();
   }
 
@@ -51,6 +50,7 @@ export default class TripFilter extends AbstractView {
     if (evt.target.tagName !== 'INPUT') {
       return;
     }
+    evt.preventDefault();
     this.#filterChangeHandler(evt.target.dataset.filterType);
   };
 }

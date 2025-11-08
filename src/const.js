@@ -1,4 +1,4 @@
-const POINTS_COUNT = 3;
+const POINTS_COUNT = 1;
 const MIN_RANDOM_VALUE = 1;
 const MAX_RANDOM_VALUE = 100;
 const FILTERS = [
@@ -50,18 +50,18 @@ const UpdateType = {
 };
 
 const FilterType = {
-  EVERYTHING: 'everything',
-  FUTURE: 'future',
-  PRESENT: 'present',
-  PAST: 'past',
+  EVERYTHING: 'Everything',
+  FUTURE: 'Future',
+  PRESENT: 'Present',
+  PAST: 'Past',
 };
 
 
 const MurkupElement = {
-  Everthing: '<p class="trip-events__msg">Click New Event to create your first point</p>',
-  Past: 'There are no past events now',
-  Present: 'There are no present events now',
-  Future: 'There are no future events now',
+  Everything: '<p class="trip-events__msg">Click New Event to create your first point</p>',
+  Past: '<p class="trip-events__msg">There are no past events now</p>',
+  Present: '<p class="trip-events__msg">There are no present events now</p>',
+  Future: '<p class="trip-events__msg">There are no future events now</p>',
 };
 
 export { POINTS_COUNT, MIN_RANDOM_VALUE, MAX_RANDOM_VALUE, FILTERS, DATE_FORMAT, FilterType, MurkupElement, StatusForm, SortType, UserAction, UpdateType };

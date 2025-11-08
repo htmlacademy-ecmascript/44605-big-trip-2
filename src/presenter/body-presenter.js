@@ -1,13 +1,14 @@
-import TripSort from '../view/sort-view';
+import SortView from '../view/sort-view';
 import NoPointView from '../view/no-point-view';
+import PointListView from '../view/point-list-view';
+
 import PointPresenter from './point-presenter';
-import NewPointPresenter from './new-point-presenter';
-import TripPointListView from '../view/event-list-view';
-import { render, remove } from '../framework/render';
-import { SortType, UserAction, UpdateType } from '../const';
-import { sortingByPrice, sortingByDay, sortingByTime } from '../utils';
 import HeaderPresenter from './header-presenter';
-import { FilterType } from '../const';
+import NewPointPresenter from './new-point-presenter';
+
+import { render, remove, replace } from '../framework/render';
+import { sortingByPrice, sortingByDay, sortingByTime, filterPoints } from '../utils';
+import { SortType, UserAction, UpdateType } from '../const';
 
 /**
  * @class Презентер списка точек маршрута и связанных UI-элементов (хедер, фильтры, сортировка).
@@ -15,6 +16,7 @@ import { FilterType } from '../const';
 export default class BodyPresenter {
   #tripContainer = null; // Контейнер для общего презентера(получаем в main.js)
   #pointsModel = null; // Модель общая (инициализируем в main.js)
+  #filterModel = null; // Модель фильтров
 
   #tripSortComponent = null; // Компонент сортировки(список)
   #tripListComponent = null; // Компонент ul списка для размещения li(точек маршрута)
@@ -22,37 +24,48 @@ export default class BodyPresenter {
   #newPointPresenter = null;
   #pointPresenters = new Map(); // MAP для хранения созданных презентеров Point
   #currentSortType = SortType.DAY; // Переменная для хранения текущей сортировки( по умолчанию DAY )
-  #currentFilter = FilterType.EVERYTHING;
+  #currentFilter = null;
   #currentDate = new Date();
+  #filteredPoints = null;
 
   /**
    * @constructor
-   * @param  tripContainer Контейнер для списка точек (область `.trip-events`)
-   * @param  pointsModel Модель с данными точек, направлений и офферов
+   * @param tripContainer Контейнер для списка точек (область `.trip-events`)
+   * @param pointsModel Модель с данными точек, направлений и офферов
+   * @param filterModel Модель с фильтрами
    */
-  constructor(tripContainer, pointsModel) {
+  constructor(tripContainer, pointsModel, filterModel) {
     this.#tripContainer = tripContainer;
     this.#pointsModel = pointsModel;
+    this.#filterModel = filterModel;
 
-    this.#pointsModel.addObserver(this.#handleModeChange); // Подписываемся на событие изменения модели
+    this.#pointsModel.addObserver(this.#handleModelChange); // Подписываемся на событие изменения модели
   }
 
   /**
-   *  Геттер презентера для получения массива точек с учетом сортировки
+   * Геттер презентера для получения массива точек с учетом сортировки
    */
   get points() {
+
+    this.#currentFilter = this.#filterModel.filter;
+    this.#filteredPoints = filterPoints(this.#pointsModel.points, this.#currentFilter);
+
     switch (this.#currentSortType) {
+
       case SortType.DAY:
-        this.#pointsModel.points.sort(sortingByDay);
+        // this.#pointsModel.points.sort(sortingByDay);
+        this.#filteredPoints.sort(sortingByDay);
         break;
+
       case SortType.TIME:
-        this.#pointsModel.points.sort(sortingByTime); // Эта сортировка работает некорректно
+        this.#filteredPoints.sort(sortingByTime); // Эта сортировка работает некорректно
         break;
+
       case SortType.PRICE:
-        this.#pointsModel.points.sort(sortingByPrice);
+        this.#filteredPoints.sort(sortingByPrice);
         break;
     }
-    return this.#pointsModel.points;
+    return this.#filteredPoints;
   }
 
   /**
@@ -73,18 +86,17 @@ export default class BodyPresenter {
    * Метод инициализации BodyPresenter
    */
   init() {
-    this.#renderHeader();
-    this.#renderSortComponent();
+    this.#renderHeaderComponent();
     this.#renderPoints();
   }
 
   /**
    * Метод отрисовки "шапки" сайта
    */
-  #renderHeader() {
+  #renderHeaderComponent() {
     // Создаю экземляр класса, передаю функции обработки клика
     const headerPresenter = new HeaderPresenter({
-      currentFilter: this.#currentFilter,
+      filterModel: this.#filterModel,
       onFilterClick: this.#handleFilterChange,
       onNewPointClick: this.#handleNewPointButton
     });
@@ -92,74 +104,21 @@ export default class BodyPresenter {
   }
 
   /**
-   * Функция-обработчик кнопки фильтрации
-   */
-  #handleFilterChange = (filterName) => {
-    if (this.#currentFilter === filterName) {
-      // console.log('Фильтры совпадают');
-      return;
-    }
-    this.#currentFilter = filterName;
-    this.#useFilter(this.#currentFilter);
-    // console.log('Фильтр ' + filterName);
-  };
-
-  #useFilter = (filter) => {
-    switch (filter) {
-      case FilterType.EVERYTHING:
-        return this.points;
-      case FilterType.FUTURE:
-        return this.points.filter((point) => point.dateFrom > this.#currentDate);
-      case FilterType.PRESENT:
-        return this.points.filter((point) => point.dateFrom === this.#currentDate);
-      case FilterType.PAST:
-        return this.points.filter((point) => point.dateFrom < this.#currentDate);
-    }
-    this.#handleModeChange(UpdateType.MAJOR);
-  };
-
-  /**
-   * Функция-обработчик кнопки добавления новой точки маршрута
-   */
-  #handleNewPointButton = () => {
-    this.#newPointPresenter = new NewPointPresenter({
-      pointListContainer: this.#tripListComponent.element,
-      handleEditTypeChange: this.#handleCloseAllForm,
-      handleDataChange: this.#handleViewAction,
-    });
-
-    this.#newPointPresenter.init(this.destinations, this.offers);
-    this.#pointPresenters.forEach((presenter) => presenter.resetViewToDefault());
-  };
-
-  /**
-   *  Метод отрисовки пустой страницы, если массив точек маршрута пуст
-   */
-  #renderEmptyPage() {
-    if (this.#tripSortComponent !== null) {
-      remove(this.#tripSortComponent);
-    }
-    this.#noPointView = new NoPointView();
-    render(this.#noPointView, this.#tripContainer);
-    // В дополнении делаем недоступными для клика все кнопки фильтрации
-    // const filterInputs = document.querySelectorAll('.trip-filters__filter-input');
-    // filterInputs.forEach((input) => {
-    //   input.disabled = true;
-    // });
-  }
-
-  /**
-   *  Метод отрисовки компонента сортировки
-   * @param onSortTypeChange - Функция обработчик изменения типа сортировки
+   * Метод отрисовки компонента сортировки
    */
   #renderSortComponent() {
-    // Инициализирую компонент сортировки(Передаю в конструктор функцию-обработчик клика)
-    this.#tripSortComponent = new TripSort({
+    const prevSortComponent = this.#tripSortComponent;
+
+    this.#tripSortComponent = new SortView({
       currentSortType: this.#currentSortType,
       onSortTypeChange: this.#handleSortTypeChange
     });
-
-    render(this.#tripSortComponent, this.#tripContainer);
+    if (prevSortComponent === null) {
+      render(this.#tripSortComponent, this.#tripContainer);
+      return;
+    }
+    replace(this.#tripSortComponent, prevSortComponent);
+    remove(prevSortComponent);
   }
 
   /**
@@ -167,8 +126,14 @@ export default class BodyPresenter {
    */
   #renderPoints() {
     if (this.points.length !== 0) {
+      if (this.#noPointView !== null) {
+        remove(this.#noPointView);
+        this.#noPointView = null;
+      }
+      this.#renderSortComponent();
+
       if (this.#tripListComponent === null) {
-        this.#tripListComponent = new TripPointListView();
+        this.#tripListComponent = new PointListView();
         render(this.#tripListComponent, this.#tripContainer);
       }
       for (let i = 0; i < this.points.length; i++) {
@@ -187,6 +152,65 @@ export default class BodyPresenter {
   }
 
   /**
+   * Метод отрисовки пустой страницы, если массив точек маршрута пуст
+   */
+  #renderEmptyPage() {
+    if (this.#tripSortComponent !== null) {
+      remove(this.#tripSortComponent);
+      this.#tripSortComponent = null;
+    }
+    if (this.#tripListComponent !== null) {
+      remove(this.#tripListComponent);
+      this.#tripListComponent = null;
+    }
+
+    const prevEmptyPage = this.#noPointView;
+    this.#noPointView = new NoPointView(this.#currentFilter);
+    if (prevEmptyPage === null) {
+      render(this.#noPointView, this.#tripContainer);
+      return;
+    }
+    replace(this.#noPointView, prevEmptyPage);
+    remove(prevEmptyPage);
+
+
+  }
+
+  /**
+   * Функция-обработчик кнопки фильтрации
+   */
+  #handleFilterChange = (filterName) => {
+
+    this.#currentSortType = SortType.DAY;
+    this.#currentFilter = filterName;
+    this.#handleModelChange(UpdateType.MAJOR);
+  };
+
+  /**
+   * Функция-обработчик кнопки добавления новой точки маршрута
+   */
+  #handleNewPointButton = () => {
+    if (this.#noPointView !== null) {
+      remove(this.#noPointView);
+      this.#noPointView = null;
+    }
+    this.#renderSortComponent();
+
+    if (this.#tripListComponent === null) {
+      this.#tripListComponent = new PointListView();
+      render(this.#tripListComponent, this.#tripContainer);
+    }
+    this.#newPointPresenter = new NewPointPresenter({
+      pointListContainer: this.#tripListComponent.element,
+      handleEditTypeChange: this.#handleCloseAllForm,
+      handleDataChange: this.#handleViewAction,
+    });
+
+    this.#newPointPresenter.init(this.destinations, this.offers);
+    this.#pointPresenters.forEach((presenter) => presenter.resetViewToDefault());
+  };
+
+  /**
   * Функция обработчик клика сортировки
   * @param sortType - Тип сортировки, выбранный пользователем
   * @description При клике на сортировку происходит очистка "доски" и заново рендерятся точки, с учетом новой сортировки
@@ -196,7 +220,7 @@ export default class BodyPresenter {
       return;
     }
     this.#currentSortType = sortType; // Присваиваю текущей сортировке новое значение из клика
-    this.#handleModeChange(UpdateType.MINOR);
+    this.#handleModelChange(UpdateType.MINOR);
   };
 
   /**
@@ -210,27 +234,24 @@ export default class BodyPresenter {
   };
 
   /**
-   * Функция очистки "доски" от созданных ранее точек и их презентеров
-   */
-  #clearBoard = () => {
-    this.#pointPresenters.forEach((presenter) => presenter.destroy());
-    this.#pointPresenters.clear();
-  };
-
-  /**
-   * Функция-обработчик, будет реагировать на действия пользователя
+   * Функция-обработчик, будет реагировать на изменение View
    * @param {*} actionType - Действие пользователя
    * @param {*} updateType - Тип обновления
    * @param {*} update - Обновленный объект точки маршрута
+   * @description Когда пользователь изменяет интерфейс, создает/удаляет/меняет/фильтрует -
+   * данная функция указывает, что необходимо сделать с моделью точек маршрута
    */
   #handleViewAction = (actionType, updateType, update) => {
     switch (actionType) {
+
       case UserAction.ADD_POINT:
         this.#pointsModel.addPoint(updateType, update);
         break;
+
       case UserAction.DELETE_POINT:
         this.#pointsModel.deletePoint(updateType, update);
         break;
+
       case UserAction.UPDATE_POINT:
         this.#pointsModel.updatePoints(updateType, update);
         break;
@@ -241,8 +262,12 @@ export default class BodyPresenter {
   * Функция-обработчик, будет реагировать на изменение модели
   * @param {string} updateType - Тип обновления
   * @param {object} data - Обновленный объект точки маршрута
+  * @description При любом изменении модели будет вызвана эта функция, так как она добавлена в Observer.
+  * Когда мы добавляем/удаляем/создаем новую точку маршрута мы вызываем функцию handleViewAction,
+  * которая в свою очередь обновляет модель, а модель при обновлении вызывает метод _notify().
+  * Этот метод проходит по всем функциям из Observer и вызывает их с аргументами
   */
-  #handleModeChange = (updateType, data) => {
+  #handleModelChange = (updateType, data) => {
     switch (updateType) {
 
       case UpdateType.PATCH: // Обновить часть списка(одну точку маршрута)
@@ -259,5 +284,13 @@ export default class BodyPresenter {
         this.#renderPoints();
         break;
     }
+  };
+
+  /**
+   * Функция очистки "доски" от созданных ранее точек и их презентеров
+   */
+  #clearBoard = () => {
+    this.#pointPresenters.forEach((presenter) => presenter.destroy());
+    this.#pointPresenters.clear();
   };
 }
