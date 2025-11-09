@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view';
-import { FilterType, MurkupElement } from '../const';
+import { MurkupElement } from '../const';
 
 function createEmptyPointComponent(filter) {
   return MurkupElement[filter];

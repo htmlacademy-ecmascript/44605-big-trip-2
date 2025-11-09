@@ -96,13 +96,13 @@ const mockPoints = [
 
 const defaultPoint = {
   flag: 'default',
-  basePrice: '',
+  basePrice: '0',
   dateFrom: '',
   dateTo: '',
   destination: '',
   isFavorite: false,
   offers: [],
-  type: '',
+  type: 'flight',
 };
 
 function getRandomPoints() {

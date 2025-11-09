@@ -1,4 +1,4 @@
-const POINTS_COUNT = 1;
+const POINTS_COUNT = 3;
 const MIN_RANDOM_VALUE = 1;
 const MAX_RANDOM_VALUE = 100;
 const FILTERS = [

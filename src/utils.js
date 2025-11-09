@@ -42,7 +42,7 @@ const filterPoints = (points, filterType) => {
       return points.filter((point) => {
         const dateFrom = dayjs(point.dateFrom);
         const dateTo = dayjs(point.dateTo);
-        return dateFrom.isBefore(nowDate) || dateFrom.isSame(nowDate) && (dateTo.isAfter(nowDate) || dateTo.isSame(nowDate));
+        return (dateFrom.isBefore(nowDate) || dateFrom.isSame(nowDate)) && (dateTo.isAfter(nowDate) || dateTo.isSame(nowDate));
       });
     case FilterType.PAST:
       return points.filter((point) => dayjs(point.dateTo).isBefore(nowDate));

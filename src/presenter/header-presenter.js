@@ -36,11 +36,6 @@ export default class HeaderPresenter extends Observable {
     remove(this.#buttonNewPointComponent);
   }
 
-  #handleFilterModelChange = () => {
-    this.#currentFilter = this.#filterModel.filter;
-    this.#renderFilter();
-  };
-
   #renderFilter() {
     const prevFilterComponent = this.#filterComponent;
 
@@ -67,7 +62,14 @@ export default class HeaderPresenter extends Observable {
     render(this.#buttonNewPointComponent, this.#tripMainContainer);
   }
 
+  #handleFilterModelChange = () => {
+    this.#renderFilter();
+  };
+
   #handleFilterChange = (filter) => {
+    if (filter === this.#filterModel.filter) {
+      return;
+    }
     this.#filterModel.setFilter(UpdateType.MAJOR, filter);
     this.#filterChangeHandler();
   };

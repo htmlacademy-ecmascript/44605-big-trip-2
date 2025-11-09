@@ -172,8 +172,6 @@ export default class BodyPresenter {
     }
     replace(this.#noPointView, prevEmptyPage);
     remove(prevEmptyPage);
-
-
   }
 
   /**

@@ -270,7 +270,18 @@ export default class PointEditView extends AbstractStatefulView {
   };
 
   #handlePriceChange = (evt) => {
-    this._setState({ basePrice: evt.target.value });
+    let newValue = evt.target.value.replace(/[^0-9]/g, ''); // Блокирую ввод любых значений, кроме числовых
+
+    // Если значение пустое, устанавливаем "0"
+    if (newValue === '') {
+      newValue = '0';
+    } else {
+      // Убираем ведущие нули, но оставляем хотя бы одну цифру (если все нули, оставляем "0")
+      newValue = newValue.replace(/^0+/, '') || '0';
+    }
+
+    evt.target.value = newValue;
+    this._setState({ basePrice: newValue });
   };
 
   #handleDeleteButton = () => {

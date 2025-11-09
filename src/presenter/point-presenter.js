@@ -155,6 +155,7 @@ export default class PointPresenter {
    * @description проброс идет только в форму редактирования PointEditView
    */
   #handleSaveButton = (updatePoint) => {
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
     const isMinorUpdate =
       this.#point.dateFrom !== updatePoint.dateFrom || this.#point.dateTo !== updatePoint.dateTo;
     this.#handleDataUpdate(
