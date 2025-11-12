@@ -1,10 +1,14 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
-import { DATE_FORMAT } from '../const';
-import { humanizeDate } from '../utils';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
+import { nanoid } from 'nanoid';
+import { DATE_FORMAT } from '../const';
+import { humanizeDate } from '../utils';
 
 function createEventPointEditTemplate(point, destinations, offers) {
+
+  // Флаг есть только у объекта точки по умолчанию. Нужен для изменения разметки компонента. В конце будет удален.
+  const flagDefault = point.flag || false;
 
   const { dateFrom, dateTo, basePrice } = point;
 
@@ -18,13 +22,10 @@ function createEventPointEditTemplate(point, destinations, offers) {
   const availableOffers = offersOfTypePoints ? offersOfTypePoints.offers : [];
 
   // Получаем выбранные предложения для этой точки с учетом типа offers
-  // const selectedOffers = availableOffers.filter((offer) => point.offers ? point.offers.includes(offer.id) : false);
   const selectedOffers = point.offers || [];
 
   const dateStart = humanizeDate(dateFrom, DATE_FORMAT.fullDate);
-  // console.log(dateStart);
   const dateEnd = humanizeDate(dateTo, DATE_FORMAT.fullDate);
-  // console.log(dateStart);
 
   const offersContent = availableOffers.length > 0 ? `
                    <h3 class="event__section-title  event__section-title--offers">Offers</h3>
@@ -41,17 +42,23 @@ function createEventPointEditTemplate(point, destinations, offers) {
                         </div>`).join('')}
                     </div>` : '';
 
-  const destinationContent = pointDestination.description ? `
+  const destinationContent = pointDestination?.description ? `
                     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
                     <p class="event__destination-description">${pointDestination.description}</p>` : '';
 
-  const destinationPhoto = pointDestination.pictures.length > 0 ? `
+  const destinationPhoto = pointDestination?.pictures.length > 0 ? `
                       <div class="event__photos-container">
                         <div class="event__photos-tape">
                           ${pointDestination.pictures.map((pic) => `
                             <img class="event__photo" src="${pic.src}" alt="${pic.description}">`).join('')}
                         </div>
                       </div>` : '';
+
+  const changeTextNewPointView = flagDefault ? `
+                  <button class="event__reset-btn" type="reset">Cancel</button>
+                  ` : `
+                  <button class="event__reset-btn" type="reset">Delete</button>
+                  <button class="event__rollup-btn" type="button">`;
 
   return `<form class="event event--edit" action="#" method="post">
                 <header class="event__header">
@@ -118,7 +125,7 @@ function createEventPointEditTemplate(point, destinations, offers) {
                     <label class="event__label  event__type-output" for="event-destination-1">
                       ${point.type}
                     </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${pointDestination.name}" list="destination-list-1">
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${pointDestination ? pointDestination.name : ''}" list="destination-list-1">
                     <datalist id="destination-list-1">
                     ${destinations.map((destination) => `
                        <option value='${destination.name}'></option>`)}
@@ -142,8 +149,7 @@ function createEventPointEditTemplate(point, destinations, offers) {
                   </div>
 
                   <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-                  <button class="event__reset-btn" type="reset">Delete</button>
-                  <button class="event__rollup-btn" type="button">
+                 ${changeTextNewPointView}
                     <span class="visually-hidden">Open event</span>
                   </button>
                 </header>
@@ -162,7 +168,10 @@ function createEventPointEditTemplate(point, destinations, offers) {
               </form>`;
 }
 
-export default class TripPointEditView extends AbstractStatefulView {
+/**
+ * @class Класс для создания компонента формы редактирования точки маршрута
+ */
+export default class PointEditView extends AbstractStatefulView {
   #point = null;
   #destinations = null;
   #offers = null;
@@ -170,16 +179,27 @@ export default class TripPointEditView extends AbstractStatefulView {
   #formSaveButtonHandler = null;
   #datePickerFrom = null;
   #datePickerTo = null;
+  #deleteButtonHandler = null;
 
-
-  constructor(point, destinations, offers, onFormArrowClick, onFormSaveButtonClick) {
+  /**
+   * @constructor
+   * @param {Object} params
+   * @param {Object} params.point - Данные точки маршрута
+   * @param {Array} params.destinations - Массив направлений
+   * @param {Array} params.offers - Массив предложений
+   * @param {Function} params.onCloseEditFormButtonClick - Функция для автоматичечского закрытия форм редактирования при открытии новой формы редактирования
+   * @param {Function} params.onSaveFormButtonClick - Функция для сохранения данных из формы редактирования
+   * @param {Function} params.onDeletePointButtonClick - Функция для удаления точки маршрута
+   */
+  constructor({ point, destinations, offers, onCloseEditFormButtonClick, onSaveFormButtonClick, onDeletePointButtonClick }) {
     super();
     this.#point = point;
-    this._setState(TripPointEditView.parsePointToState(this.#point)); // Обновляю состояние _state с помощью спред-оператора разворачиваю объект Point
+    this._setState(PointEditView.parsePointToState(this.#point)); // Обновляю состояние _state с помощью спред-оператора разворачиваю объект Point
     this.#destinations = destinations;
     this.#offers = offers;
-    this.#formArrowHandler = onFormArrowClick;
-    this.#formSaveButtonHandler = onFormSaveButtonClick;
+    this.#formArrowHandler = onCloseEditFormButtonClick;
+    this.#formSaveButtonHandler = onSaveFormButtonClick;
+    this.#deleteButtonHandler = onDeletePointButtonClick;
 
     this._restoreHandlers();
   }
@@ -188,9 +208,12 @@ export default class TripPointEditView extends AbstractStatefulView {
     return createEventPointEditTemplate(this._state, this.#destinations, this.#offers);
   }
 
+  /**
+   * Функция сбрасывает введенные значения до значений точки до редактирования
+   * @param {Object} point - Объект данных точки маршрута
+   */
   reset(point) {
-    this.updateElement(TripPointEditView.parsePointToState(point));
-
+    this.updateElement(PointEditView.parsePointToState(point));
   }
 
   removeElement() {
@@ -206,13 +229,64 @@ export default class TripPointEditView extends AbstractStatefulView {
   }
 
   _restoreHandlers() {
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#formArrowHandler); // Обработчик стрелки закрытия формы редактирования
+    this.element.querySelector('.event__rollup-btn')?.addEventListener('click', this.#formArrowHandler); // Обработчик стрелки закрытия формы редактирования
     this.element.querySelector('.event__type-list').addEventListener('click', this.#handleTypeChange); // Обработчик выбора типа поездки
-    this.element.querySelector('.event__save-btn').addEventListener('click', this.#handleSaveButtonSubmit); // Обработчик кнопки сохранения
+    this.element.querySelector('.event__save-btn').addEventListener('click', this.#handleSaveButton); // Обработчик кнопки сохранения
     this.element.querySelector('.event__input--destination').addEventListener('input', this.#handleDestinationsChange); // Обработчик пункта назначения
     this.element.querySelector('.event__input--price').addEventListener('input', this.#handlePriceChange); // Обработчик изменения цены
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#handleDeleteButton);
     this.#setDatePicker();
   }
+
+  #handleTypeChange = (evt) => {
+    if (evt.target.tagName !== 'INPUT') {
+      return;
+    }
+    this.updateElement({ type: evt.target.value });
+  };
+
+  #handleSaveButton = (evt) => {
+    evt.preventDefault();
+    const checkedOffers = document.querySelector('.event__available-offers')?.querySelectorAll('input[type="checkbox"]:checked');
+    if (checkedOffers) {
+      const offerIds = Array.from(checkedOffers).map((checkbox) => checkbox.dataset.offerId);
+      this._setState({ offers: offerIds });
+    }
+    this.#point = PointEditView.parseStateToPoint(this._state);
+    if (Object.keys(this.#point).includes('flag')) {
+      delete this.#point.flag;
+    }
+    this.#formSaveButtonHandler({
+      id: nanoid(),
+      ...this.#point
+    });
+  };
+
+  #handleDestinationsChange = (evt) => {
+    const destinationInput = this.#destinations.find((element) => element.name === evt.target.value);
+    if (destinationInput) {
+      this.updateElement({ destination: destinationInput.id });
+    }
+  };
+
+  #handlePriceChange = (evt) => {
+    let newValue = evt.target.value.replace(/[^0-9]/g, ''); // Блокирую ввод любых значений, кроме числовых
+
+    // Если значение пустое, устанавливаем "0"
+    if (newValue === '') {
+      newValue = '0';
+    } else {
+      // Убираем ведущие нули, но оставляем хотя бы одну цифру (если все нули, оставляем "0")
+      newValue = newValue.replace(/^0+/, '') || '0';
+    }
+
+    evt.target.value = newValue;
+    this._setState({ basePrice: newValue });
+  };
+
+  #handleDeleteButton = () => {
+    this.#deleteButtonHandler();
+  };
 
   #setDatePicker = () => {
     const [dateFromElement, dateToElement] = this.element.querySelectorAll('.event__input--time');
@@ -249,36 +323,6 @@ export default class TripPointEditView extends AbstractStatefulView {
     const iso = userDate ? userDate.toISOString() : '';
     this._setState({ dateTo: iso });
     this.#datePickerFrom.set('maxDate', iso);
-  };
-
-  #handlePriceChange = (evt) => {
-    this._setState({ basePrice: evt.target.value });
-  };
-
-  #handleDestinationsChange = (evt) => {
-    const destinationInput = this.#destinations.find((element) => element.name === evt.target.value);
-    if (destinationInput) {
-      this.updateElement({ destination: destinationInput.id });
-    }
-  };
-
-  #handleSaveButtonSubmit = (evt) => {
-    evt.preventDefault();
-    const checkedOffers = document.querySelector('.event__available-offers')?.querySelectorAll('input[type="checkbox"]:checked');
-    if (checkedOffers) {
-      const offerIds = Array.from(checkedOffers).map((checkbox) => checkbox.dataset.offerId);
-      this._setState({ offers: offerIds });
-    }
-    this.#point = TripPointEditView.parseStateToPoint(this._state);
-    this.#formSaveButtonHandler(this.#point);
-  };
-
-
-  #handleTypeChange = (evt) => {
-    if (evt.target.tagName !== 'INPUT') {
-      return;
-    }
-    this.updateElement({ type: evt.target.value });
   };
 
   static parsePointToState(point) {

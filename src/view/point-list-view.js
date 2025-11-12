@@ -7,10 +7,10 @@ function createEventListComponent() {
 }
 
 /**
- * @description Класс для создания списка точек
+ * @class Класс для создания элемента списка
  * @returns Тег списка ul для размещения точек маршрута li
  */
-export default class TripPointListView extends AbstractView {
+export default class PointListView extends AbstractView {
   get template() {
     return createEventListComponent();
   }

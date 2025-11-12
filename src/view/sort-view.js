@@ -1,10 +1,10 @@
 import AbstractView from '../framework/view/abstract-view';
 import { SortType } from '../const';
 
-function createTripSortComponent() {
+function createTripSortComponent(currentSortType) {
   return `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
             <div class="trip-sort__item  trip-sort__item--day">
-              <input id="sort-day" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-day" data-sort-type = "${SortType.DAY}" checked>
+              <input id="sort-day" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-day" data-sort-type = "${SortType.DAY}" ${currentSortType === SortType.DAY ? 'checked' : ''}>
               <label class="trip-sort__btn" for="sort-day">Day</label>
             </div>
 
@@ -14,12 +14,12 @@ function createTripSortComponent() {
             </div>
 
             <div class="trip-sort__item  trip-sort__item--time">
-              <input id="sort-time" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-time" data-sort-type = "${SortType.TIME}">
+              <input id="sort-time" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-time" data-sort-type = "${SortType.TIME}" ${currentSortType === SortType.TIME ? 'checked' : ''}>
               <label class="trip-sort__btn" for="sort-time">Time</label>
             </div>
 
             <div class="trip-sort__item  trip-sort__item--price">
-              <input id="sort-price" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-price"  data-sort-type = "${SortType.PRICE}">
+              <input id="sort-price" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-price"  data-sort-type = "${SortType.PRICE}" ${currentSortType === SortType.PRICE ? 'checked' : ''}>
               <label class="trip-sort__btn" for="sort-price">Price</label>
             </div>
 
@@ -30,20 +30,40 @@ function createTripSortComponent() {
           </form>`;
 }
 
-export default class TripSort extends AbstractView {
-  #onSortType;
+/**
+ * @class Класс для создания компонента сортировки
+ */
+export default class SortView extends AbstractView {
+  #currentSortType = null;
+  #onSortType = null;
 
-  constructor({ onSortTypeChange }) {
+  /**
+   * @constructor
+   * @param {Object} params
+   * @param {String} params.currentSortType - Выбранный тип сортировки
+   * @param {Function} params.onSortTypeChange - Функция-обработчик, реагирует на изменение типа сортировки (DAY / PRICE / TIME)
+   */
+  constructor({ currentSortType, onSortTypeChange }) {
     super();
-    this.#onSortType = onSortTypeChange; // Функция сортировки, приходит из TripPresenter
+    this.#currentSortType = currentSortType;
+    this.#onSortType = onSortTypeChange;
 
-    this.element.addEventListener('click', this.#onButtonSortclick);
+    this._restoreHandlers();
   }
 
   get template() {
-    return createTripSortComponent();
+    return createTripSortComponent(this.#currentSortType);
   }
 
+  _restoreHandlers() {
+    this.element.addEventListener('click', this.#onButtonSortclick);
+  }
+
+  /**
+   * Функиця-обработчик клика на компоненте сортировки
+   * @param {*} evt Событие клика пользователя на странице
+   * @description Передает выбранную сортировку в презентер
+   */
   #onButtonSortclick = (evt) => {
     if (evt.target.tagName !== 'INPUT') {
       return;

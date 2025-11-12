@@ -1,8 +1,12 @@
-import TripPresenter from './presenter/trip-presenter';
-import PointsModel from './model/model';
+import BodyPresenter from './presenter/body-presenter';
+import PointsModel from './model/points-model';
+import FilterModel from './model/filter-model';
 
-const tripEventsContainer = document.querySelector('.trip-events'); // Найдем основной контейнер для размещения всех точек маршрута
-const pointsModel = new PointsModel(); // Инициализируем модель
-const tripPresenter = new TripPresenter(tripEventsContainer, pointsModel); // Инициализируем главный презентер приложения, передаем параметры в конструктор класса
+const tripPointsContainer = document.querySelector('.trip-events'); // Найдем основной контейнер для размещения всех точек маршрута
+const pointsModel = new PointsModel();
+const filterModel = new FilterModel();
 
-tripPresenter.init(); // Вызываем метод у экземляра класса (метод описан внутри класса, а экземляр наследует? методы класса)
+const bodyPresenter = new BodyPresenter(tripPointsContainer, pointsModel, filterModel); // Инициализируем главный презентер приложения, передаем параметры в конструктор класса
+
+bodyPresenter.init();
+

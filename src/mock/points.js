@@ -4,8 +4,8 @@ import { getRandomArrayElement } from '../utils';
 const mockPoints = [
   {
     basePrice: 200,
-    dateFrom: '2019-12-01T07:30:56.845Z',
-    dateTo: '2019-12-02T12:25:13.375Z',
+    dateFrom: '2025-12-01T07:30:56.845Z',
+    dateTo: '2025-12-02T12:25:13.375Z',
     destination: '1', // Moscow
     isFavorite: true,
     offers: ['5'], // flight: business class
@@ -13,8 +13,8 @@ const mockPoints = [
   },
   {
     basePrice: 300,
-    dateFrom: '2019-03-04T11:55:56.845Z',
-    dateTo: '2019-03-04T12:10:13.375Z',
+    dateFrom: '2025-03-04T11:55:56.845Z',
+    dateTo: '2025-03-04T12:10:13.375Z',
     destination: '3', // Adler
     isFavorite: false,
     offers: ['3', '1'], // taxi: translator, comfort
@@ -94,6 +94,17 @@ const mockPoints = [
   },
 ];
 
+const defaultPoint = {
+  flag: 'default',
+  basePrice: '0',
+  dateFrom: '',
+  dateTo: '',
+  destination: '',
+  isFavorite: false,
+  offers: [],
+  type: 'flight',
+};
+
 function getRandomPoints() {
   return {
     id: nanoid(),
@@ -101,4 +112,5 @@ function getRandomPoints() {
   };
 }
 
-export { getRandomPoints };
+
+export { getRandomPoints, defaultPoint };

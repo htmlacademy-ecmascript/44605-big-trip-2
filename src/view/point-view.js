@@ -1,7 +1,7 @@
-import { DATE_FORMAT } from '../const.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { humanizeDate } from '../utils.js';
 import dayjs from 'dayjs';
+import { DATE_FORMAT } from '../const.js';
+import { humanizeDate } from '../utils.js';
 
 function createPointComponent(point, destinations, offers) {
 
@@ -30,22 +30,11 @@ function createPointComponent(point, destinations, offers) {
   // Вычисляю разницу в дате и времени от начала и конца. Результат получаю в минутах
   const durationTime = dateEnd.diff(dateStart, 'm');
 
+  // Нужно доработать функцию, учитывать секунды.
   function formatDuration(minutes) {
     const days = Math.floor(minutes / (24 * 60));
     const hours = Math.floor(minutes % (24 * 60) / 60);
     const mins = minutes % 60;
-
-    // Альтернативный вариант, но есть проблема. Когда кол-во часов === 0, значение hours не попадает в массив и => в DOM
-    // const formattedDate = [];
-
-    // if (days > 0) {
-    //   formattedDate.push(`${days.toString().padStart(2, '0')}D`);
-    // } if (hours > 0) {
-    //   formattedDate.push(`${hours.toString().padStart(2, '0')}H`);
-    // }
-    // formattedDate.push(`${mins.toString().padStart(2, '0')}M`);
-
-    // return formattedDate.join(' ');
 
     if (days > 0) {
       return `${days.toString().padStart(2, '0')}D ${hours.toString().padStart(2, '0')}H ${mins.toString().padStart(2, '0')}M`;
@@ -57,7 +46,7 @@ function createPointComponent(point, destinations, offers) {
   }
 
   // Записыванием в переменную название класса если в point есть пометка isFavorite
-  const pointFavoritClassName = isFavorite ? 'event__favorite-btn--active' : '';
+  const pointFavoriteClassName = isFavorite ? 'event__favorite-btn--active' : '';
 
   // Формирую кусок разметки
   // Если есть выбранные предложения для точки, то я рисую их, итерируясь по каждой точке с помощью map
@@ -93,7 +82,7 @@ function createPointComponent(point, destinations, offers) {
           &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
         </p>
         ${offersHtml}
-        <button class="event__favorite-btn ${pointFavoritClassName}" type="button">
+        <button class="event__favorite-btn ${pointFavoriteClassName}" type="button">
           <span class="visually-hidden">Add to favorite</span>
           <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
             <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"/>
@@ -106,32 +95,33 @@ function createPointComponent(point, destinations, offers) {
             </li > `;
 }
 /**
- * Класс для создания экземляра точки маршрута
+ * @class Класс для создания компонента точки маршрута
  */
-export default class TripPointView extends AbstractStatefulView {
-  #point;
-  #destinations;
-  #offers;
-  #handleEditClick;
-  #handleFavoritClick;
+export default class PointView extends AbstractStatefulView {
+  #point = null;
+  #destinations = null;
+  #offers = null;
+  #handleOpenFormArrow = null;
+  #handleFavoriteButton = null;
 
   /**
    * @constructor
-   * @param {Object} point - Данные точки маршрута
-   * @param {Array} destinations - Массив направлений
-   * @param {Array} offers - Массив предложений
-   * @param {Function} onEditClick - Функция обработчик клика для открытия формы редактирования
+   * @param {Object} params
+   * @param {Object} params.point - Данные точки маршрута
+   * @param {Array} params.destinations - Массив направлений
+   * @param {Array} params.offers - Массив предложений
+   * @param {Function} params.onEditFormButtonClick - Функция обработчик клика для открытия формы редактирования
+   * @param {Function} params.onFavoriteButtonClick - Функция обработчик клика для кнопки "Избранное"
    */
-  constructor(point, destinations, offers, onEditClick, onFavoritClick) {
+  constructor({ point, destinations, offers, onEditFormButtonClick, onFavoriteButtonClick }) {
     super();
     this.#point = point;
     this.#destinations = destinations;
     this.#offers = offers;
-    this.#handleEditClick = onEditClick;
-    this.#handleFavoritClick = onFavoritClick;
+    this.#handleOpenFormArrow = onEditFormButtonClick;
+    this.#handleFavoriteButton = onFavoriteButtonClick;
 
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#handleEditClick);
-    this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#handleFavoritClick);
+    this._restoreHandlers();
   }
 
   get template() {
@@ -139,6 +129,7 @@ export default class TripPointView extends AbstractStatefulView {
   }
 
   _restoreHandlers() {
-
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#handleOpenFormArrow);
+    this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#handleFavoriteButton);
   }
 }
