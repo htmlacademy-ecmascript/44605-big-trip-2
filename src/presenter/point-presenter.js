@@ -2,7 +2,7 @@ import PointView from '../view/point-view';
 import TripPointEditView from '../view/point-edit-view';
 import { render, replace, remove, RenderPosition } from '../framework/render';
 import { StatusForm, UserAction, UpdateType } from '../const';
-import { defaultPoint } from '../mock/points';
+import { DEFAULT_POINT } from '../const';
 
 /**
  * @class Презентер управления одной точкой маршрута: карточка + форма редактирования.
@@ -34,7 +34,7 @@ export default class PointPresenter {
   /**
    * Метод инициализации PointPresenter
    */
-  init(destinations, offers, point = defaultPoint) {
+  init(destinations, offers, point = DEFAULT_POINT) {
     this.#point = point;
     this.#destinations = destinations;
     this.#offers = offers;
@@ -59,7 +59,7 @@ export default class PointPresenter {
       onDeletePointButtonClick: this.#handleDeleteButton,
     });
 
-    if (this.#point === defaultPoint) {
+    if (this.#point === DEFAULT_POINT) {
       render(this.#pointComponent, this.#pointListContainer, RenderPosition.AFTERBEGIN);
       return;
     }
