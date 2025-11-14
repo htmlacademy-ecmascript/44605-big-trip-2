@@ -1,7 +1,7 @@
 import TripPointEditView from '../view/point-edit-view';
 import { render, remove, RenderPosition } from '../framework/render';
 import { StatusForm, UserAction, UpdateType } from '../const';
-import { defaultPoint } from '../mock/points';
+import { DEFAULT_POINT } from '../const';
 
 /**
  * @class Презентер управления одной точкой маршрута: карточка + форма редактирования.
@@ -16,7 +16,7 @@ export default class NewPointPresenter {
   #pointEditComponent = null;
   #handleCloseAllForm = null;
   #handleDataUpdate = null;
-  #mode = StatusForm.DEFAULT;
+  #mode = StatusForm.EDIT;
 
   /**
    * @constructor
@@ -34,7 +34,7 @@ export default class NewPointPresenter {
   /**
    * Метод инициализации NewPointPresenter
    */
-  init(destinations, offers, point = defaultPoint) {
+  init(destinations, offers, point = DEFAULT_POINT) {
     this.#point = point;
     this.#destinations = destinations;
     this.#offers = offers;
@@ -65,6 +65,27 @@ export default class NewPointPresenter {
     this.#buttonNewPoint.disabled = false;
   }
 
+  setSaving() {
+    if (this.#mode === StatusForm.EDIT) {
+      this.#pointEditComponent.updateElement({
+        isDisabled: true,
+        isSaving: true,
+      });
+    }
+  }
+
+  setAborting() {
+    const resetFormState = () => {
+      this.#pointEditComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#pointEditComponent.shake(resetFormState);
+  }
+
   #handleCloseNewPointForm = () => {
     this.destroy();
   };
@@ -75,8 +96,6 @@ export default class NewPointPresenter {
       UpdateType.MINOR,
       updatedPoint
     );
-    this.destroy();
-    this.#buttonNewPoint.disabled = false;
   };
 
   #escKeyDownHandler = (evt) => {

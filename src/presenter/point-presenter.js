@@ -2,7 +2,7 @@ import PointView from '../view/point-view';
 import TripPointEditView from '../view/point-edit-view';
 import { render, replace, remove, RenderPosition } from '../framework/render';
 import { StatusForm, UserAction, UpdateType } from '../const';
-import { defaultPoint } from '../mock/points';
+import { DEFAULT_POINT } from '../const';
 
 /**
  * @class Презентер управления одной точкой маршрута: карточка + форма редактирования.
@@ -34,7 +34,7 @@ export default class PointPresenter {
   /**
    * Метод инициализации PointPresenter
    */
-  init(destinations, offers, point = defaultPoint) {
+  init(destinations, offers, point = DEFAULT_POINT) {
     this.#point = point;
     this.#destinations = destinations;
     this.#offers = offers;
@@ -59,7 +59,7 @@ export default class PointPresenter {
       onDeletePointButtonClick: this.#handleDeleteButton,
     });
 
-    if (this.#point === defaultPoint) {
+    if (this.#point === DEFAULT_POINT) {
       render(this.#pointComponent, this.#pointListContainer, RenderPosition.AFTERBEGIN);
       return;
     }
@@ -97,18 +97,53 @@ export default class PointPresenter {
     }
   }
 
+  setSaving() {
+    if (this.#mode === StatusForm.EDIT) {
+      this.#pointEditComponent.updateElement({
+        isDisabled: true,
+        isSaving: true,
+      });
+    }
+  }
+
+  setDeleting() {
+    if (this.#mode === StatusForm.EDIT) {
+      this.#pointEditComponent.updateElement({
+        isDisabled: true,
+        isDeleting: true,
+      });
+    }
+  }
+
+  setAborting() {
+    if (this.#mode === StatusForm.DEFAULT) {
+      this.#pointComponent.shake();
+      return;
+    }
+
+    const resetFormState = () => {
+      this.#pointEditComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#pointEditComponent.shake(resetFormState);
+  }
+
   /**
- *  Функция открытия компонента редактирования
- */
+   *  Функция открытия компонента редактирования
+   */
   #replaceCardToForm() {
-    replace(this.#pointEditComponent, this.#pointComponent); // Заменаем один компонент на другой(Инициализация ранее п.5.3)
+    replace(this.#pointEditComponent, this.#pointComponent); // Заменяем один компонент на другой(Инициализация ранее п.5.3)
     document.addEventListener('keydown', this.#escKeyDownHandler);
-    this.#handleCloseAllForm(); // Метод проходит по MAP и вызывает метод resetViewToDefault() - закрывает если открыта форма редактирвоания
+    this.#handleCloseAllForm(); // Метод проходит по MAP и вызывает метод resetViewToDefault() - закрывает если открыта форма редактирования
     this.#mode = StatusForm.EDIT; // После ставим статус - "в редактировании"
   }
 
   /**
-   *  Функиця закрытия компонента редактирования
+   *  Функция закрытия компонента редактирования
    */
   #replaceFormToCard() {
     replace(this.#pointComponent, this.#pointEditComponent);

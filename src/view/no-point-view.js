@@ -1,8 +1,8 @@
 import AbstractView from '../framework/view/abstract-view';
-import { MurkupElement } from '../const';
+import { MarkupElement } from '../const';
 
 function createEmptyPointComponent(filter) {
-  return MurkupElement[filter];
+  return MarkupElement[filter.toUpperCase()];
 }
 
 /**
