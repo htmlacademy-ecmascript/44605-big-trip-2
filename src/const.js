@@ -15,7 +15,21 @@ const DEFAULT_POINT = {
 const Method = {
   GET: 'GET',
   PUT: 'PUT',
+  POST: 'POST',
+  DELETE: 'DELETE'
 };
+
+const PathURL = {
+  POINTS: 'points',
+  OFFERS: 'offers',
+  DESTINATIONS: 'destinations',
+};
+
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
+
 
 const DateFormat = {
   DAY_MONTH: 'D MMM',
@@ -62,4 +76,4 @@ const MarkupElement = {
   FUTURE: '<p class="trip-events__msg">There are no future events now</p>',
 };
 
-export { DEFAULT_POINT, API_URL, AUTHORIZATION, Method, DateFormat, FilterType, MarkupElement, StatusForm, SortType, UserAction, UpdateType };
+export { DEFAULT_POINT, API_URL, AUTHORIZATION, Method, PathURL, TimeLimit, DateFormat, FilterType, MarkupElement, StatusForm, SortType, UserAction, UpdateType };

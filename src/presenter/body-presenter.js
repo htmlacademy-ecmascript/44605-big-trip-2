@@ -7,9 +7,11 @@ import PointPresenter from './point-presenter';
 import HeaderPresenter from './header-presenter';
 import NewPointPresenter from './new-point-presenter';
 
+import UiBlocker from '../framework/ui-blocker/ui-blocker';
+
 import { render, remove, replace } from '../framework/render';
 import { sortingByPrice, sortingByDay, sortingByTime, filterPoints } from '../utils';
-import { SortType, UserAction, UpdateType } from '../const';
+import { SortType, UserAction, UpdateType, TimeLimit } from '../const';
 
 /**
  * @class Презентер списка точек маршрута и связанных UI-элементов (хедер, фильтры, сортировка).
@@ -30,6 +32,10 @@ export default class BodyPresenter {
   #currentFilter = null;
   #filteredPoints = null;
   #isLoading = true;
+  #UiBlocker = new UiBlocker({
+    lowerLimit: TimeLimit.LOWER_LIMIT,
+    upperLimit: TimeLimit.UPPER_LIMIT
+  });
 
   /**
    * @constructor
@@ -252,21 +258,40 @@ export default class BodyPresenter {
    * @description Когда пользователь изменяет интерфейс, создает/удаляет/меняет/фильтрует -
    * данная функция указывает, что необходимо сделать с моделью точек маршрута
    */
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction = async (actionType, updateType, update) => {
+    this.#UiBlocker.block();
+
     switch (actionType) {
 
       case UserAction.ADD_POINT:
-        this.#pointsModel.addPoint(updateType, update);
+        this.#newPointPresenter.setSaving();
+        try {
+          await this.#pointsModel.addPoint(updateType, update);
+        } catch (err) {
+          this.#newPointPresenter.setAborting();
+        }
         break;
 
       case UserAction.DELETE_POINT:
-        this.#pointsModel.deletePoint(updateType, update);
+        this.#pointPresenters.get(update.id).setDeleting();
+        try {
+          await this.#pointsModel.deletePoint(updateType, update);
+        } catch (err) {
+          this.#pointPresenters.get(update.id).setAborting();
+        }
         break;
 
       case UserAction.UPDATE_POINT:
-        this.#pointsModel.updatePoints(updateType, update);
+        this.#pointPresenters.get(update.id).setSaving();
+        try {
+          await this.#pointsModel.updatePoints(updateType, update);
+        } catch (err) {
+          this.#pointPresenters.get(update.id).setAborting();
+        }
         break;
     }
+
+    this.#UiBlocker.unblock();
   };
 
   /**
@@ -286,6 +311,10 @@ export default class BodyPresenter {
         break;
 
       case UpdateType.MINOR: // Обновить список (например, когда произошло удаление задачи или изменилась дата)
+        if (this.#newPointPresenter) {
+          this.#newPointPresenter.destroy();
+          this.#newPointPresenter = null;
+        }
         this.#clearBoard();
         this.#renderPoints();
         break;
