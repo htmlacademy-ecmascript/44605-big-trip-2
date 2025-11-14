@@ -1,29 +1,26 @@
-const POINTS_COUNT = 3;
-const MIN_RANDOM_VALUE = 1;
-const MAX_RANDOM_VALUE = 100;
-const FILTERS = [
-  {
-    name: 'EVERYTHING',
-    count: 0
-  },
-  {
-    name: 'FUTURE',
-    count: 0
-  },
-  {
-    name: 'PRESENT',
-    count: 0
-  },
-  {
-    name: 'PAST',
-    count: 0
-  }
-];
+const API_URL = 'https://22.objects.htmlacademy.pro/big-trip';
+const AUTHORIZATION = 'Basic mg-kem';
 
-const DATE_FORMAT = {
-  dayMonth: 'D MMM',
-  hoursMinutes: 'HH:mm',
-  fullDate: 'DD/MM/YY HH:mm',
+const DEFAULT_POINT = {
+  flag: 'default',
+  basePrice: '0',
+  dateFrom: '',
+  dateTo: '',
+  destination: '',
+  isFavorite: false,
+  offers: [],
+  type: 'flight',
+};
+
+const Method = {
+  GET: 'GET',
+  PUT: 'PUT',
+};
+
+const DateFormat = {
+  DAY_MONTH: 'D MMM',
+  HOURS_MINUTES: 'HH:mm',
+  FULL_DATE: 'DD/MM/YY HH:mm',
 };
 
 const StatusForm = {
@@ -47,21 +44,22 @@ const UpdateType = {
   PATCH: 'patch',
   MINOR: 'minor',
   MAJOR: 'major',
+  INIT: 'init',
 };
 
 const FilterType = {
-  EVERYTHING: 'Everything',
-  FUTURE: 'Future',
-  PRESENT: 'Present',
-  PAST: 'Past',
+  EVERYTHING: 'everything',
+  PAST: 'past',
+  PRESENT: 'present',
+  FUTURE: 'future',
 };
 
 
-const MurkupElement = {
-  Everything: '<p class="trip-events__msg">Click New Event to create your first point</p>',
-  Past: '<p class="trip-events__msg">There are no past events now</p>',
-  Present: '<p class="trip-events__msg">There are no present events now</p>',
-  Future: '<p class="trip-events__msg">There are no future events now</p>',
+const MarkupElement = {
+  EVERYTHING: '<p class="trip-events__msg">Click New Event to create your first point</p>',
+  PAST: '<p class="trip-events__msg">There are no past events now</p>',
+  PRESENT: '<p class="trip-events__msg">There are no present events now</p>',
+  FUTURE: '<p class="trip-events__msg">There are no future events now</p>',
 };
 
-export { POINTS_COUNT, MIN_RANDOM_VALUE, MAX_RANDOM_VALUE, FILTERS, DATE_FORMAT, FilterType, MurkupElement, StatusForm, SortType, UserAction, UpdateType };
+export { DEFAULT_POINT, API_URL, AUTHORIZATION, Method, DateFormat, FilterType, MarkupElement, StatusForm, SortType, UserAction, UpdateType };
