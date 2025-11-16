@@ -2,7 +2,7 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import { nanoid } from 'nanoid';
-import { DATE_FORMAT } from '../const';
+import { DateFormat } from '../const';
 import { humanizeDate } from '../utils';
 
 function createEventPointEditTemplate(point, destinations, offers) {
@@ -24,8 +24,8 @@ function createEventPointEditTemplate(point, destinations, offers) {
   // Получаем выбранные предложения для этой точки с учетом типа offers
   const selectedOffers = point.offers || [];
 
-  const dateStart = humanizeDate(dateFrom, DATE_FORMAT.fullDate);
-  const dateEnd = humanizeDate(dateTo, DATE_FORMAT.fullDate);
+  const dateStart = humanizeDate(dateFrom, DateFormat.FULL_DATE);
+  const dateEnd = humanizeDate(dateTo, DateFormat.FULL_DATE);
 
   const offersContent = availableOffers.length > 0 ? `
                    <h3 class="event__section-title  event__section-title--offers">Offers</h3>
@@ -187,7 +187,7 @@ export default class PointEditView extends AbstractStatefulView {
    * @param {Object} params.point - Данные точки маршрута
    * @param {Array} params.destinations - Массив направлений
    * @param {Array} params.offers - Массив предложений
-   * @param {Function} params.onCloseEditFormButtonClick - Функция для автоматичечского закрытия форм редактирования при открытии новой формы редактирования
+   * @param {Function} params.onCloseEditFormButtonClick - Функция для автоматического закрытия форм редактирования при открытии новой формы редактирования
    * @param {Function} params.onSaveFormButtonClick - Функция для сохранения данных из формы редактирования
    * @param {Function} params.onDeletePointButtonClick - Функция для удаления точки маршрута
    */
@@ -294,7 +294,7 @@ export default class PointEditView extends AbstractStatefulView {
     const commonConfig = {
       dateFormat: 'd/m/y H:i',
       enableTime: true,
-      locale: { firstDayfWeek: 1 },
+      locale: { firstDayWeek: 1 },
       'time_24hr': true,
     };
 

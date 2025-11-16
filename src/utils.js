@@ -1,14 +1,5 @@
 import dayjs from 'dayjs';
 import { FilterType } from './const';
-// import dayjsPluginUTC from 'dayjs-plugin-utc';
-
-const getRandomArrayElement = (items) => items[Math.floor(Math.random() * items.length)];
-
-const getRandomInteger = (min, max) => {
-  min = Math.ceil(min); // Округляем min до ближайшего большего целого
-  max = Math.floor(max); // Округляем max до ближайшего меньшего целого
-  return Math.floor(Math.random() * (max - min + 1) + min); // [min, max]
-};
 
 const humanizeDate = (date, format) => date ? dayjs(date).format(format) : '';
 
@@ -52,4 +43,4 @@ const filterPoints = (points, filterType) => {
   }
 };
 
-export { getRandomArrayElement, getRandomInteger, humanizeDate, sortingByDay, sortingByPrice, sortingByTime, filterPoints };
+export { humanizeDate, sortingByDay, sortingByPrice, sortingByTime, filterPoints };

@@ -9,8 +9,8 @@ export default class HeaderPresenter extends Observable {
   #tripFilterContainer = document.querySelector('.trip-controls__filters'); // Контейнер для списка Filter
   #currentFilter = null;
   #filterModel = null;
-  #filterChangeHandler = null; // Функция, приходит из BodyPresnter
-  #newPointButtonHandler = null; // Функция, приходит из BodyPresnter
+  #filterChangeHandler = null; // Функция, приходит из BodyPresenter
+  #newPointButtonHandler = null; // Функция, приходит из BodyPresenter
 
   #filterComponent = null;
   #buttonNewPointComponent = null;
@@ -23,24 +23,17 @@ export default class HeaderPresenter extends Observable {
     this.#filterModel.addObserver(this.#handleFilterModelChange);
   }
 
-  init() {
-    this.#renderFilter();
-    this.#renderButton();
+  init(isLoading) {
+    this.#renderFilter(isLoading);
+    this.#renderButton(isLoading);
   }
 
-  destroyFilter() {
-    remove(this.#filterComponent);
-  }
-
-  destroyButton() {
-    remove(this.#buttonNewPointComponent);
-  }
-
-  #renderFilter() {
+  #renderFilter(isLoading) {
     const prevFilterComponent = this.#filterComponent;
 
     this.#filterComponent =
       new Filter({
+        isLoading: isLoading,
         currentFilter: this.#filterModel.filter,
         onFilterClick: this.#handleFilterChange
       });
@@ -54,12 +47,22 @@ export default class HeaderPresenter extends Observable {
     remove(prevFilterComponent);
   }
 
-  #renderButton() {
+  #renderButton(isLoading) {
+    const prevButtonNewPointComponent = this.#buttonNewPointComponent;
+
     this.#buttonNewPointComponent =
       new NewPointView({
+        isLoading: isLoading,
         onNewPointButtonClick: this.#newPointButtonHandler,
       });
-    render(this.#buttonNewPointComponent, this.#tripMainContainer);
+
+    if (prevButtonNewPointComponent === null) {
+      render(this.#buttonNewPointComponent, this.#tripMainContainer);
+      return;
+    }
+
+    replace(this.#buttonNewPointComponent, prevButtonNewPointComponent);
+    remove(prevButtonNewPointComponent);
   }
 
   #handleFilterModelChange = () => {
