@@ -3,7 +3,6 @@ import NoPointView from '../view/no-point-view';
 import PointListView from '../view/point-list-view';
 
 import PointPresenter from './point-presenter';
-import HeaderPresenter from './header-presenter';
 import NewPointPresenter from './new-point-presenter';
 
 import { render, remove, replace } from '../framework/render';
@@ -34,8 +33,8 @@ export default class BodyPresenter {
    * @param pointsModel Модель с данными точек, направлений и офферов
    * @param filterModel Модель с фильтрами
    */
-  constructor(tripContainer, pointsModel, filterModel) {
-    this.#tripContainer = tripContainer;
+  constructor({ bodyContainer, pointsModel, filterModel }) {
+    this.#tripContainer = bodyContainer;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
 
@@ -46,21 +45,15 @@ export default class BodyPresenter {
    * Геттер презентера для получения массива точек с учетом сортировки
    */
   get points() {
-
     this.#currentFilter = this.#filterModel.filter;
     this.#filteredPoints = filterPoints(this.#pointsModel.points, this.#currentFilter);
-
     switch (this.#currentSortType) {
-
       case SortType.DAY:
-        // this.#pointsModel.points.sort(sortingByDay);
         this.#filteredPoints.sort(sortingByDay);
         break;
-
       case SortType.TIME:
         this.#filteredPoints.sort(sortingByTime); // Эта сортировка работает некорректно
         break;
-
       case SortType.PRICE:
         this.#filteredPoints.sort(sortingByPrice);
         break;
@@ -86,21 +79,7 @@ export default class BodyPresenter {
    * Метод инициализации BodyPresenter
    */
   init() {
-    this.#renderHeaderComponent();
     this.#renderPoints();
-  }
-
-  /**
-   * Метод отрисовки "шапки" сайта
-   */
-  #renderHeaderComponent() {
-    // Создаю экземляр класса, передаю функции обработки клика
-    const headerPresenter = new HeaderPresenter({
-      filterModel: this.#filterModel,
-      onFilterClick: this.#handleFilterChange,
-      onNewPointClick: this.#handleNewPointButton
-    });
-    headerPresenter.init();
   }
 
   /**

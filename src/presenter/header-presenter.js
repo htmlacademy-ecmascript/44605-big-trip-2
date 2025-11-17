@@ -8,6 +8,7 @@ export default class HeaderPresenter extends Observable {
   #tripMainContainer = document.querySelector('.trip-main'); // Контейнер Header для фильтров, карты маршрута, стоимости
   #tripFilterContainer = document.querySelector('.trip-controls__filters'); // Контейнер для списка Filter
   #currentFilter = null;
+  #pointModel = null;
   #filterModel = null;
   #filterChangeHandler = null; // Функция, приходит из BodyPresnter
   #newPointButtonHandler = null; // Функция, приходит из BodyPresnter
@@ -15,8 +16,15 @@ export default class HeaderPresenter extends Observable {
   #filterComponent = null;
   #buttonNewPointComponent = null;
 
-  constructor({ filterModel, onFilterClick, onNewPointClick }) {
+  /**
+   * @constructor
+   * @param {} params
+   * @param params.pointModel - модель с данными
+   * @param params.filterModel - модель с фильтрами
+   */
+  constructor({ pointModel, filterModel, onFilterClick, onNewPointClick }) {
     super();
+    this.#pointModel = pointModel;
     this.#filterModel = filterModel;
     this.#filterChangeHandler = onFilterClick;
     this.#newPointButtonHandler = onNewPointClick;
