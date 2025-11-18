@@ -11,7 +11,7 @@ import UiBlocker from '../framework/ui-blocker/ui-blocker';
 
 import { render, remove, replace } from '../framework/render';
 import { sortingByPrice, sortingByDay, sortingByTime, filterPoints } from '../utils';
-import { SortType, UserAction, UpdateType, TimeLimit } from '../const';
+import { SortType, UserAction, UpdateType, TimeLimit, FilterType } from '../const';
 
 /**
  * @class Презентер списка точек маршрута и связанных UI-элементов (хедер, фильтры, сортировка).
@@ -225,6 +225,7 @@ export default class BodyPresenter {
 
     this.#newPointPresenter.init(this.destinations, this.offers);
     this.#pointPresenters.forEach((presenter) => presenter.resetViewToDefault());
+
   };
 
   /**
@@ -247,6 +248,9 @@ export default class BodyPresenter {
     if (this.#newPointPresenter) {
       this.#newPointPresenter.destroy();
     }
+    document.querySelectorAll('.trip-filters__filter-input').forEach((inputItem) => {
+      inputItem.disabled = false;
+    });
     this.#pointPresenters.forEach((presenter) => presenter.resetViewToDefault());
   };
 

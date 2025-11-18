@@ -17,6 +17,7 @@ export default class NewPointPresenter {
   #handleCloseAllForm = null;
   #handleDataUpdate = null;
   #mode = StatusForm.EDIT;
+  #filterItems = null;
 
   /**
    * @constructor
@@ -40,6 +41,7 @@ export default class NewPointPresenter {
     this.#offers = offers;
 
     this.#buttonNewPoint = document.querySelector('.trip-main__event-add-btn');
+    this.#filterItems = document.querySelectorAll('.trip-filters__filter-input');
     this.#buttonNewPoint.disabled = true;
 
     const prevPointEditComponent = this.#pointEditComponent;
@@ -55,6 +57,9 @@ export default class NewPointPresenter {
 
     if (prevPointEditComponent === null) {
       render(this.#pointEditComponent, this.#pointListContainer, RenderPosition.AFTERBEGIN);
+      this.#filterItems.forEach((filter) => {
+        filter.disabled = true;
+      });
       document.addEventListener('keydown', this.#escKeyDownHandler);
     }
     remove(prevPointEditComponent);
@@ -88,6 +93,9 @@ export default class NewPointPresenter {
 
   #handleCloseNewPointForm = () => {
     this.destroy();
+    this.#filterItems.forEach((filter) => {
+      filter.disabled = false;
+    });
   };
 
   #handleSaveNewPointForm = (updatedPoint) => {
@@ -96,6 +104,9 @@ export default class NewPointPresenter {
       UpdateType.MINOR,
       updatedPoint
     );
+    this.#filterItems.forEach((filter) => {
+      filter.disabled = false;
+    });
   };
 
   #escKeyDownHandler = (evt) => {
