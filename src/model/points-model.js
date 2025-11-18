@@ -88,13 +88,15 @@ export default class PointsModel extends Observable {
    * @param {*} updateType - Тип обновления
    * @param {*} update - Новый объект точки маршрута
    */
-  addPoint(updateType, update) {
-    this.#points = [
-      update,
-      ...this.#points
-    ];
-
-    this._notify(updateType, update);
+  async addPoint(updateType, update) {
+    try {
+      const response = await this.#pointApiService.addPoint(update);
+      const newPoint = this.#adaptToClient(response);
+      this.#points = [newPoint, ...this.#points];
+      this._notify(updateType, newPoint);
+    } catch (err) {
+      throw new Error('Can\t add new point');
+    }
   }
 
   /**
@@ -102,19 +104,22 @@ export default class PointsModel extends Observable {
   * @param {*} updateType - Тип обновления
   * @param {*} update - Новый объект точки маршрута
   */
-  deletePoint(updateType, update) {
+  async deletePoint(updateType, update) {
     const index = this.#points.findIndex((point) => point.id === update.id);
 
     if (index === -1) {
       throw new Error('Can`t update unexisting point');
     }
-
-    this.#points = [
-      ...this.#points.slice(0, index),
-      ...this.#points.slice(index + 1)
-    ];
-
-    this._notify(updateType);
+    try {
+      await this.#pointApiService.deletePoint(update);
+      this.#points = [
+        ...this.#points.slice(0, index),
+        ...this.#points.slice(index + 1)
+      ];
+      this._notify(updateType);
+    } catch (err) {
+      throw new Error('Can\t delete point');
+    }
   }
 
   #adaptToClient(point) {

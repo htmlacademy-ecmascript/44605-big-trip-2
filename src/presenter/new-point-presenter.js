@@ -16,7 +16,8 @@ export default class NewPointPresenter {
   #pointEditComponent = null;
   #handleCloseAllForm = null;
   #handleDataUpdate = null;
-  #mode = StatusForm.DEFAULT;
+  #mode = StatusForm.EDIT;
+  #filterItems = null;
 
   /**
    * @constructor
@@ -40,6 +41,7 @@ export default class NewPointPresenter {
     this.#offers = offers;
 
     this.#buttonNewPoint = document.querySelector('.trip-main__event-add-btn');
+    this.#filterItems = document.querySelectorAll('.trip-filters__filter-input');
     this.#buttonNewPoint.disabled = true;
 
     const prevPointEditComponent = this.#pointEditComponent;
@@ -55,6 +57,9 @@ export default class NewPointPresenter {
 
     if (prevPointEditComponent === null) {
       render(this.#pointEditComponent, this.#pointListContainer, RenderPosition.AFTERBEGIN);
+      this.#filterItems.forEach((filter) => {
+        filter.disabled = true;
+      });
       document.addEventListener('keydown', this.#escKeyDownHandler);
     }
     remove(prevPointEditComponent);
@@ -65,8 +70,32 @@ export default class NewPointPresenter {
     this.#buttonNewPoint.disabled = false;
   }
 
+  setSaving() {
+    if (this.#mode === StatusForm.EDIT) {
+      this.#pointEditComponent.updateElement({
+        isDisabled: true,
+        isSaving: true,
+      });
+    }
+  }
+
+  setAborting() {
+    const resetFormState = () => {
+      this.#pointEditComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#pointEditComponent.shake(resetFormState);
+  }
+
   #handleCloseNewPointForm = () => {
     this.destroy();
+    this.#filterItems.forEach((filter) => {
+      filter.disabled = false;
+    });
   };
 
   #handleSaveNewPointForm = (updatedPoint) => {
@@ -75,8 +104,9 @@ export default class NewPointPresenter {
       UpdateType.MINOR,
       updatedPoint
     );
-    this.destroy();
-    this.#buttonNewPoint.disabled = false;
+    this.#filterItems.forEach((filter) => {
+      filter.disabled = false;
+    });
   };
 
   #escKeyDownHandler = (evt) => {
