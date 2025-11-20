@@ -11,7 +11,7 @@ export default class TripHeaderPresenter {
   #filterPresenter = null;
   #filterChangeHandler = null;
 
-  constructor({ headerContainer, filterModel, pointsModel, filterChangeHandler }) {
+  constructor({ headerContainer, filterModel, pointsModel, modelChangeHandler, filterChangeHandler }) {
     this.#headerContainer = headerContainer;
     this.#filterModel = filterModel;
     this.#pointsModel = pointsModel;
@@ -32,14 +32,10 @@ export default class TripHeaderPresenter {
       new FilterPresenter({
         filterModel: this.#filterModel,
         pointsModel: this.#pointsModel,
+        filterChangeHandler: this.#filterChangeHandler,
       });
 
-    // this.#filterViewComponent =
-    //   new TripFilterView({
-    //     currentFilter: this.#filterModel.filter,
-    //     filterChangeHandler: this.#handleFilterClick,
-    //   });
-    // render(this.#filterViewComponent, this.#filterContainer);
+    this.#filterPresenter.init();
   }
 
   #renderButton() {

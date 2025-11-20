@@ -1,4 +1,4 @@
-const POINTS_COUNT = 10;
+const POINTS_COUNT = 3;
 const MIN_RANDOM_VALUE = 1;
 const MAX_RANDOM_VALUE = 100;
 const FILTERS = [
@@ -57,11 +57,11 @@ const FilterType = {
 };
 
 
-const MurkupElement = {
+const MarkupElement = {
   EVERYTHING: '<p class="trip-events__msg">Click New Event to create your first point</p>',
   PAST: '<p class="trip-events__msg">There are no past events now</p>',
   PRESENT: '<p class="trip-events__msg">There are no present events now</p>',
   FUTURE: '<p class="trip-events__msg">There are no future events now</p>',
 };
 
-export { POINTS_COUNT, MIN_RANDOM_VALUE, MAX_RANDOM_VALUE, FILTERS, DATE_FORMAT, FilterType, MurkupElement, StatusForm, SortType, UserAction, UpdateType };
+export { POINTS_COUNT, MIN_RANDOM_VALUE, MAX_RANDOM_VALUE, FILTERS, DATE_FORMAT, FilterType, MarkupElement, StatusForm, SortType, UserAction, UpdateType };

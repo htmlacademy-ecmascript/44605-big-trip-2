@@ -1,14 +1,14 @@
 import AbstractView from '../framework/view/abstract-view';
-import { MurkupElement } from '../const';
+import { MarkupElement } from '../const';
 
 function createEmptyPointComponent(filter) {
-  return MurkupElement[filter];
+  return MarkupElement[filter];
 }
 
 /**
  * @class Класс для создания компонента пустой страницы
  */
-export default class NoPointView extends AbstractView {
+export default class NoContentView extends AbstractView {
   #currentFilter = null;
 
   constructor(currentFilter) {

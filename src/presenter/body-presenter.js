@@ -1,5 +1,5 @@
 import SortView from '../view/sort-view';
-import NoPointView from '../view/no-point-view';
+import NoContentView from '../view/no-content-view';
 import PointListView from '../view/point-list-view';
 
 import PointPresenter from './point-presenter';
@@ -13,13 +13,15 @@ import { SortType, UserAction, UpdateType } from '../const';
  * @class Презентер списка точек маршрута и связанных UI-элементов (хедер, фильтры, сортировка).
  */
 export default class BodyPresenter {
-  #tripContainer = null; // Контейнер для общего презентера(получаем в main.js)
+  #bodyContainer = null; // Контейнер для общего презентера(получаем в main.js)
   #pointsModel = null; // Модель общая (инициализируем в main.js)
   #filterModel = null; // Модель фильтров
+  #handleViewAction = null;
+  #handleModelChange = null;
 
-  #tripSortComponent = null; // Компонент сортировки(список)
-  #tripListComponent = null; // Компонент ul списка для размещения li(точек маршрута)
-  #noPointView = null;
+  #SortComponent = null; // Компонент сортировки(список)
+  #pointListContainer = null; // Компонент ul списка для размещения li(точек маршрута)
+  #NoContentView = null;
   #newPointPresenter = null;
   #pointPresenters = new Map(); // MAP для хранения созданных презентеров Point
   #currentSortType = SortType.DAY; // Переменная для хранения текущей сортировки( по умолчанию DAY )
@@ -29,12 +31,15 @@ export default class BodyPresenter {
 
   /**
    * @constructor
-   * @param tripContainer Контейнер для списка точек (область `.trip-events`)
-   * @param pointsModel Модель с данными точек, направлений и офферов
-   * @param filterModel Модель с фильтрами
+   * @param {Object} params
+   * @param params.bodyContainer Контейнер для списка точек (область `.trip-events`)
+   * @param params.pointsModel Модель с данными точек, направлений и офферов
+   * @param params.filterModel Модель с фильтрами
+   * @param params.handleViewAction Функция-обработчик, будет реагировать на изменение View
+   * @param params.handleModelChange Функция-обработчик, будет реагировать на изменение модели
    */
-  constructor({ bodyContainer, pointsModel, filterModel }) {
-    this.#tripContainer = bodyContainer;
+  constructor({ bodyContainer, pointsModel, filterModel, handleViewAction, handleModelChange }) {
+    this.#bodyContainer = bodyContainer;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
 
@@ -86,17 +91,17 @@ export default class BodyPresenter {
    * Метод отрисовки компонента сортировки
    */
   #renderSortComponent() {
-    const prevSortComponent = this.#tripSortComponent;
+    const prevSortComponent = this.#SortComponent;
 
-    this.#tripSortComponent = new SortView({
+    this.#SortComponent = new SortView({
       currentSortType: this.#currentSortType,
       onSortTypeChange: this.#handleSortTypeChange
     });
     if (prevSortComponent === null) {
-      render(this.#tripSortComponent, this.#tripContainer);
+      render(this.#SortComponent, this.#bodyContainer);
       return;
     }
-    replace(this.#tripSortComponent, prevSortComponent);
+    replace(this.#SortComponent, prevSortComponent);
     remove(prevSortComponent);
   }
 
@@ -104,39 +109,56 @@ export default class BodyPresenter {
    *  Метод отрисовки точек маршрута на страницу
    */
   #renderPoints() {
-    if (this.points.length !== 0) {
-      if (this.#noPointView !== null) {
-        remove(this.#noPointView);
-        this.#noPointView = null;
-      }
-      this.#renderSortComponent();
-
-      if (this.#tripListComponent === null) {
-        this.#tripListComponent = new PointListView();
-        render(this.#tripListComponent, this.#tripContainer);
-      }
-      for (let i = 0; i < this.points.length; i++) {
-        const pointPresenter = new PointPresenter({
-          pointListContainer: this.#tripListComponent.element,
-          handleEditTypeChange: this.#handleCloseAllForm,
-          handleDataChange: this.#handleViewAction,
-        });
-
-        pointPresenter.init(this.destinations, this.offers, this.points[i]);
-        this.#pointPresenters.set(this.points[i].id, pointPresenter); // Добавляем презентер в Map
-      }
-    } else {
-      this.#renderEmptyPage();
+    this.#renderSortComponent();
+    for (let i = 0; i < this.points.length; i++) {
+      this.#renderPoint();
     }
+    // if (this.points.length !== 0) {
+    //   if (this.#noPointView !== null) {
+    //     remove(this.#noPointView);
+    //     this.#noPointView = null;
+    //   }
+    //   this.#renderSortComponent();
+
+    //   if (this.#tripListComponent === null) {
+    //     this.#tripListComponent = new PointListView();
+    //     render(this.#tripListComponent, this.#bodyContainer);
+    //   }
+    //   for (let i = 0; i < this.points.length; i++) {
+    //     const pointPresenter = new PointPresenter({
+    //       pointListContainer: this.#tripListComponent.element,
+    //       handleEditTypeChange: this.#handleCloseAllForm,
+    //       handleDataChange: this.#handleViewAction,
+    //     });
+
+    //     pointPresenter.init(this.destinations, this.offers, this.points[i]);
+    //     this.#pointPresenters.set(this.points[i].id, pointPresenter); // Добавляем презентер в Map
+    //   }
+    // } else {
+    //   this.#renderEmptyPage();
+    // }
+  }
+
+
+  #renderPoint() {
+    const pointPresenter = new PointPresenter({
+      pointListContainer: this.#pointListContainer,
+      handleEditTypeChange: ,
+      handleDataChange
+    })
+  }
+
+  #renderPointListContainer() {
+    this.#pointListContainer = new PointListView();
   }
 
   /**
    * Метод отрисовки пустой страницы, если массив точек маршрута пуст
    */
   #renderEmptyPage() {
-    if (this.#tripSortComponent !== null) {
-      remove(this.#tripSortComponent);
-      this.#tripSortComponent = null;
+    if (this.#SortComponent !== null) {
+      remove(this.#SortComponent);
+      this.#SortComponent = null;
     }
     if (this.#tripListComponent !== null) {
       remove(this.#tripListComponent);
@@ -146,7 +168,7 @@ export default class BodyPresenter {
     const prevEmptyPage = this.#noPointView;
     this.#noPointView = new NoPointView(this.#currentFilter);
     if (prevEmptyPage === null) {
-      render(this.#noPointView, this.#tripContainer);
+      render(this.#noPointView, this.#bodyContainer);
       return;
     }
     replace(this.#noPointView, prevEmptyPage);
@@ -175,7 +197,7 @@ export default class BodyPresenter {
 
     if (this.#tripListComponent === null) {
       this.#tripListComponent = new PointListView();
-      render(this.#tripListComponent, this.#tripContainer);
+      render(this.#tripListComponent, this.#bodyContainer);
     }
     this.#newPointPresenter = new NewPointPresenter({
       pointListContainer: this.#tripListComponent.element,
@@ -210,58 +232,7 @@ export default class BodyPresenter {
     this.#pointPresenters.forEach((presenter) => presenter.resetViewToDefault());
   };
 
-  /**
-   * Функция-обработчик, будет реагировать на изменение View
-   * @param {*} actionType - Действие пользователя
-   * @param {*} updateType - Тип обновления
-   * @param {*} update - Обновленный объект точки маршрута
-   * @description Когда пользователь изменяет интерфейс, создает/удаляет/меняет/фильтрует -
-   * данная функция указывает, что необходимо сделать с моделью точек маршрута
-   */
-  #handleViewAction = (actionType, updateType, update) => {
-    switch (actionType) {
 
-      case UserAction.ADD_POINT:
-        this.#pointsModel.addPoint(updateType, update);
-        break;
-
-      case UserAction.DELETE_POINT:
-        this.#pointsModel.deletePoint(updateType, update);
-        break;
-
-      case UserAction.UPDATE_POINT:
-        this.#pointsModel.updatePoints(updateType, update);
-        break;
-    }
-  };
-
-  /**
-  * Функция-обработчик, будет реагировать на изменение модели
-  * @param {string} updateType - Тип обновления
-  * @param {object} data - Обновленный объект точки маршрута
-  * @description При любом изменении модели будет вызвана эта функция, так как она добавлена в Observer.
-  * Когда мы добавляем/удаляем/создаем новую точку маршрута мы вызываем функцию handleViewAction,
-  * которая в свою очередь обновляет модель, а модель при обновлении вызывает метод _notify().
-  * Этот метод проходит по всем функциям из Observer и вызывает их с аргументами
-  */
-  #handleModelChange = (updateType, data) => {
-    switch (updateType) {
-
-      case UpdateType.PATCH: // Обновить часть списка(одну точку маршрута)
-        this.#pointPresenters.get(data.id).init(this.destinations, this.offers, data);
-        break;
-
-      case UpdateType.MINOR: // Обновить список (например, когда произошло удаление задачи или изменилась дата)
-        this.#clearBoard();
-        this.#renderPoints();
-        break;
-
-      case UpdateType.MAJOR: // Обновить всю "доску" (например, при переключении фильтров)
-        this.#clearBoard();
-        this.#renderPoints();
-        break;
-    }
-  };
 
   /**
    * Функция очистки "доски" от созданных ранее точек и их презентеров
