@@ -1,55 +1,61 @@
-import AbstractView from '../framework/view/abstract-view.js';
-import { FilterType } from '../const.js';
+import AbstractView from '../framework/view/abstract-view';
 
-function createFilterComponent(filter) {
-  return `<form class="trip-filters" action="#" method="get">
-                <div class="trip-filters__filter">
-                  <input id="filter-everything" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="everything" data-filter-type = "${FilterType.EVERYTHING}" ${filter === FilterType.EVERYTHING ? 'checked' : ''}>
-                  <label class="trip-filters__filter-label" for="filter-everything">Everything</label>
-                </div>
+function createFilter(currentFilter, filters) {
 
-                <div class="trip-filters__filter">
-                  <input id="filter-future" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="future" data-filter-type = "${FilterType.FUTURE}" ${filter === FilterType.FUTURE ? 'checked' : ''}>
-                  <label class="trip-filters__filter-label" for="filter-future">Future</label>
-                </div>
-
-                <div class="trip-filters__filter">
-                  <input id="filter-present" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="present" data-filter-type = "${FilterType.PRESENT}" ${filter === FilterType.PRESENT ? 'checked' : ''}>
-                  <label class="trip-filters__filter-label" for="filter-present">Present</label>
-                </div>
-
-                <div class="trip-filters__filter">
-                  <input id="filter-past" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="past" data-filter-type="${FilterType.PAST}" ${filter === FilterType.PAST ? 'checked' : ''}}>
-                  <label class="trip-filters__filter-label" for="filter-past">Past</label>
-                </div>
-
-                <button class="visually-hidden" type="submit">Accept filter</button>
-              </form>`;
+  return `
+   <form class="trip-filters" action="#" method="get">
+    ${filters.map((filter) => createFilterItem(currentFilter, filter)).join('')}
+    </form>`;
 }
-export default class Filter extends AbstractView {
+
+function createFilterItem(currentFilter, filter) {
+  const { type, count } = filter;
+  return `
+  <div class="trip-filters__filter">
+      <input
+        id="filter-${type}"
+        class="trip-filters__filter-input
+        visually-hidden"
+        type="radio"
+        name="trip-filter"
+        value="${type}"
+        ${currentFilter === type ? 'checked' : ''}
+        ${count === 0 ? 'disabled' : ''}>
+  <label
+    class="trip-filters__filter-label"
+    for="filter-${type}">
+    ${type}
+  </label>
+    </div > `;
+}
+
+export default class FilterView extends AbstractView {
   #currentFilter = null;
+  #filters = null;
   #filterChangeHandler = null;
 
-  constructor({ currentFilter, onFilterClick }) {
+  constructor({ currentFilter, filters, filterChangeHandler }) {
     super();
     this.#currentFilter = currentFilter;
-    this.#filterChangeHandler = onFilterClick;
-    this._restoreHandlers();
+    this.#filters = filters;
+    this.#filterChangeHandler = filterChangeHandler;
+    this.element.addEventListener('change', this.#handleFilterClick);
   }
 
   get template() {
-    return createFilterComponent(this.#currentFilter);
+    return createFilter(this.#currentFilter, this.#filters);
   }
 
-  _restoreHandlers() {
-    this.element.addEventListener('click', this.#handleChangeFilter);
-  }
-
-  #handleChangeFilter = (evt) => {
-    if (evt.target.tagName !== 'INPUT') {
+  /**
+   * Функция-обработчик изменения фильтра
+   * @param {*} evt - элемент, на котором сработал клик
+   * @description Внутри себя вызывает функцию из конструктора, полученную из HeaderPresenter
+   */
+  #handleFilterClick = (evt) => {
+    if (this.currentFilter === evt.target.value) {
       return;
     }
     evt.preventDefault();
-    this.#filterChangeHandler(evt.target.dataset.filterType);
+    this.#filterChangeHandler(evt.target.value);
   };
 }

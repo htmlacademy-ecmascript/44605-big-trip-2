@@ -2,6 +2,9 @@ const POINTS_COUNT = 10;
 const MIN_RANDOM_VALUE = 1;
 const MAX_RANDOM_VALUE = 100;
 
+const API_URL = 'https://22.objects.htmlacademy.pro/big-trip';
+const AUTHORIZATION = 'Basic mg-kem';
+
 const DEFAULT_POINT = {
   flag: 'default',
   basePrice: '0',
@@ -40,6 +43,7 @@ const UpdateType = {
   PATCH: 'patch',
   MINOR: 'minor',
   MAJOR: 'major',
+  INIT: 'init',
 };
 
 const FilterType = {
@@ -49,6 +53,18 @@ const FilterType = {
   PAST: 'past',
 };
 
+const Method = {
+  GET: 'GET',
+  PUT: 'PUT',
+  POST: 'POST',
+  DELETE: 'DELETE'
+};
+
+const PathURL = {
+  POINTS: 'points',
+  OFFERS: 'offers',
+  DESTINATIONS: 'destinations',
+};
 
 const MarkupElement = {
   EVERYTHING: '<p class="trip-events__msg">Click New Event to create your first point</p>',
@@ -57,4 +73,4 @@ const MarkupElement = {
   FUTURE: '<p class="trip-events__msg">There are no future events now</p>',
 };
 
-export { DEFAULT_POINT, POINTS_COUNT, MIN_RANDOM_VALUE, MAX_RANDOM_VALUE, DATE_FORMAT, FilterType, MarkupElement, StatusForm, SortType, UserAction, UpdateType };
+export { API_URL, AUTHORIZATION, DEFAULT_POINT, POINTS_COUNT, MIN_RANDOM_VALUE, MAX_RANDOM_VALUE, DATE_FORMAT, FilterType, MarkupElement, StatusForm, SortType, UserAction, Method, PathURL, UpdateType };

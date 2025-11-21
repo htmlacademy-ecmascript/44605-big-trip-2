@@ -1,4 +1,4 @@
-import TripHeaderPresenter from './trip-header-presenter';
+import HeaderPresenter from './header-presenter';
 import BodyPresenter from './body-presenter';
 
 
@@ -36,7 +36,7 @@ export default class BoardPresenter {
   }
 
   #renderHeader() {
-    this.#headerPresenter = new TripHeaderPresenter({
+    this.#headerPresenter = new HeaderPresenter({
       headerContainer: this.#headerContainer,
       filterModel: this.#filterModel,
       pointsModel: this.#pointsModel,

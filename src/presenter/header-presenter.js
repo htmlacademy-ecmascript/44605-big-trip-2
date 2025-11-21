@@ -1,34 +1,22 @@
-import Filter from '../view/filter-view';
 import NewPointView from '../view/new-point-view';
-import Observable from '../framework/observable';
-import { render, remove, replace } from '../framework/render';
+import FilterPresenter from './filter-presenter';
 import { UpdateType } from '../const';
+import { render } from '../framework/render';
 
-export default class HeaderPresenter extends Observable {
-  #tripMainContainer = document.querySelector('.trip-main'); // Контейнер Header для фильтров, карты маршрута, стоимости
-  #tripFilterContainer = document.querySelector('.trip-controls__filters'); // Контейнер для списка Filter
-  #currentFilter = null;
-  #pointModel = null;
+export default class HeaderPresenter {
+  #headerContainer = null;
+  #filterViewComponent = null;
+  #buttonViewComponent = null;
   #filterModel = null;
-  #filterChangeHandler = null; // Функция, приходит из BodyPresnter
-  #newPointButtonHandler = null; // Функция, приходит из BodyPresnter
+  #pointsModel = null;
+  #filterPresenter = null;
+  #handleNewPointButton = null;
 
-  #filterComponent = null;
-  #buttonNewPointComponent = null;
-
-  /**
-   * @constructor
-   * @param {} params
-   * @param params.pointModel - модель с данными
-   * @param params.filterModel - модель с фильтрами
-   */
-  constructor({ pointModel, filterModel, onFilterClick, onNewPointClick }) {
-    super();
-    this.#pointModel = pointModel;
+  constructor({ headerContainer, filterModel, pointsModel, onNewPointButtonClick }) {
+    this.#headerContainer = headerContainer;
     this.#filterModel = filterModel;
-    this.#filterChangeHandler = onFilterClick;
-    this.#newPointButtonHandler = onNewPointClick;
-    this.#filterModel.addObserver(this.#handleFilterModelChange);
+    this.#pointsModel = pointsModel;
+    this.#handleNewPointButton = onNewPointButtonClick;
   }
 
   init() {
@@ -36,49 +24,31 @@ export default class HeaderPresenter extends Observable {
     this.#renderButton();
   }
 
-  destroyFilter() {
-    remove(this.#filterComponent);
-  }
-
-  destroyButton() {
-    remove(this.#buttonNewPointComponent);
-  }
-
+  /**
+   * Метод для добавления на страницу компонента фильтрации
+   * @description Создаю компонент, затем рендерим в контейнер "шапки". Внутри передаем функцию, изменяющую модель фильтров
+   */
   #renderFilter() {
-    const prevFilterComponent = this.#filterComponent;
-
-    this.#filterComponent =
-      new Filter({
-        currentFilter: this.#filterModel.filter,
-        onFilterClick: this.#handleFilterChange
+    this.#filterPresenter =
+      new FilterPresenter({
+        filterModel: this.#filterModel,
+        pointsModel: this.#pointsModel,
+        filterChangeHandler: this.#handleFilterChange,
       });
 
-    if (prevFilterComponent === null) {
-      render(this.#filterComponent, this.#tripFilterContainer);
-      return;
-    }
-
-    replace(this.#filterComponent, prevFilterComponent);
-    remove(prevFilterComponent);
+    this.#filterPresenter.init();
   }
 
   #renderButton() {
-    this.#buttonNewPointComponent =
+    this.#buttonViewComponent =
       new NewPointView({
-        onNewPointButtonClick: this.#newPointButtonHandler,
+        onNewPointButtonClick: this.#handleNewPointButton
       });
-    render(this.#buttonNewPointComponent, this.#tripMainContainer);
+
+    render(this.#buttonViewComponent, this.#headerContainer);
   }
 
-  #handleFilterModelChange = () => {
-    this.#renderFilter();
-  };
-
-  #handleFilterChange = (filter) => {
-    if (filter === this.#filterModel.filter) {
-      return;
-    }
-    this.#filterModel.setFilter(UpdateType.MAJOR, filter);
-    this.#filterChangeHandler();
+  #handleFilterChange = (newValueFilter) => {
+    this.#filterModel.setFilter(UpdateType.MINOR, newValueFilter);
   };
 }
