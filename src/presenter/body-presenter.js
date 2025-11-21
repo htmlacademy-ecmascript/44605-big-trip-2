@@ -1,13 +1,15 @@
 import SortView from '../view/sort-view';
 import NoContentView from '../view/no-content-view';
 import PointListView from '../view/point-list-view';
+import LoadingView from '../view/loading-view';
 
 import PointPresenter from './point-presenter';
 import NewPointPresenter from './new-point-presenter';
+import UiBlocker from '../framework/ui-blocker/ui-blocker';
 
 import { render, remove, replace } from '../framework/render';
 import { sortingByPrice, sortingByDay, sortingByTime, filterPoints } from '../utils';
-import { SortType, UserAction, UpdateType } from '../const';
+import { SortType, UserAction, UpdateType, TimeLimit } from '../const';
 
 /**
  * @class Презентер списка точек маршрута и связанных UI-элементов (хедер, фильтры, сортировка).
@@ -18,6 +20,7 @@ export default class BodyPresenter {
   #filterModel = null; // Модель фильтров
 
   #sortComponent = null; // Компонент сортировки(список)
+  #loadingViewComponent = new LoadingView();
   #pointListContainer = null; // Компонент ul списка для размещения li(точек маршрута)
   #noContentView = null;
   #newPointPresenter = null;
@@ -26,6 +29,11 @@ export default class BodyPresenter {
   #currentFilter = null;
   #currentDate = new Date();
   #filteredPoints = null;
+  #isLoading = true;
+  #UiBlocker = new UiBlocker({
+    lowerLimit: TimeLimit.LOWER_LIMIT,
+    upperLimit: TimeLimit.UPPER_LIMIT
+  });
 
   /**
    * @constructor
@@ -134,6 +142,10 @@ export default class BodyPresenter {
    *  Метод отрисовки точек маршрута на страницу
    */
   #renderPoints() {
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
     if (this.#noContentView) {
       remove(this.#noContentView);
       this.#noContentView = null;
@@ -183,6 +195,10 @@ export default class BodyPresenter {
     remove(prevEmptyPage);
   }
 
+  #renderLoading() {
+    render(this.#loadingViewComponent, this.#bodyContainer);
+  }
+
   /**
   * Функция обработчик клика сортировки
   * @param sortType - Тип сортировки, выбранный пользователем
@@ -214,18 +230,35 @@ export default class BodyPresenter {
     * @description Когда пользователь изменяет интерфейс, создает/удаляет/меняет/фильтрует -
     * данная функция указывает, что необходимо сделать с моделью точек маршрута
     */
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction = async (actionType, updateType, update) => {
+    this.#UiBlocker.block();
     switch (actionType) {
       case UserAction.ADD_POINT:
-        this.#pointsModel.addPoint(updateType, update);
+        this.#newPointPresenter.setSaving();
+        try {
+          await this.#pointsModel.addPoint(updateType, update);
+        } catch (err) {
+          this.#newPointPresenter.setAborting();
+        }
         break;
       case UserAction.DELETE_POINT:
-        this.#pointsModel.deletePoint(updateType, update);
+        this.#pointPresenters.get(update.id).setDeleting();
+        try {
+          await this.#pointsModel.deletePoint(updateType, update);
+        } catch (err) {
+          this.#pointPresenters.get(update.id).setAborting();
+        }
         break;
       case UserAction.UPDATE_POINT:
-        this.#pointsModel.updatePoints(updateType, update);
+        this.#pointPresenters.get(update.id).setSaving();
+        try {
+          await this.#pointsModel.updatePoints(updateType, update);
+        } catch (err) {
+          this.#pointPresenters.get(update.id).setAborting();
+        }
         break;
     }
+    this.#UiBlocker.unblock();
   };
 
   /**
@@ -244,6 +277,11 @@ export default class BodyPresenter {
         break;
       case UpdateType.MINOR: // Обновить список (например, когда произошло удаление задачи или изменилась дата)
         this.#clearBoard();
+        this.#renderPoints();
+        break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingViewComponent);
         this.#renderPoints();
         break;
     }

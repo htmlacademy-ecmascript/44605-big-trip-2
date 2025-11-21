@@ -65,6 +65,10 @@ const PathURL = {
   OFFERS: 'offers',
   DESTINATIONS: 'destinations',
 };
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
 
 const MarkupElement = {
   EVERYTHING: '<p class="trip-events__msg">Click New Event to create your first point</p>',
@@ -73,4 +77,4 @@ const MarkupElement = {
   FUTURE: '<p class="trip-events__msg">There are no future events now</p>',
 };
 
-export { API_URL, AUTHORIZATION, DEFAULT_POINT, POINTS_COUNT, MIN_RANDOM_VALUE, MAX_RANDOM_VALUE, DATE_FORMAT, FilterType, MarkupElement, StatusForm, SortType, UserAction, Method, PathURL, UpdateType };
+export { TimeLimit, API_URL, AUTHORIZATION, DEFAULT_POINT, POINTS_COUNT, MIN_RANDOM_VALUE, MAX_RANDOM_VALUE, DATE_FORMAT, FilterType, MarkupElement, StatusForm, SortType, UserAction, Method, PathURL, UpdateType };
