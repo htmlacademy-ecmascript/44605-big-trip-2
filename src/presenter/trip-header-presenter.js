@@ -1,5 +1,6 @@
 import NewPointView from '../view/new-point-view';
 import FilterPresenter from './filter-presenter';
+import { UpdateType } from '../const';
 import { render } from '../framework/render';
 
 export default class TripHeaderPresenter {
@@ -9,13 +10,13 @@ export default class TripHeaderPresenter {
   #filterModel = null;
   #pointsModel = null;
   #filterPresenter = null;
-  #filterChangeHandler = null;
+  #handleNewPointButton = null;
 
-  constructor({ headerContainer, filterModel, pointsModel, modelChangeHandler, filterChangeHandler }) {
+  constructor({ headerContainer, filterModel, pointsModel, onNewPointButtonClick }) {
     this.#headerContainer = headerContainer;
     this.#filterModel = filterModel;
     this.#pointsModel = pointsModel;
-    this.#filterChangeHandler = filterChangeHandler;
+    this.#handleNewPointButton = onNewPointButtonClick;
   }
 
   init() {
@@ -25,14 +26,14 @@ export default class TripHeaderPresenter {
 
   /**
    * Метод для добавления на страницу компонента фильтрации
-   * @description Создаю компонент, затем рендерим в контейнер "шапки". Внутри передаем фукнцию, изменяющую модель фильтров
+   * @description Создаю компонент, затем рендерим в контейнер "шапки". Внутри передаем функцию, изменяющую модель фильтров
    */
   #renderFilter() {
     this.#filterPresenter =
       new FilterPresenter({
         filterModel: this.#filterModel,
         pointsModel: this.#pointsModel,
-        filterChangeHandler: this.#filterChangeHandler,
+        filterChangeHandler: this.#handleFilterChange,
       });
 
     this.#filterPresenter.init();
@@ -41,19 +42,13 @@ export default class TripHeaderPresenter {
   #renderButton() {
     this.#buttonViewComponent =
       new NewPointView({
-        onNewPointButtonClick: this.#handleButton
+        onNewPointButtonClick: this.#handleNewPointButton
       });
 
     render(this.#buttonViewComponent, this.#headerContainer);
   }
 
-  #handleFilterClick = (changedFilter) => {
-    this.#filterModel.setFilter(changedFilter);
-    console.log(changedFilter);
-    this.#filterChangeHandler();
-  };
-
-  #handleButton = () => {
-    console.log('Кнопка нажата');
+  #handleFilterChange = (newValueFilter) => {
+    this.#filterModel.setFilter(UpdateType.MINOR, newValueFilter);
   };
 }

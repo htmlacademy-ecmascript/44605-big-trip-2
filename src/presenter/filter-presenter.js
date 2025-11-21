@@ -14,7 +14,14 @@ export default class FilterPresenter {
     this.#filterModel = filterModel;
     this.#pointsModel = pointsModel;
     this.#filterChangeHandler = filterChangeHandler;
+
+    this.#filterModel.addObserver(this.#handleModelChange);
+    this.#pointsModel.addObserver(this.#handleModelChange);
   }
+
+  #handleModelChange = () => {
+    this.init();
+  };
 
   get filters() {
     const points = this.#pointsModel.points;

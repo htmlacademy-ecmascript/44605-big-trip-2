@@ -1,8 +1,8 @@
 import AbstractView from '../framework/view/abstract-view';
 import { MarkupElement } from '../const';
 
-function createEmptyPointComponent(filter) {
-  return MarkupElement[filter];
+function createEmptyPointComponent(filter = MarkupElement.EVERYTHING) {
+  return MarkupElement[filter.toUpperCase()];
 }
 
 /**

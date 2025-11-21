@@ -1,5 +1,4 @@
 import BoardPresenter from './presenter/board-presenter';
-// import BodyPresenter from './presenter/body-presenter';
 import PointsModel from './model/points-model';
 import FilterModel from './model/filter-model';
 
@@ -11,8 +10,4 @@ const filterModel = new FilterModel();
 
 const boardPresenter = new BoardPresenter({ headerContainer, bodyContainer, pointsModel, filterModel });
 boardPresenter.init();
-
-// const bodyPresenter = new BodyPresenter(tripPointsContainer, pointsModel, filterModel); // Инициализируем главный презентер приложения, передаем параметры в конструктор класса
-
-// bodyPresenter.init();
 

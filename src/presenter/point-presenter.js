@@ -171,7 +171,7 @@ export default class PointPresenter {
   #handleDeleteButton = () => {
     this.#handleDataUpdate(
       UserAction.DELETE_POINT,
-      UpdateType.MAJOR,
+      UpdateType.MINOR,
       this.#point
     );
   };

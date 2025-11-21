@@ -1,24 +1,17 @@
-const POINTS_COUNT = 3;
+const POINTS_COUNT = 10;
 const MIN_RANDOM_VALUE = 1;
 const MAX_RANDOM_VALUE = 100;
-const FILTERS = [
-  {
-    name: 'EVERYTHING',
-    count: 0
-  },
-  {
-    name: 'FUTURE',
-    count: 0
-  },
-  {
-    name: 'PRESENT',
-    count: 0
-  },
-  {
-    name: 'PAST',
-    count: 0
-  }
-];
+
+const DEFAULT_POINT = {
+  flag: 'default',
+  basePrice: '0',
+  dateFrom: '',
+  dateTo: '',
+  destination: '',
+  isFavorite: false,
+  offers: [],
+  type: 'flight',
+};
 
 const DATE_FORMAT = {
   dayMonth: 'D MMM',
@@ -64,4 +57,4 @@ const MarkupElement = {
   FUTURE: '<p class="trip-events__msg">There are no future events now</p>',
 };
 
-export { POINTS_COUNT, MIN_RANDOM_VALUE, MAX_RANDOM_VALUE, FILTERS, DATE_FORMAT, FilterType, MarkupElement, StatusForm, SortType, UserAction, UpdateType };
+export { DEFAULT_POINT, POINTS_COUNT, MIN_RANDOM_VALUE, MAX_RANDOM_VALUE, DATE_FORMAT, FilterType, MarkupElement, StatusForm, SortType, UserAction, UpdateType };
