@@ -63,6 +63,7 @@ export default class NewPointPresenter {
   destroy() {
     remove(this.#pointEditComponent);
     this.#buttonNewPoint.disabled = false;
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
   }
 
   setSaving() {
@@ -84,6 +85,10 @@ export default class NewPointPresenter {
     };
 
     this.#pointEditComponent.shake(resetFormState);
+  }
+
+  setSaved() {
+    this.destroy();
   }
 
 

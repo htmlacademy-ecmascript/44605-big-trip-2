@@ -237,6 +237,8 @@ export default class BodyPresenter {
         this.#newPointPresenter.setSaving();
         try {
           await this.#pointsModel.addPoint(updateType, update);
+          this.#newPointPresenter.setSaved();
+          this.#newPointPresenter = null;
         } catch (err) {
           this.#newPointPresenter.setAborting();
         }
