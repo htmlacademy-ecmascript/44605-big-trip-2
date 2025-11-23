@@ -1,7 +1,6 @@
 import HeaderPresenter from './header-presenter';
 import BodyPresenter from './body-presenter';
 
-
 export default class BoardPresenter {
   #headerContainer = null;
   #bodyContainer = null;
@@ -23,11 +22,6 @@ export default class BoardPresenter {
     this.#bodyContainer = bodyContainer;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
-
-    // this.#filterModel.addObserver(this.#handleModelChange);
-    // this.#pointsModel.addObserver(this.#handleModelChange);
-
-    // Тут необходимо подписать модель на функцию обновления страницы
   }
 
   init() {

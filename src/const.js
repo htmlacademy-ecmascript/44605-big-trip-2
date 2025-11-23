@@ -1,7 +1,3 @@
-const POINTS_COUNT = 10;
-const MIN_RANDOM_VALUE = 1;
-const MAX_RANDOM_VALUE = 100;
-
 const API_URL = 'https://22.objects.htmlacademy.pro/big-trip';
 const AUTHORIZATION = 'Basic mg-kem';
 
@@ -25,8 +21,8 @@ const DATE_FORMAT = {
 const StatusForm = {
   EDIT: 'edit',
   DEFAULT: 'default',
-
 };
+
 const SortType = {
   DAY: 'day',
   TIME: 'time',
@@ -77,4 +73,4 @@ const MarkupElement = {
   FUTURE: '<p class="trip-events__msg">There are no future events now</p>',
 };
 
-export { TimeLimit, API_URL, AUTHORIZATION, DEFAULT_POINT, POINTS_COUNT, MIN_RANDOM_VALUE, MAX_RANDOM_VALUE, DATE_FORMAT, FilterType, MarkupElement, StatusForm, SortType, UserAction, Method, PathURL, UpdateType };
+export { TimeLimit, API_URL, AUTHORIZATION, DEFAULT_POINT, DATE_FORMAT, FilterType, MarkupElement, StatusForm, SortType, UserAction, Method, PathURL, UpdateType };

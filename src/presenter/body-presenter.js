@@ -27,7 +27,6 @@ export default class BodyPresenter {
   #pointPresenters = new Map(); // MAP для хранения созданных презентеров Point
   #currentSortType = SortType.DAY; // Переменная для хранения текущей сортировки( по умолчанию DAY )
   #currentFilter = null;
-  #currentDate = new Date();
   #filteredPoints = null;
   #isLoading = true;
   #UiBlocker = new UiBlocker({
@@ -47,9 +46,8 @@ export default class BodyPresenter {
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
 
-    // Когда произойдет обновление модели фильтров я должен вызвать функцию обновления страницы
     this.#filterModel.addObserver(this.#handleModelChange);
-    this.#pointsModel.addObserver(this.#handleModelChange); // Подписываемся на событие изменения модели
+    this.#pointsModel.addObserver(this.#handleModelChange);
   }
 
   /**
@@ -274,10 +272,10 @@ export default class BodyPresenter {
   */
   #handleModelChange = (updateType, data) => {
     switch (updateType) {
-      case UpdateType.PATCH: // Обновить часть списка(одну точку маршрута)
+      case UpdateType.PATCH:
         this.#pointPresenters.get(data.id).init(this.destinations, this.offers, data);
         break;
-      case UpdateType.MINOR: // Обновить список (например, когда произошло удаление задачи или изменилась дата)
+      case UpdateType.MINOR:
         this.#clearBoard();
         this.#renderPoints();
         break;

@@ -1,8 +1,8 @@
 import AbstractView from '../framework/view/abstract-view';
 
-function createNewPoint(loaderFlag) {
+function createNewPoint() {
   return `
-  <button class="trip-main__event-add-btn  btn  btn--big  btn--yellow" type="button" ${loaderFlag ? 'disabled' : ''}>New event</button>
+  <button class="trip-main__event-add-btn  btn  btn--big  btn--yellow" type="button" }>New event</button>
   `;
 }
 
@@ -11,17 +11,15 @@ function createNewPoint(loaderFlag) {
  */
 export default class NewPointView extends AbstractView {
   #handleNewPointButton = null;
-  #isLoading = null;
 
-  constructor({ isLoading, onNewPointButtonClick }) {
+  constructor({ onNewPointButtonClick }) {
     super();
-    this.#isLoading = isLoading;
     this.#handleNewPointButton = onNewPointButtonClick;
     this._restoreHandlers();
   }
 
   get template() {
-    return createNewPoint(this.#isLoading);
+    return createNewPoint();
   }
 
   _restoreHandlers() {

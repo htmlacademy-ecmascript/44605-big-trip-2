@@ -189,7 +189,7 @@ export default class PointEditView extends AbstractStatefulView {
    * @param {Object} params.point - Данные точки маршрута
    * @param {Array} params.destinations - Массив направлений
    * @param {Array} params.offers - Массив предложений
-   * @param {Function} params.onCloseEditFormButtonClick - Функция для автоматичечского закрытия форм редактирования при открытии новой формы редактирования
+   * @param {Function} params.onCloseEditFormButtonClick - Функция для автоматического закрытия форм редактирования при открытии новой формы редактирования
    * @param {Function} params.onSaveFormButtonClick - Функция для сохранения данных из формы редактирования
    * @param {Function} params.onDeletePointButtonClick - Функция для удаления точки маршрута
    */

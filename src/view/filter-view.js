@@ -1,7 +1,6 @@
 import AbstractView from '../framework/view/abstract-view';
 
 function createFilter(currentFilter, filters) {
-
   return `
    <form class="trip-filters" action="#" method="get">
     ${filters.map((filter) => createFilterItem(currentFilter, filter)).join('')}
