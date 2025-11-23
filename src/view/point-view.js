@@ -1,5 +1,5 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { DateFormat } from '../const.js';
+import { DATE_FORMAT } from '../const.js';
 import { humanizeDate } from '../utils.js';
 
 function createPointComponent(point, destinations, offers) {
@@ -19,8 +19,8 @@ function createPointComponent(point, destinations, offers) {
   // Получаем выбранные предложения для этой точки с учетом типа offers
   const selectedOffers = availableOffers.filter((offer) => point.offers ? point.offers.includes(offer.id) : false);
 
-  const timeStart = humanizeDate(dateFrom, DateFormat.HOURS_MINUTES); // Получаю время начала в формате 11:55
-  const timeEnd = humanizeDate(dateTo, DateFormat.HOURS_MINUTES); // Получаю время окончания в формате 11:55
+  const timeStart = humanizeDate(dateFrom, DATE_FORMAT.hoursMinutes); // Получаю время начала в формате 11:55
+  const timeEnd = humanizeDate(dateTo, DATE_FORMAT.hoursMinutes); // Получаю время окончания в формате 11:55
 
   // Вычисляю разницу в дате и времени от начала и конца. Результат получаю в минутах
   const durationTime = Math.ceil(((new Date(dateTo) - new Date(dateFrom)) / 1000) / 60);
@@ -60,7 +60,7 @@ function createPointComponent(point, destinations, offers) {
 
   return `<li class="trip-events__item">
       <div class="event">
-        <time class="event__date" datetime="${dateFrom}">${humanizeDate(dateFrom, DateFormat.DAY_MONTH)}</time>
+        <time class="event__date" datetime="${dateFrom}">${humanizeDate(dateFrom, DATE_FORMAT.dayMonth)}</time>
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
         </div>

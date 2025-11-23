@@ -1,3 +1,7 @@
+const POINTS_COUNT = 10;
+const MIN_RANDOM_VALUE = 1;
+const MAX_RANDOM_VALUE = 100;
+
 const API_URL = 'https://22.objects.htmlacademy.pro/big-trip';
 const AUTHORIZATION = 'Basic mg-kem';
 
@@ -12,29 +16,10 @@ const DEFAULT_POINT = {
   type: 'flight',
 };
 
-const Method = {
-  GET: 'GET',
-  PUT: 'PUT',
-  POST: 'POST',
-  DELETE: 'DELETE'
-};
-
-const PathURL = {
-  POINTS: 'points',
-  OFFERS: 'offers',
-  DESTINATIONS: 'destinations',
-};
-
-const TimeLimit = {
-  LOWER_LIMIT: 350,
-  UPPER_LIMIT: 1000,
-};
-
-
-const DateFormat = {
-  DAY_MONTH: 'D MMM',
-  HOURS_MINUTES: 'HH:mm',
-  FULL_DATE: 'DD/MM/YY HH:mm',
+const DATE_FORMAT = {
+  dayMonth: 'D MMM',
+  hoursMinutes: 'HH:mm',
+  fullDate: 'DD/MM/YY HH:mm',
 };
 
 const StatusForm = {
@@ -63,11 +48,27 @@ const UpdateType = {
 
 const FilterType = {
   EVERYTHING: 'everything',
-  PAST: 'past',
-  PRESENT: 'present',
   FUTURE: 'future',
+  PRESENT: 'present',
+  PAST: 'past',
 };
 
+const Method = {
+  GET: 'GET',
+  PUT: 'PUT',
+  POST: 'POST',
+  DELETE: 'DELETE'
+};
+
+const PathURL = {
+  POINTS: 'points',
+  OFFERS: 'offers',
+  DESTINATIONS: 'destinations',
+};
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
 
 const MarkupElement = {
   EVERYTHING: '<p class="trip-events__msg">Click New Event to create your first point</p>',
@@ -76,4 +77,4 @@ const MarkupElement = {
   FUTURE: '<p class="trip-events__msg">There are no future events now</p>',
 };
 
-export { DEFAULT_POINT, API_URL, AUTHORIZATION, Method, PathURL, TimeLimit, DateFormat, FilterType, MarkupElement, StatusForm, SortType, UserAction, UpdateType };
+export { TimeLimit, API_URL, AUTHORIZATION, DEFAULT_POINT, POINTS_COUNT, MIN_RANDOM_VALUE, MAX_RANDOM_VALUE, DATE_FORMAT, FilterType, MarkupElement, StatusForm, SortType, UserAction, Method, PathURL, UpdateType };

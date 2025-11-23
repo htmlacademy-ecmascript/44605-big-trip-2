@@ -132,18 +132,19 @@ export default class PointPresenter {
     this.#pointEditComponent.shake(resetFormState);
   }
 
+
   /**
-   *  Функция открытия компонента редактирования
-   */
+ *  Функция открытия компонента редактирования
+ */
   #replaceCardToForm() {
-    replace(this.#pointEditComponent, this.#pointComponent); // Заменяем один компонент на другой(Инициализация ранее п.5.3)
+    replace(this.#pointEditComponent, this.#pointComponent); // Заменаем один компонент на другой(Инициализация ранее п.5.3)
     document.addEventListener('keydown', this.#escKeyDownHandler);
-    this.#handleCloseAllForm(); // Метод проходит по MAP и вызывает метод resetViewToDefault() - закрывает если открыта форма редактирования
+    this.#handleCloseAllForm(); // Метод проходит по MAP и вызывает метод resetViewToDefault() - закрывает если открыта форма редактирвоания
     this.#mode = StatusForm.EDIT; // После ставим статус - "в редактировании"
   }
 
   /**
-   *  Функция закрытия компонента редактирования
+   *  Функиця закрытия компонента редактирования
    */
   #replaceFormToCard() {
     replace(this.#pointComponent, this.#pointEditComponent);
@@ -206,7 +207,7 @@ export default class PointPresenter {
   #handleDeleteButton = () => {
     this.#handleDataUpdate(
       UserAction.DELETE_POINT,
-      UpdateType.MAJOR,
+      UpdateType.MINOR,
       this.#point
     );
   };
