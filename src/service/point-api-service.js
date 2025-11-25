@@ -7,7 +7,7 @@ export default class PointApiService extends ApiService {
    * Геттер для получения списка точек маршрута
    */
   get points() {
-    return this._load({ url: 'points' })
+    return this._load({ url: `${PathURL.POINTS}` })
       .then(ApiService.parseResponse);
   }
 
@@ -15,7 +15,7 @@ export default class PointApiService extends ApiService {
    * Геттер для получения списка пунктов назначений
    */
   get destinations() {
-    return this._load({ url: 'destinations' })
+    return this._load({ url: `${PathURL.DESTINATIONS}` })
       .then(ApiService.parseResponse);
   }
 
@@ -23,7 +23,7 @@ export default class PointApiService extends ApiService {
    * Геттер для получения списка дополнительных предложений
    */
   get offers() {
-    return this._load({ url: 'offers' })
+    return this._load({ url: `${PathURL.OFFERS}` })
       .then(ApiService.parseResponse);
   }
 

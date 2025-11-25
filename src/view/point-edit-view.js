@@ -1,7 +1,7 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
-import { DateFormat } from '../const';
+import { DATE_FORMAT } from '../const';
 import { humanizeDate } from '../utils';
 
 function createEventPointEditTemplate(point, destinations, offers) {
@@ -23,8 +23,8 @@ function createEventPointEditTemplate(point, destinations, offers) {
   // Получаем выбранные предложения для этой точки с учетом типа offers
   const selectedOffers = point.offers || [];
 
-  const dateStart = humanizeDate(dateFrom, DateFormat.FULL_DATE);
-  const dateEnd = humanizeDate(dateTo, DateFormat.FULL_DATE);
+  const dateStart = humanizeDate(dateFrom, DATE_FORMAT.fullDate);
+  const dateEnd = humanizeDate(dateTo, DATE_FORMAT.fullDate);
 
   const offersContent = availableOffers.length > 0 ? `
                    <h3 class="event__section-title  event__section-title--offers">Offers</h3>
@@ -126,7 +126,7 @@ function createEventPointEditTemplate(point, destinations, offers) {
                     <label class="event__label  event__type-output" for="event-destination-1">
                       ${point.type}
                     </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${pointDestination ? pointDestination.name : ''}" list="destination-list-1" ${isDisabled ? 'disabled' : ''}>
+                     <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${pointDestination ? pointDestination.name : ''}" list="destination-list-1" ${isDisabled ? 'disabled' : ''}>
                     <datalist id="destination-list-1">
                     ${destinations.map((destination) => `
                        <option value='${destination.name}'></option>`)}
@@ -135,10 +135,10 @@ function createEventPointEditTemplate(point, destinations, offers) {
 
                   <div class="event__field-group  event__field-group--time">
                     <label class="visually-hidden" for="event-start-time-1">From</label>
-                    <input class="event__input event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dateStart}" ${isDisabled ? 'disabled' : ''}>
+                   <input class="event__input event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dateStart}" ${isDisabled ? 'disabled' : ''}>
                     &mdash;
                     <label class="visually-hidden" for="event-end-time-1">To</label>
-                    <input class="event__input event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dateEnd}" ${isDisabled ? 'disabled' : ''}>
+                     <input class="event__input event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dateEnd}" ${isDisabled ? 'disabled' : ''}>
                   </div>
 
                   <div class="event__field-group  event__field-group--price">
@@ -146,8 +146,7 @@ function createEventPointEditTemplate(point, destinations, offers) {
                       <span class="visually-hidden">Price</span>
                       &euro;
                     </label>
-                    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}" ${isDisabled ? 'disabled' : ''}>
-                  </div>
+                    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}" ${isDisabled ? 'disabled' : ''}></div>
 
                   <button class="event__save-btn  btn  btn--blue" type="submit">
                   ${isSaving ? 'Saving...' : 'Save'}
