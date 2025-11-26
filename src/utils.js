@@ -3,18 +3,18 @@ import { FilterType } from './const';
 
 const humanizeDate = (date, format) => date ? dayjs(date).format(format) : '';
 
-const sortingByDay = (a, b) => {
-  const dateA = dayjs(a.dateFrom).valueOf();
-  const dateB = dayjs(b.dateFrom).valueOf();
+const sortingByDay = (firstItem, secondItem) => {
+  const dateA = dayjs(firstItem.dateFrom).valueOf();
+  const dateB = dayjs(secondItem.dateFrom).valueOf();
   return dateA - dateB;
 };
 
-const sortingByPrice = (a, b) => b.basePrice - a.basePrice;
+const sortingByPrice = (firstItem, secondItem) => secondItem.basePrice - firstItem.basePrice;
 
-const sortingByTime = (a, b) => {
-  const dateA = dayjs(a.dateTo).valueOf() - dayjs(a.dateFrom).valueOf();
-  const dateB = dayjs(b.dateTo).valueOf() - dayjs(b.dateFrom).valueOf();
-  return dateB - dateA;
+const sortingByTime = (firstItem, secondItem) => {
+  const firstDate = dayjs(firstItem.dateTo).valueOf() - dayjs(firstItem.dateFrom).valueOf();
+  const secondDate = dayjs(secondItem.dateTo).valueOf() - dayjs(secondItem.dateFrom).valueOf();
+  return secondDate - firstDate;
 };
 
 /**

@@ -9,7 +9,7 @@ import UiBlocker from '../framework/ui-blocker/ui-blocker';
 
 import { render, remove, replace } from '../framework/render';
 import { sortingByPrice, sortingByDay, sortingByTime, filterPoints } from '../utils';
-import { SortType, UserAction, UpdateType, TimeLimit } from '../const';
+import { SortType, UserAction, UpdateType, TimeLimit, FilterType } from '../const';
 
 /**
  * @class Презентер списка точек маршрута и связанных UI-элементов (хедер, фильтры, сортировка).
@@ -92,13 +92,13 @@ export default class BodyPresenter {
   }
 
   createNewPoint() {
+    this.#filterModel.setFilter(UpdateType.MINOR, FilterType.EVERYTHING);
+    this.#currentSortType = SortType.DAY;
     if (this.#noContentView) {
       remove(this.#noContentView);
       this.#noContentView = null;
     }
-    if (!this.#sortComponent) {
-      this.#renderSortComponent();
-    }
+    this.#renderSortComponent();
     if (!this.#pointListContainer) {
       this.#renderPointListContainer();
     }
@@ -173,7 +173,7 @@ export default class BodyPresenter {
   /**
    * Метод отрисовки пустой страницы, если массив точек маршрута пуст
    */
-  #renderNoContent() {
+  #renderNoContent(errorFlag) {
     if (this.#sortComponent) {
       remove(this.#sortComponent);
       this.#sortComponent = null;
@@ -184,7 +184,7 @@ export default class BodyPresenter {
     }
 
     const prevEmptyPage = this.#noContentView;
-    this.#noContentView = new NoContentView(this.#currentFilter);
+    this.#noContentView = new NoContentView(this.#currentFilter, errorFlag);
     if (prevEmptyPage === null) {
       render(this.#noContentView, this.#bodyContainer);
       return;
@@ -282,6 +282,10 @@ export default class BodyPresenter {
       case UpdateType.INIT:
         this.#isLoading = false;
         remove(this.#loadingViewComponent);
+        if (data) {
+          this.#renderNoContent(data);
+          return;
+        }
         this.#renderPoints();
         break;
     }
