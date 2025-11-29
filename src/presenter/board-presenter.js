@@ -43,6 +43,7 @@ export default class BoardPresenter {
   #renderBody() {
     this.#bodyPresenter =
       new BodyPresenter({
+        headerContainer: this.#headerContainer,
         bodyContainer: this.#bodyContainer,
         pointsModel: this.#pointsModel,
         filterModel: this.#filterModel,

@@ -71,6 +71,7 @@ const MarkupElement = {
   PAST: '<p class="trip-events__msg">There are no past events now</p>',
   PRESENT: '<p class="trip-events__msg">There are no present events now</p>',
   FUTURE: '<p class="trip-events__msg">There are no future events now</p>',
+  ERROR: '<p class="trip-events__msg">Failed to load latest route information</p>',
 };
 
 export { TimeLimit, API_URL, AUTHORIZATION, DEFAULT_POINT, DATE_FORMAT, FilterType, MarkupElement, StatusForm, SortType, UserAction, Method, PathURL, UpdateType };

@@ -23,10 +23,10 @@ export default class NewPointView extends AbstractView {
   }
 
   _restoreHandlers() {
-    this.element.addEventListener('click', this.#handleButtonClick);
+    this.element.addEventListener('click', this.#onButtonClick);
   }
 
-  #handleButtonClick = () => {
+  #onButtonClick = () => {
     this.#handleNewPointButton();
   };
 }

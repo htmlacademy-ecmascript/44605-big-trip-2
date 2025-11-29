@@ -9,6 +9,7 @@ export default class PointsModel extends Observable {
   #points = [];
   #destinations = [];
   #offers = [];
+  #error = null;
   #pointApiService = null;
 
   constructor({ pointApiService }) {
@@ -46,15 +47,17 @@ export default class PointsModel extends Observable {
 
   async init() {
     try {
-      const point = await this.#pointApiService.points;
-      this.#points = point.map(this.#adaptToClient);
+      const points = await this.#pointApiService.points;
+      this.#points = points.map(this.#adaptToClient);
       this.#offers = await this.#pointApiService.offers;
       this.#destinations = await this.#pointApiService.destinations;
+      this.#error = false;
     } catch (err) {
       this.#points = [];
+      this.#error = true;
     }
 
-    this._notify(UpdateType.INIT);
+    this._notify(UpdateType.INIT, this.#error);
   }
 
   /**

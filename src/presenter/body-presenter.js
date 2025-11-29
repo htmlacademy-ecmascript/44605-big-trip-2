@@ -2,25 +2,28 @@ import SortView from '../view/sort-view';
 import NoContentView from '../view/no-content-view';
 import PointListView from '../view/point-list-view';
 import LoadingView from '../view/loading-view';
+import TripInformationView from '../view/trip-information-view';
 
 import PointPresenter from './point-presenter';
 import NewPointPresenter from './new-point-presenter';
 import UiBlocker from '../framework/ui-blocker/ui-blocker';
 
-import { render, remove, replace } from '../framework/render';
+import { render, remove, replace, RenderPosition } from '../framework/render';
 import { sortingByPrice, sortingByDay, sortingByTime, filterPoints } from '../utils';
-import { SortType, UserAction, UpdateType, TimeLimit } from '../const';
+import { SortType, UserAction, UpdateType, TimeLimit, FilterType } from '../const';
 
 /**
  * @class Презентер списка точек маршрута и связанных UI-элементов (хедер, фильтры, сортировка).
  */
 export default class BodyPresenter {
+  #headerContainer = null;
   #bodyContainer = null; // Контейнер для общего презентера(получаем в main.js)
   #pointsModel = null; // Модель общая (инициализируем в main.js)
   #filterModel = null; // Модель фильтров
 
   #sortComponent = null; // Компонент сортировки(список)
   #loadingViewComponent = new LoadingView();
+  #tripInfoComponent = null;
   #pointListContainer = null; // Компонент ul списка для размещения li(точек маршрута)
   #noContentView = null;
   #newPointPresenter = null;
@@ -41,7 +44,8 @@ export default class BodyPresenter {
    * @param params.pointsModel Модель с данными точек, направлений и офферов
    * @param params.filterModel Модель с фильтрами
    */
-  constructor({ bodyContainer, pointsModel, filterModel }) {
+  constructor({ headerContainer, bodyContainer, pointsModel, filterModel }) {
+    this.#headerContainer = headerContainer;
     this.#bodyContainer = bodyContainer;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
@@ -92,13 +96,13 @@ export default class BodyPresenter {
   }
 
   createNewPoint() {
+    this.#filterModel.setFilter(UpdateType.MINOR, FilterType.EVERYTHING);
+    this.#currentSortType = SortType.DAY;
     if (this.#noContentView) {
       remove(this.#noContentView);
       this.#noContentView = null;
     }
-    if (!this.#sortComponent) {
-      this.#renderSortComponent();
-    }
+    this.#renderSortComponent();
     if (!this.#pointListContainer) {
       this.#renderPointListContainer();
     }
@@ -136,6 +140,22 @@ export default class BodyPresenter {
     render(this.#pointListContainer, this.#bodyContainer);
   }
 
+  #renderTripInfo() {
+    const prevTripInfoComponent = this.#tripInfoComponent;
+
+    this.#tripInfoComponent = new TripInformationView({
+      points: this.points,
+      destinations: this.destinations,
+      offers: this.offers
+    });
+
+    if (prevTripInfoComponent === null) {
+      render(this.#tripInfoComponent, this.#headerContainer, RenderPosition.AFTERBEGIN);
+      return;
+    }
+    replace(this.#tripInfoComponent, prevTripInfoComponent);
+  }
+
   /**
    *  Метод отрисовки точек маршрута на страницу
    */
@@ -150,6 +170,7 @@ export default class BodyPresenter {
     }
     if (this.points.length !== 0) {
       this.#renderSortComponent();
+      this.#renderTripInfo();
       this.#renderPointListContainer();
       for (let i = 0; i < this.points.length; i++) {
         this.#renderPoint(this.points[i]);
@@ -173,7 +194,7 @@ export default class BodyPresenter {
   /**
    * Метод отрисовки пустой страницы, если массив точек маршрута пуст
    */
-  #renderNoContent() {
+  #renderNoContent(errorFlag) {
     if (this.#sortComponent) {
       remove(this.#sortComponent);
       this.#sortComponent = null;
@@ -184,7 +205,7 @@ export default class BodyPresenter {
     }
 
     const prevEmptyPage = this.#noContentView;
-    this.#noContentView = new NoContentView(this.#currentFilter);
+    this.#noContentView = new NoContentView(this.#currentFilter, errorFlag);
     if (prevEmptyPage === null) {
       render(this.#noContentView, this.#bodyContainer);
       return;
@@ -282,6 +303,10 @@ export default class BodyPresenter {
       case UpdateType.INIT:
         this.#isLoading = false;
         remove(this.#loadingViewComponent);
+        if (data) {
+          this.#renderNoContent(data);
+          return;
+        }
         this.#renderPoints();
         break;
     }

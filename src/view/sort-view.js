@@ -56,15 +56,15 @@ export default class SortView extends AbstractView {
   }
 
   _restoreHandlers() {
-    this.element.addEventListener('click', this.#onButtonSortclick);
+    this.element.addEventListener('click', this.#onButtonSortClick);
   }
 
   /**
-   * Функиця-обработчик клика на компоненте сортировки
+   * Функция-обработчик клика на компоненте сортировки
    * @param {*} evt Событие клика пользователя на странице
    * @description Передает выбранную сортировку в презентер
    */
-  #onButtonSortclick = (evt) => {
+  #onButtonSortClick = (evt) => {
     if (evt.target.tagName !== 'INPUT') {
       return;
     }
