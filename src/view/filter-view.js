@@ -38,7 +38,7 @@ export default class FilterView extends AbstractView {
     this.#currentFilter = currentFilter;
     this.#filters = filters;
     this.#filterChangeHandler = filterChangeHandler;
-    this.element.addEventListener('change', this.#handleFilterClick);
+    this.element.addEventListener('change', this.#onFilterClick);
   }
 
   get template() {
@@ -50,7 +50,7 @@ export default class FilterView extends AbstractView {
    * @param {*} evt - элемент, на котором сработал клик
    * @description Внутри себя вызывает функцию из конструктора, полученную из HeaderPresenter
    */
-  #handleFilterClick = (evt) => {
+  #onFilterClick = (evt) => {
     if (this.currentFilter === evt.target.value) {
       return;
     }

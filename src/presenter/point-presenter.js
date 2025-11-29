@@ -46,7 +46,7 @@ export default class PointPresenter {
       point: this.#point,
       destinations: this.#destinations,
       offers: this.#offers,
-      onEditFormButtonClick: this.#handleOpenFormArrow,
+      onEditFormButtonClick: this.#onOpenFormArrowClick,
       onFavoriteButtonClick: this.#handleFavoriteButton,
     });
 
@@ -54,7 +54,7 @@ export default class PointPresenter {
       point: this.#point,
       destinations: this.#destinations,
       offers: this.#offers,
-      onCloseEditFormButtonClick: this.#handleCloseFormArrow,
+      onCloseEditFormButtonClick: this.#onCloseFormArrowClick,
       onSaveFormButtonClick: this.#handleSaveButton,
       onDeletePointButtonClick: this.#handleDeleteButton,
     });
@@ -132,33 +132,32 @@ export default class PointPresenter {
     this.#pointEditComponent.shake(resetFormState);
   }
 
-
   /**
  *  Функция открытия компонента редактирования
  */
   #replaceCardToForm() {
-    replace(this.#pointEditComponent, this.#pointComponent); // Заменаем один компонент на другой(Инициализация ранее п.5.3)
-    document.addEventListener('keydown', this.#escKeyDownHandler);
-    this.#handleCloseAllForm(); // Метод проходит по MAP и вызывает метод resetViewToDefault() - закрывает если открыта форма редактирвоания
+    replace(this.#pointEditComponent, this.#pointComponent); // Заменяем один компонент на другой(Инициализация ранее п.5.3)
+    document.addEventListener('keydown', this.#onEscapeClick);
+    this.#handleCloseAllForm(); // Метод проходит по MAP и вызывает метод resetViewToDefault() - закрывает если открыта форма редактирования
     this.#mode = StatusForm.EDIT; // После ставим статус - "в редактировании"
   }
 
   /**
-   *  Функиця закрытия компонента редактирования
+   *  Функция закрытия компонента редактирования
    */
   #replaceFormToCard() {
     replace(this.#pointComponent, this.#pointEditComponent);
-    document.removeEventListener('keydown', this.#escKeyDownHandler);
+    document.removeEventListener('keydown', this.#onEscapeClick);
     this.#mode = StatusForm.DEFAULT;
   }
 
   // Бестолковый метод, проще сразу вызывать replace напрямую
-  #handleOpenFormArrow = () => {
+  #onOpenFormArrowClick = () => {
     this.#replaceCardToForm();
   };
 
   // Бестолковый метод, проще сразу вызывать replace напрямую
-  #handleCloseFormArrow = () => {
+  #onCloseFormArrowClick = () => {
     this.#replaceFormToCard();
   };
 
@@ -176,12 +175,12 @@ export default class PointPresenter {
   /**
    * Функция обработчик нажатия кнопки escape для закрытия формы редактирования
    */
-  #escKeyDownHandler = (evt) => {
+  #onEscapeClick = (evt) => {
     if (evt.key === 'Escape') {
       evt.preventDefault();
       this.#pointEditComponent.reset(this.#point);
       this.#replaceFormToCard();
-      document.removeEventListener('keydown', this.#escKeyDownHandler);
+      document.removeEventListener('keydown', this.#onEscapeClick);
     }
   };
 
@@ -191,7 +190,7 @@ export default class PointPresenter {
    * @description проброс идет только в форму редактирования PointEditView
    */
   #handleSaveButton = (updatePoint) => {
-    document.removeEventListener('keydown', this.#escKeyDownHandler);
+    document.removeEventListener('keydown', this.#onEscapeClick);
     const isMinorUpdate =
       this.#point.dateFrom !== updatePoint.dateFrom || this.#point.dateTo !== updatePoint.dateTo;
     this.#handleDataUpdate(

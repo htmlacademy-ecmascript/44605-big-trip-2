@@ -177,7 +177,7 @@ export default class PointEditView extends AbstractStatefulView {
   #point = null;
   #destinations = null;
   #offers = null;
-  #formArrowHandler = null;
+  #onFormArrowClick = null;
   #formSaveButtonHandler = null;
   #datePickerFrom = null;
   #datePickerTo = null;
@@ -199,7 +199,7 @@ export default class PointEditView extends AbstractStatefulView {
     this._setState(PointEditView.parsePointToState(this.#point)); // Обновляю состояние _state с помощью спред-оператора разворачиваю объект Point
     this.#destinations = destinations;
     this.#offers = offers;
-    this.#formArrowHandler = onCloseEditFormButtonClick;
+    this.#onFormArrowClick = onCloseEditFormButtonClick;
     this.#formSaveButtonHandler = onSaveFormButtonClick;
     this.#deleteButtonHandler = onDeletePointButtonClick;
 
@@ -231,23 +231,23 @@ export default class PointEditView extends AbstractStatefulView {
   }
 
   _restoreHandlers() {
-    this.element.querySelector('.event__rollup-btn')?.addEventListener('click', this.#formArrowHandler); // Обработчик стрелки закрытия формы редактирования
-    this.element.querySelector('.event__type-list').addEventListener('click', this.#handleTypeChange); // Обработчик выбора типа поездки
-    this.element.querySelector('.event__save-btn').addEventListener('click', this.#handleSaveButton); // Обработчик кнопки сохранения
-    this.element.querySelector('.event__input--destination').addEventListener('input', this.#handleDestinationsChange); // Обработчик пункта назначения
-    this.element.querySelector('.event__input--price').addEventListener('input', this.#handlePriceChange); // Обработчик изменения цены
-    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#handleDeleteButton);
+    this.element.querySelector('.event__rollup-btn')?.addEventListener('click', this.#onFormArrowClick); // Обработчик стрелки закрытия формы редактирования
+    this.element.querySelector('.event__type-list').addEventListener('click', this.#onPointTypeClick); // Обработчик выбора типа поездки
+    this.element.querySelector('.event__save-btn').addEventListener('click', this.#onSaveButtonClick); // Обработчик кнопки сохранения
+    this.element.querySelector('.event__input--destination').addEventListener('input', this.#onDestinationChange); // Обработчик пункта назначения
+    this.element.querySelector('.event__input--price').addEventListener('input', this.#onPriceChange); // Обработчик изменения цены
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#onDeleteButtonClick);
     this.#setDatePicker();
   }
 
-  #handleTypeChange = (evt) => {
+  #onPointTypeClick = (evt) => {
     if (evt.target.tagName !== 'INPUT') {
       return;
     }
     this.updateElement({ type: evt.target.value });
   };
 
-  #handleSaveButton = (evt) => {
+  #onSaveButtonClick = (evt) => {
     evt.preventDefault();
     const checkedOffers = document.querySelector('.event__available-offers')?.querySelectorAll('input[type="checkbox"]:checked');
     if (checkedOffers) {
@@ -261,14 +261,14 @@ export default class PointEditView extends AbstractStatefulView {
     this.#formSaveButtonHandler(this.#point);
   };
 
-  #handleDestinationsChange = (evt) => {
+  #onDestinationChange = (evt) => {
     const destinationInput = this.#destinations.find((element) => element.name === evt.target.value);
     if (destinationInput) {
       this.updateElement({ destination: destinationInput.id });
     }
   };
 
-  #handlePriceChange = (evt) => {
+  #onPriceChange = (evt) => {
     let newValue = evt.target.value.replace(/[^0-9]/g, ''); // Блокирую ввод любых значений, кроме числовых
 
     // Если значение пустое, устанавливаем "0"
@@ -283,7 +283,7 @@ export default class PointEditView extends AbstractStatefulView {
     this._setState({ basePrice: newValue });
   };
 
-  #handleDeleteButton = () => {
+  #onDeleteButtonClick = () => {
     this.#deleteButtonHandler();
   };
 

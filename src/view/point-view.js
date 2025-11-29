@@ -96,8 +96,8 @@ export default class PointView extends AbstractStatefulView {
   #point = null;
   #destinations = null;
   #offers = null;
-  #handleOpenFormArrow = null;
-  #handleFavoriteButton = null;
+  #onEditFormButtonClick = null;
+  #onFavoriteButtonClick = null;
 
   /**
    * @constructor
@@ -113,8 +113,8 @@ export default class PointView extends AbstractStatefulView {
     this.#point = point;
     this.#destinations = destinations;
     this.#offers = offers;
-    this.#handleOpenFormArrow = onEditFormButtonClick;
-    this.#handleFavoriteButton = onFavoriteButtonClick;
+    this.#onEditFormButtonClick = onEditFormButtonClick;
+    this.#onFavoriteButtonClick = onFavoriteButtonClick;
 
     this._restoreHandlers();
   }
@@ -124,7 +124,7 @@ export default class PointView extends AbstractStatefulView {
   }
 
   _restoreHandlers() {
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#handleOpenFormArrow);
-    this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#handleFavoriteButton);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#onEditFormButtonClick);
+    this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#onFavoriteButtonClick);
   }
 }
