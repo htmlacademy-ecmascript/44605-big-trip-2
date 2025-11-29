@@ -5,17 +5,40 @@ import { DATE_FORMAT } from '../const';
 
 function createTemplate(points, destinations, offers) {
   const firstItem = points[0];
+  const lastItem = points[points.length - 1];
+
+  const lastItemDate = humanizeDate(lastItem['dateTo'], DATE_FORMAT.dayMonth);
   const firstItemDate = humanizeDate(firstItem['dateFrom'], DATE_FORMAT.dayMonth);
+
+  const firstItemDestinationName = (destinations.find((item) => item.id === firstItem.destination))['name'];
+  const lastItemDestinationName = (destinations.find((item) => item.id === lastItem.destination))['name'];
+
+  const totalPrice = () => {
+    let total = 0;
+
+    points.forEach((point) => {
+      total += point.basePrice;
+      const offersOfTypePoints = offers.find((offer) => offer.type === point.type);
+      const availableOffers = offersOfTypePoints ? offersOfTypePoints.offers : [];
+      const selectedOffers = point.offers || [];
+      const offerPrices = availableOffers.filter((offer) => selectedOffers.includes(offer.id));
+      offerPrices.forEach((price) => {
+        total += price.price;
+      });
+    });
+    return total;
+  };
+
   return `
   <section class="trip-main__trip-info  trip-info">
               <div class="trip-info__main">
-                <h1 class="trip-info__title">Amsterdam &mdash; Chamonix &mdash; Geneva</h1>
+                <h1 class="trip-info__title">${firstItemDestinationName} - ${lastItemDestinationName}</h1>
 
-                <p class="trip-info__dates">${firstItemDate}</p>
+                <p class="trip-info__dates">${firstItemDate} - ${lastItemDate}</p>
               </div>
 
               <p class="trip-info__cost">
-                Total: &euro;&nbsp;<span class="trip-info__cost-value">1230</span>
+                Total: &euro;&nbsp;<span class="trip-info__cost-value">${totalPrice()}</span>
               </p>
             </section>`;
 }
