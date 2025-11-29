@@ -143,8 +143,11 @@ export default class BodyPresenter {
   #renderTripInfo() {
     const prevTripInfoComponent = this.#tripInfoComponent;
 
+    const points = this.points;
+    points.sort(sortingByDay);
+
     this.#tripInfoComponent = new TripInformationView({
-      points: this.points,
+      points: points,
       destinations: this.destinations,
       offers: this.offers
     });
