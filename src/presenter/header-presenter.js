@@ -1,7 +1,7 @@
 import NewPointView from '../view/new-point-view';
 import FilterPresenter from './filter-presenter';
 import { UpdateType } from '../const';
-import { render, RenderPosition } from '../framework/render';
+import { render } from '../framework/render';
 
 export default class HeaderPresenter {
   #headerContainer = null;
